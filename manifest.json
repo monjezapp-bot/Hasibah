@@ -1,7 +1,7 @@
 {
-  "name": "حاسبة شيفت طارق",
+  "name": "حاسبة شيفت ",
   "short_name": "شيفت طارق",
-  "description": "حاسبة أرباح الشيفت اليومي لكابتن الدليفري",
+  "description": "حاسبة أرباح الشيفت اليومي للكابتن ",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
