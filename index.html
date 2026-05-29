@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="manifest" href="manifest.json">
-<title>حاسبة الشفت</title>
+<title>طارق | حاسبة الشفت</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -14,193 +13,315 @@
   --green:#00c896;--green2:#30e8b0;--red:#ff5757;--purple:#a855f7;
   --text:#eef2f8;--muted:#5a6a82;--muted2:#8898aa;--r:16px;--r2:10px;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
 input,textarea{user-select:text;-webkit-user-select:text}
-body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden}
-body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 60% 35% at 15% 0%,rgba(240,165,0,.04) 0%,transparent 55%),radial-gradient(ellipse 45% 30% at 85% 100%,rgba(59,139,235,.04) 0%,transparent 55%)}
-.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding-bottom:90px}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100dvh;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 35% at 15% 0%,rgba(240,165,0,.04) 0%,transparent 55%),
+             radial-gradient(ellipse 45% 30% at 85% 100%,rgba(59,139,235,.04) 0%,transparent 55%)}
 
-/* HEADER */
-.header{background:rgba(13,21,32,.96);border-bottom:1px solid var(--border2);backdrop-filter:blur(24px);position:sticky;top:0;z-index:80}
-.header-inner{padding:14px 16px 0}
+/* ── LAYOUT ── */
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding-bottom:72px}
+
+/* ── HEADER ── */
+.header{background:rgba(8,12,20,.97);border-bottom:1px solid var(--border2);
+  backdrop-filter:blur(24px);position:sticky;top:0;z-index:80}
+.header-inner{padding:12px 16px 0}
 .profile-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .avatar-wrap{position:relative;flex-shrink:0;cursor:pointer}
-.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#c47d00);display:flex;align-items:center;justify-content:center;font-size:21px;overflow:hidden;box-shadow:0 0 0 2px rgba(240,165,0,.3);transition:.2s}
+.avatar{width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),#c47d00);
+  display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;
+  box-shadow:0 0 0 2px rgba(240,165,0,.3);transition:.2s}
 .avatar:active{transform:scale(.9)}
 .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.avatar-dot{position:absolute;bottom:0;right:0;width:13px;height:13px;border-radius:50%;border:2px solid var(--bg);background:var(--green)}
+.avatar-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--bg);background:var(--green)}
 .profile-info{flex:1;min-width:0}
-.profile-name{font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:5px}
-.profile-name .pen{font-size:11px;color:var(--muted);transition:.2s}
-.profile-name:active .pen{color:var(--gold)}
+.profile-name{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;
+  display:flex;align-items:center;gap:5px}
+.profile-name .pen{font-size:11px;color:var(--muted)}
 
-/* datetime bar */
-.dt-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 16px;background:var(--s1);border-bottom:1px solid var(--border);font-size:11px;color:var(--muted)}
-.dt-bar .dt-time{font-family:'Tajawal',sans-serif;font-weight:700;color:var(--gold2);font-size:13px}
+/* remaining bar */
+.rem-bar{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border)}
+.rstat{padding:7px 4px;text-align:center;border-left:1px solid var(--border)}
+.rstat:last-child{border-left:none}
+.rstat-val{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:900;
+  color:var(--gold2);direction:ltr;line-height:1}
+.rstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
 
-/* header stats */
-.header-stats{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border)}
-.hstat{padding:8px 4px;text-align:center;border-left:1px solid var(--border)}
-.hstat:last-child{border-left:none}
-.hstat-val{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;color:var(--gold2);direction:ltr}
-.hstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
+/* datetime */
+.dt-bar{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 16px;background:var(--s1);border-bottom:1px solid var(--border);
+  font-size:11px;color:var(--muted)}
+.dt-time{font-family:'Tajawal',sans-serif;font-weight:700;color:var(--gold2);
+  font-size:12px;direction:ltr}
 
-/* TABS */
-.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{flex:1;min-width:0;padding:10px 4px;text-align:center;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;font-family:'IBM Plex Sans Arabic',sans-serif;white-space:nowrap;border-bottom:2px solid transparent;transition:.2s}
-.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;z-index:80;
+  background:rgba(8,12,20,.97);border-top:1px solid var(--border2);
+  backdrop-filter:blur(24px);display:flex}
+.bnav-btn{flex:1;padding:10px 4px 12px;text-align:center;cursor:pointer;
+  border:none;background:none;font-family:'IBM Plex Sans Arabic',sans-serif;
+  transition:.15s;border-top:2px solid transparent}
+.bnav-btn .bi{font-size:20px;display:block;line-height:1;margin-bottom:3px}
+.bnav-btn .bl{font-size:9px;font-weight:700;color:var(--muted)}
+.bnav-btn.active{border-top-color:var(--gold)}
+.bnav-btn.active .bl{color:var(--gold)}
 
-/* PAGES */
-.page{display:none;padding:14px}
+/* ── TIP TICKER ── */
+.tip-ticker{background:var(--s2);border-bottom:1px solid var(--border);
+  padding:6px 16px;font-size:11px;color:var(--muted2);overflow:hidden;
+  white-space:nowrap;position:relative}
+.tip-ticker-inner{display:inline-block;animation:ticker 18s linear infinite}
+@keyframes ticker{0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)}}
+
+/* ── PAGES ── */
+.page{display:none;padding:14px;
+  transition:transform .25s ease,opacity .25s ease}
 .page.active{display:block;animation:fadeUp .2s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
-/* GOAL CARD */
-.goal-card{background:linear-gradient(135deg,#0a1e0e,#062014);border:1px solid rgba(0,200,150,.18);border-radius:var(--r);padding:14px 16px;margin-bottom:12px;position:relative;overflow:hidden}
-.goal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.goal-badge{font-size:10px;font-weight:700;color:var(--green2);background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.2);padding:2px 9px;border-radius:20px}
+/* ── GOAL CARD ── */
+.goal-card{background:linear-gradient(135deg,#0a1e0e,#062014);
+  border:1px solid rgba(0,200,150,.18);border-radius:var(--r);
+  padding:13px 15px;margin-bottom:11px}
+.goal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.goal-badge{font-size:10px;font-weight:700;color:var(--green2);
+  background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.2);
+  padding:2px 8px;border-radius:20px}
 .goal-label{font-size:11px;color:var(--green2);font-weight:600}
 .goal-row{display:flex;align-items:center;gap:8px}
-.goal-input{flex:1;background:rgba(255,255,255,.05);border:1.5px solid rgba(0,200,150,.2);border-radius:10px;padding:8px 12px;font-size:22px;font-weight:500;color:#fff;font-family:'Tajawal',sans-serif;text-align:center;outline:none;transition:.2s;-webkit-appearance:none}
+.goal-input{flex:1;background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(0,200,150,.2);border-radius:10px;
+  padding:7px 12px;font-size:20px;font-weight:500;color:#fff;
+  font-family:'Tajawal',sans-serif;text-align:right;outline:none;
+  transition:.2s;-webkit-appearance:none}
 .goal-input:focus{border-color:var(--green);background:rgba(0,200,150,.06)}
 .goal-curr{font-size:12px;color:var(--green2);font-weight:700;flex-shrink:0}
 
-/* SHIFT BUTTONS */
-.shift-btns{display:flex;gap:8px;margin-top:12px}
-.btn-start{flex:1;background:linear-gradient(135deg,#0f4a1f,#1a7a35);border:1px solid rgba(0,200,150,.3);color:var(--green2);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;padding:11px;border-radius:11px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px}
-.btn-start:active{transform:scale(.97)}
-.btn-start.active-shift{background:linear-gradient(135deg,#4a0f0f,#7a1a1a);border-color:rgba(255,87,87,.3);color:var(--red)}
-.btn-end{flex:1;background:rgba(255,87,87,.08);border:1px solid rgba(255,87,87,.25);color:var(--red);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;padding:11px;border-radius:11px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;opacity:.4;pointer-events:none}
+/* ── SHIFT BUTTONS ── */
+.shift-btns{display:flex;gap:8px;margin-top:10px}
+.btn-start{flex:1;background:linear-gradient(135deg,#0f4a1f,#1a7a35);
+  border:1px solid rgba(0,200,150,.3);color:var(--green2);
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:12px;
+  padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-start.active-shift{background:linear-gradient(135deg,#4a0f0f,#7a1a1a);
+  border-color:rgba(255,87,87,.3);color:var(--red)}
+.btn-end{flex:1;background:rgba(255,87,87,.08);border:1px solid rgba(255,87,87,.25);
+  color:var(--red);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;
+  font-size:12px;padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  opacity:.35;pointer-events:none}
 .btn-end.enabled{opacity:1;pointer-events:all}
-.btn-end:active{transform:scale(.97)}
+#shiftTimer{display:none;text-align:center;margin-top:7px;font-size:11px;color:var(--muted)}
 
-/* KPI GRID */
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
-.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px;position:relative;overflow:hidden}
-.kpi-lbl-top{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px}
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+  padding:13px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.kpi:active{transform:scale(.96);opacity:.85}
+.kpi::after{content:'ⓘ';position:absolute;top:8px;left:10px;
+  font-size:12px;color:var(--border2);font-style:normal}
+.kpi-lbl-top{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;padding-left:16px}
 .kpi-val{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;line-height:1;direction:ltr}
 .kpi-unit{font-size:10px;font-weight:700;color:var(--muted);margin-top:3px}
 .kpi.km{border-color:rgba(59,139,235,.3)} .kpi.km .kpi-val{color:var(--blue2)}
 .kpi.hrs{border-color:rgba(168,85,247,.3)} .kpi.hrs .kpi-val{color:#c084fc}
 .kpi.cost{border-color:rgba(255,87,87,.3)} .kpi.cost .kpi-val{color:var(--red)}
-.kpi.earn{border-color:rgba(240,165,0,.3);background:linear-gradient(135deg,#120f00,#100c00)} .kpi.earn .kpi-val{color:var(--gold2)}
+.kpi.earn{border-color:rgba(240,165,0,.3);background:linear-gradient(135deg,#120f00,#100c00)}
+.kpi.earn .kpi-val{color:var(--gold2)}
 
-/* NET BAR */
-.net-bar{background:linear-gradient(135deg,#041a0e,#031410);border:1px solid rgba(0,200,150,.25);border-radius:var(--r);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+/* ── NET BAR ── */
+.net-bar{background:linear-gradient(135deg,#041a0e,#031410);
+  border:1px solid rgba(0,200,150,.25);border-radius:var(--r);
+  padding:12px 15px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:11px}
 .net-lbl{font-size:11px;color:var(--green2);font-weight:700}
 .net-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.net-val{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;color:var(--green2);direction:ltr}
+.net-val{font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;
+  color:var(--green2);direction:ltr}
 
-/* TRIP TRACKER */
-.tracker-card{background:var(--s2);border:1px solid rgba(240,165,0,.15);border-radius:var(--r);padding:14px;margin-bottom:12px;overflow:hidden}
-.tracker-title{font-size:11px;font-weight:700;color:var(--gold2);margin-bottom:10px;display:flex;align-items:center;gap:5px}
-.tracker-input-row{display:flex;gap:8px;margin-bottom:10px;align-items:stretch}
-.trip-input{flex:1;min-width:0;background:rgba(255,255,255,.06);border:1.5px solid var(--border2);border-radius:9px;padding:9px 12px;font-size:15px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;text-align:right;outline:none;transition:.2s;-webkit-appearance:none}
-.trip-input:focus{border-color:var(--gold);background:rgba(240,165,0,.06)}
-.btn-add-trip{flex-shrink:0;background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:12px;padding:0 16px;border-radius:9px;border:none;cursor:pointer;white-space:nowrap;transition:.2s;height:auto}
+/* ── TRACKER ── */
+.tracker-card{background:var(--s2);border:1px solid rgba(240,165,0,.15);
+  border-radius:var(--r);padding:13px;margin-bottom:11px;overflow:hidden}
+.tracker-title{font-size:11px;font-weight:700;color:var(--gold2);
+  margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.tracker-inputs{display:flex;gap:7px;margin-bottom:9px}
+.tracker-inputs .trip-input{flex:1;min-width:0;background:rgba(255,255,255,.06);
+  border:1.5px solid var(--border2);border-radius:9px;padding:8px 11px;
+  font-size:14px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;
+  text-align:right;outline:none;-webkit-appearance:none;transition:.2s}
+.tracker-inputs .trip-input:focus{border-color:var(--gold);background:rgba(240,165,0,.06)}
+.btn-add-trip{flex-shrink:0;background:linear-gradient(135deg,#c47d00,var(--gold));
+  color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:900;
+  font-size:11px;padding:0 14px;border-radius:9px;border:none;cursor:pointer;
+  white-space:nowrap;transition:.2s}
 .btn-add-trip:active{transform:scale(.96)}
-.tracker-status{background:rgba(0,0,0,.2);border-radius:9px;padding:10px 12px}
-.ts-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.tracker-status{background:rgba(0,0,0,.2);border-radius:9px;padding:9px 11px}
+.ts-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
 .ts-row:last-child{margin-bottom:0}
 .ts-lbl{font-size:11px;color:var(--muted)}
 .ts-val{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;direction:ltr}
-.ts-val.green{color:var(--green2)} .ts-val.gold{color:var(--gold2)} .ts-val.red{color:var(--red)} .ts-val.neu{color:var(--blue2)}
-.trips-list{margin-top:9px;max-height:110px;overflow-y:auto}
-.trip-item{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(255,255,255,.03);border-radius:7px;margin-bottom:3px;font-size:12px}
-.trip-item:last-child{margin-bottom:0}
-.trip-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 6px}
+.ts-val.green{color:var(--green2)} .ts-val.gold{color:var(--gold2)}
+.ts-val.red{color:var(--red)} .ts-val.neu{color:var(--blue2)}
+.trips-list{margin-top:8px;max-height:100px;overflow-y:auto}
+.trip-item{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 9px;background:rgba(255,255,255,.03);border-radius:7px;
+  margin-bottom:3px;font-size:11px}
+.trip-del{background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:12px;padding:2px 5px}
 
-/* BREAKDOWN */
-.sec-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;padding-right:2px}
-.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
-.card-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);transition:.12s}
+/* ── BREAKDOWN ── */
+.sec-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.07em;margin-bottom:7px;padding-right:2px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;margin-bottom:11px}
+.card-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 13px;border-bottom:1px solid var(--border);transition:.12s}
 .card-row:last-child{border-bottom:none}
 .cr-left{display:flex;align-items:center;gap:9px}
-.cr-icon{font-size:16px;width:24px;text-align:center}
+.cr-icon{font-size:15px;width:22px;text-align:center}
 .cr-name{font-size:12px;font-weight:600}
 .cr-desc{font-size:10px;color:var(--muted);margin-top:1px}
-.cr-val{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;direction:ltr}
-.cr-val.neg{color:var(--red)} .cr-val.warn{color:var(--gold)} .cr-val.pos{color:var(--green2)} .cr-val.neu{color:var(--blue2)}
+.cr-val{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;direction:ltr}
+.cr-val.neg{color:var(--red)} .cr-val.warn{color:var(--gold)}
+.cr-val.pos{color:var(--green2)} .cr-val.neu{color:var(--blue2)}
 
-/* SETTINGS */
-.setting-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
-.setting-hdr{padding:10px 14px;background:var(--s2);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px}
+/* ── SETTINGS ── */
+.setting-card{background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:11px}
+.setting-hdr{padding:9px 13px;background:var(--s2);border-bottom:1px solid var(--border);
+  font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.setting-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 13px;border-bottom:1px solid var(--border);gap:10px}
 .setting-row:last-child{border-bottom:none}
 .sr-label{font-size:12px;font-weight:600;flex:1}
-.sr-desc{font-size:10px;color:var(--muted);margin-top:2px}
+.sr-desc{font-size:10px;color:var(--muted);margin-top:1px}
 .sr-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.setting-input{width:82px;background:rgba(255,255,255,.05);border:1px solid var(--border2);border-radius:8px;padding:6px 9px;font-size:14px;font-weight:700;color:var(--gold);font-family:'Tajawal',sans-serif;text-align:center;outline:none;transition:.2s;-webkit-appearance:none;direction:ltr}
+.setting-input{width:80px;background:rgba(255,255,255,.05);
+  border:1px solid var(--border2);border-radius:8px;padding:6px 9px;
+  font-size:14px;font-weight:700;color:var(--gold);font-family:'Tajawal',sans-serif;
+  text-align:center;outline:none;transition:.2s;-webkit-appearance:none;direction:ltr}
 .setting-input:focus{border-color:var(--gold);background:rgba(240,165,0,.07)}
 .sr-unit{font-size:10px;color:var(--muted);font-weight:600;white-space:nowrap}
 
-/* LOG TABLE */
-.log-table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);margin-bottom:12px}
-.log-table{width:100%;border-collapse:collapse;min-width:520px}
-.log-table th{padding:9px 10px;font-size:10px;font-weight:700;color:var(--muted);text-align:center;background:var(--s2);border-bottom:1px solid var(--border2);white-space:nowrap;letter-spacing:.04em;text-transform:uppercase}
-.log-table td{padding:8px 10px;font-size:12px;text-align:center;border-bottom:1px solid var(--border);color:var(--text);direction:ltr;font-family:'Tajawal',sans-serif}
-.log-table td.ar{direction:rtl;font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px}
+/* ── LOG TABLE ── */
+.log-table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);
+  margin-bottom:11px}
+.log-table{width:100%;border-collapse:collapse;min-width:480px}
+.log-table th{padding:9px 10px;font-size:10px;font-weight:700;color:var(--muted);
+  text-align:center;background:var(--s2);border-bottom:1px solid var(--border2);
+  white-space:nowrap;letter-spacing:.04em;text-transform:uppercase}
+.log-table td{padding:8px 10px;font-size:12px;text-align:center;
+  border-bottom:1px solid var(--border);color:var(--text);
+  direction:ltr;font-family:'Tajawal',sans-serif}
 .log-table tr:nth-child(even) td{background:rgba(255,255,255,.015)}
-.log-table .totals td{background:var(--s3);font-weight:700;color:var(--gold2);border-top:1px solid var(--border2)}
-.log-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px 5px}
-.log-del-btn:active{color:var(--red)}
+.log-table .totals td{background:var(--s3);font-weight:700;color:var(--gold2);
+  border-top:1px solid var(--border2)}
+.log-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:12px;padding:2px 5px}
 
-/* STAGE DETAIL */
-.stage{background:var(--s1);border-radius:var(--r);overflow:hidden;margin-bottom:10px;border:1px solid var(--border)}
-.stage-hdr{padding:9px 13px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:7px}
-.stage-hdr.s1{background:rgba(59,139,235,.1);color:var(--blue2);border-bottom:1px solid rgba(59,139,235,.15)}
-.stage-hdr.s2{background:rgba(240,165,0,.08);color:var(--gold2);border-bottom:1px solid rgba(240,165,0,.15)}
-.stage-hdr.sf{background:rgba(0,200,150,.1);color:var(--green2);border-bottom:1px solid rgba(0,200,150,.15)}
-.stage-row{display:flex;justify-content:space-between;align-items:center;padding:8px 13px;border-bottom:1px solid var(--border);font-size:12px}
-.stage-row:last-child{border-bottom:none}
-.sr-lbl{color:var(--muted2)}
-.sr-val{font-family:'Tajawal',sans-serif;font-weight:700;font-size:13px;direction:ltr}
-
-/* TIPS */
-.tip-section-hdr{padding:10px 14px;font-size:11px;font-weight:700;color:var(--blue2);background:rgba(59,139,235,.08);border-bottom:1px solid rgba(59,139,235,.12);display:flex;align-items:center;gap:7px}
-.tip-row{display:flex;align-items:flex-start;gap:9px;padding:10px 14px;border-bottom:1px solid var(--border)}
-.tip-row:last-child{border-bottom:none}
-.tip-check{color:var(--green2);flex-shrink:0;font-size:13px;margin-top:1px}
-.tip-text{font-size:12px;line-height:1.6;color:var(--muted2)}
-
-/* EXPORT / DATA BUTTONS */
-.data-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.data-btn{padding:12px;border-radius:var(--r2);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:6px;border:none}
+/* ── DATA BUTTONS ── */
+.data-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.data-btn{padding:11px;border-radius:var(--r2);font-family:'IBM Plex Sans Arabic',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:5px;border:none}
 .data-btn:active{transform:scale(.97)}
 .btn-export{background:rgba(59,139,235,.1);border:1px solid rgba(59,139,235,.25);color:var(--blue2)}
 .btn-import{background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.2);color:var(--green2)}
-.btn-clear-all{width:100%;padding:11px;background:rgba(255,87,87,.06);border:1px solid rgba(255,87,87,.2);border-radius:var(--r2);color:var(--red);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;margin-top:4px}
+.btn-clear-all{width:100%;padding:10px;background:rgba(255,87,87,.06);
+  border:1px solid rgba(255,87,87,.2);border-radius:var(--r2);color:var(--red);
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;transition:.2s;margin-top:4px}
 .btn-clear-all:active{background:rgba(255,87,87,.12)}
 
-/* PROFILE MODAL */
-.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:.25s}
+/* ── RATIO STRIP ── */
+.ratio-strip{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 13px;background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r2);margin-bottom:11px}
+
+/* ── KPI BOTTOM SHEET ── */
+.sheet-overlay{position:fixed;inset:0;z-index:150;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:.22s;
+  display:flex;align-items:flex-end;justify-content:center}
+.sheet-overlay.open{opacity:1;pointer-events:all}
+.bottom-sheet{background:var(--s1);border:1px solid var(--border2);
+  border-radius:22px 22px 0 0;padding:20px 18px 36px;
+  width:100%;max-width:480px;
+  transform:translateY(100%);transition:.28s cubic-bezier(.34,1.3,.64,1)}
+.sheet-overlay.open .bottom-sheet{transform:translateY(0)}
+.sheet-drag{width:36px;height:4px;border-radius:2px;background:var(--border2);
+  margin:0 auto 16px}
+.sheet-title{font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;
+  margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.sheet-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+.sheet-rows{background:var(--s2);border-radius:var(--r2);overflow:hidden;margin-bottom:14px}
+.sheet-row{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
+.sheet-row:last-child{border-bottom:none}
+.sheet-row-lbl{color:var(--muted2)}
+.sheet-row-val{font-family:'Tajawal',sans-serif;font-weight:700;direction:ltr}
+.sheet-highlight{background:rgba(255,255,255,.04);margin:0 -14px;padding:12px 14px;
+  border-radius:0 0 var(--r2) var(--r2)}
+.sheet-progress{height:5px;border-radius:3px;background:var(--border2);
+  overflow:hidden;margin-top:10px}
+.sheet-progress-bar{height:100%;border-radius:3px;transition:.4s}
+.sheet-ok-btn{width:100%;padding:13px;
+  background:linear-gradient(135deg,#c47d00,var(--gold));
+  color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;
+  font-weight:700;font-size:14px;border-radius:13px;border:none;cursor:pointer}
+
+/* ── PROFILE MODAL ── */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);
+  backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:.25s}
 .overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--s1);border:1px solid var(--border2);border-radius:22px 22px 0 0;padding:22px 18px 36px;width:100%;max-width:480px;transform:translateY(100%);transition:.3s cubic-bezier(.34,1.56,.64,1)}
+.modal{background:var(--s1);border:1px solid var(--border2);
+  border-radius:22px 22px 0 0;padding:20px 18px 36px;
+  width:100%;max-width:480px;
+  transform:translateY(100%);transition:.3s cubic-bezier(.34,1.56,.64,1)}
 .overlay.open .modal{transform:translateY(0)}
-.modal-drag{width:38px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 18px}
+.modal-drag{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 16px}
 .modal-title{font-size:16px;font-weight:900;margin-bottom:4px;font-family:'Tajawal',sans-serif}
-.modal-sub{font-size:11px;color:var(--muted);margin-bottom:20px}
-.modal-avatar-wrap{display:flex;justify-content:center;margin-bottom:18px}
-.modal-avatar{width:86px;height:86px;border-radius:50%;cursor:pointer;background:linear-gradient(135deg,var(--gold),#c47d00);display:flex;align-items:center;justify-content:center;font-size:38px;overflow:hidden;position:relative;box-shadow:0 0 0 3px rgba(240,165,0,.3);transition:.2s}
+.modal-sub{font-size:11px;color:var(--muted);margin-bottom:18px}
+.modal-avatar-wrap{display:flex;justify-content:center;margin-bottom:16px}
+.modal-avatar{width:84px;height:84px;border-radius:50%;cursor:pointer;
+  background:linear-gradient(135deg,var(--gold),#c47d00);
+  display:flex;align-items:center;justify-content:center;font-size:36px;
+  overflow:hidden;position:relative;box-shadow:0 0 0 3px rgba(240,165,0,.3);transition:.2s}
 .modal-avatar:active{transform:scale(.95)}
 .modal-avatar img{width:100%;height:100%;object-fit:cover}
-.modal-av-ov{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.modal-av-ov span{font-size:20px}
+.modal-av-ov{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.modal-av-ov span{font-size:18px}
 .modal-av-ov small{font-size:9px;color:#fff;font-weight:700}
-.name-input{width:100%;background:var(--s2);border:1.5px solid var(--border2);border-radius:12px;padding:12px 14px;font-size:15px;font-weight:700;color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;text-align:right;outline:none;transition:.2s;margin-bottom:14px}
+.name-input{width:100%;background:var(--s2);border:1.5px solid var(--border2);
+  border-radius:12px;padding:11px 13px;font-size:15px;font-weight:700;
+  color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;
+  text-align:right;outline:none;transition:.2s;margin-bottom:13px}
 .name-input:focus{border-color:var(--gold)}
 .modal-btns{display:flex;gap:9px}
-.btn-save{flex:1;background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;padding:12px;border-radius:12px;border:none;cursor:pointer}
-.btn-cancel{flex:1;background:var(--s2);color:var(--muted);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;padding:12px;border-radius:12px;border:1px solid var(--border);cursor:pointer}
+.btn-save{flex:1;background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
+  padding:12px;border-radius:12px;border:none;cursor:pointer}
+.btn-cancel{flex:1;background:var(--s2);color:var(--muted);
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
+  padding:12px;border-radius:12px;border:1px solid var(--border);cursor:pointer}
 
-/* MISC */
-.tip-note{background:rgba(240,165,0,.06);border:1px solid rgba(240,165,0,.15);border-radius:var(--r2);padding:10px 13px;font-size:11px;color:#e6c060;line-height:1.7;margin-bottom:12px}
+/* ── MISC ── */
 @keyframes numFlash{0%{opacity:.2;transform:translateY(3px)}100%{opacity:1;transform:none}}
 .flash{animation:numFlash .22s ease}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite;margin-left:4px}
-input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+.pulse{display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--green);animation:pulse 1.8s infinite;margin-left:4px}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -229,33 +350,43 @@ input[type=number]{-moz-appearance:textfield}
         <div style="font-size:10px;color:var(--muted)">كابتن دليفري <span class="pulse"></span></div>
       </div>
     </div>
-    <div class="header-stats">
-      <div class="hstat"><div class="hstat-val" id="hs-km">—</div><div class="hstat-lbl">كيلومتر مطلوب</div></div>
-      <div class="hstat"><div class="hstat-val" id="hs-hrs">—</div><div class="hstat-lbl">ساعة عمل</div></div>
-      <div class="hstat"><div class="hstat-val" id="hs-earn">—</div><div class="hstat-lbl">جنيه تحصّل</div></div>
+    <!-- remaining bar -->
+    <div class="rem-bar">
+      <div class="rstat">
+        <div class="rstat-val" id="hs-km-rem">—</div>
+        <div class="rstat-lbl">كم متبقي</div>
+      </div>
+      <div class="rstat">
+        <div class="rstat-val" id="hs-hrs-rem">—</div>
+        <div class="rstat-lbl">وقت متبقي</div>
+      </div>
+      <div class="rstat">
+        <div class="rstat-val" id="hs-money-rem">—</div>
+        <div class="rstat-lbl">جنيه متبقي</div>
+      </div>
     </div>
   </div>
-  <!-- datetime bar -->
   <div class="dt-bar">
     <span id="dtDate" style="direction:rtl">—</span>
-    <span class="dt-time" id="dtTime" style="direction:ltr">—</span>
+    <span class="dt-time" id="dtTime">—</span>
   </div>
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('dash',this)">🏠 الرئيسية</button>
-    <button class="tab" onclick="showTab('settings',this)">⚙️ الإعدادات</button>
-    <button class="tab" onclick="showTab('log',this)">📅 السجل</button>
-    <button class="tab" onclick="showTab('tips',this)">💡 نصائح</button>
+  <!-- tip ticker -->
+  <div class="tip-ticker">
+    <span class="tip-ticker-inner" id="tipTickerText">💡 شغّل أوقات الذروة لزيادة أرباحك ⚡ افحص الإطارات أسبوعياً 🔧 غيّر الزيت كل 1000 كم 📱 استخدم باقة إنترنت شهرية</span>
   </div>
 </div>
 
-<!-- ═══ PAGE: DASHBOARD ═══ -->
+<!-- ═══ PAGES ═══ -->
+<div id="pages-wrap">
+
+<!-- PAGE: DASHBOARD -->
 <div class="page active" id="page-dash">
   <div style="height:12px"></div>
 
-  <!-- Goal card -->
+  <!-- Goal -->
   <div class="goal-card">
     <div class="goal-top">
-      <div class="goal-label">الصافي المطلوب للبيت (بالجنيه)</div>
+      <div class="goal-label">الصافي المطلوب للبيت</div>
       <div class="goal-badge">🎯 هدف الشيفت</div>
     </div>
     <div class="goal-row">
@@ -263,50 +394,48 @@ input[type=number]{-moz-appearance:textfield}
              inputmode="numeric" min="0" step="50" oninput="recalc()">
       <span class="goal-curr">جنيه</span>
     </div>
-    <!-- shift buttons -->
     <div class="shift-btns">
       <button class="btn-start" id="btnStart" onclick="toggleShift()">
         <span id="shiftBtnIcon">▶</span>
         <span id="shiftBtnTxt">بدء الشيفت</span>
       </button>
-      <button class="btn-end" id="btnEnd" onclick="endShift()">
-        ⏹ إنهاء الشيفت
-      </button>
+      <button class="btn-end" id="btnEnd" onclick="endShift()">⏹ إنهاء</button>
     </div>
-    <div id="shiftTimer" style="display:none;text-align:center;margin-top:8px;font-size:11px;color:var(--muted)">
-      ⏱ وقت الشيفت: <span id="timerDisplay" style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">00:00:00</span>
+    <div id="shiftTimer">
+      ⏱ وقت الشيفت:
+      <span id="timerDisplay" style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">00:00:00</span>
     </div>
   </div>
 
-  <!-- KPI 2x2 -->
+  <!-- KPI 2×2 — clickable -->
   <div class="kpi-grid">
-    <div class="kpi km">
-      <div class="kpi-lbl-top">🏁 إجمالي الكيلومترات المطلوبة</div>
+    <div class="kpi km" onclick="showKpiSheet('km')">
+      <div class="kpi-lbl-top">🏁 الكيلومترات المطلوبة</div>
       <div class="kpi-val" id="r-km">—</div>
       <div class="kpi-unit">كيلومتر</div>
     </div>
-    <div class="kpi hrs">
-      <div class="kpi-lbl-top">⏱️ المدة التقديرية للشيفت</div>
+    <div class="kpi hrs" onclick="showKpiSheet('hrs')">
+      <div class="kpi-lbl-top">⏱️ المدة التقديرية</div>
       <div class="kpi-val" id="r-hrs">—</div>
       <div class="kpi-unit" id="r-hrs-fmt">ساعة</div>
     </div>
-    <div class="kpi cost">
-      <div class="kpi-lbl-top">💸 إجمالي تكاليف الشيفت</div>
+    <div class="kpi cost" onclick="showKpiSheet('cost')">
+      <div class="kpi-lbl-top">💸 إجمالي التكاليف</div>
       <div class="kpi-val" id="r-cost">—</div>
       <div class="kpi-unit">جنيه</div>
     </div>
-    <div class="kpi earn">
-      <div class="kpi-lbl-top">💰 المبلغ الإجمالي المطلوب تحصيله</div>
+    <div class="kpi earn" onclick="showKpiSheet('earn')">
+      <div class="kpi-lbl-top">💰 المطلوب تحصيله</div>
       <div class="kpi-val" id="r-earn">—</div>
       <div class="kpi-unit">جنيه</div>
     </div>
   </div>
 
-  <!-- Net bar -->
+  <!-- Net -->
   <div class="net-bar">
     <div>
-      <div class="net-lbl">✅ صافي الربح المتوقع للبيت</div>
-      <div class="net-sub">بعد خصم جميع التكاليف والعمولة</div>
+      <div class="net-lbl">✅ صافي الربح للبيت</div>
+      <div class="net-sub">بعد خصم كل التكاليف والعمولة</div>
     </div>
     <div style="text-align:left">
       <span class="net-val" id="r-net">—</span>
@@ -314,87 +443,83 @@ input[type=number]{-moz-appearance:textfield}
     </div>
   </div>
 
-  <!-- TRIP TRACKER -->
+  <!-- Trip Tracker -->
   <div class="tracker-card">
-    <div class="tracker-title">📍 متتبع المشاوير — المتبقي لتحقيق الهدف</div>
-    <div class="tracker-input-row">
-      <input class="trip-input" id="tripAmt" type="number" placeholder="ثمن المشوار بالجنيه"
-             inputmode="numeric" min="0">
-      <button class="btn-add-trip" onclick="addTrip()">+ إضافة</button>
+    <div class="tracker-title">📍 متتبع المشاوير</div>
+    <div class="tracker-inputs">
+      <input class="trip-input" id="tripAmt" type="number"
+             placeholder="ثمن المشوار (جنيه)" inputmode="numeric" min="0">
+      <button class="btn-add-trip" onclick="addTrip()">+ مشوار</button>
+    </div>
+    <div class="tracker-inputs" style="margin-bottom:9px">
+      <input class="trip-input" id="expAmt" type="number"
+             placeholder="مصروف إضافي (جنيه)" inputmode="numeric" min="0"
+             style="border-color:rgba(255,87,87,.3)">
+      <button class="btn-add-trip" onclick="addExpense()"
+              style="background:linear-gradient(135deg,#922,var(--red));color:#fff">+ مصروف</button>
     </div>
     <div class="tracker-status">
       <div class="ts-row">
-        <span class="ts-lbl">💰 إجمالي ما تم تحصيله</span>
+        <span class="ts-lbl">💰 إجمالي المحصّل</span>
         <span class="ts-val gold" id="t-collected">0</span>
       </div>
       <div class="ts-row">
-        <span class="ts-lbl">🎯 المتبقي لتحقيق الهدف (إجمالي)</span>
+        <span class="ts-lbl">🎯 المتبقي للهدف</span>
         <span class="ts-val red" id="t-remaining">—</span>
       </div>
       <div class="ts-row">
-        <span class="ts-lbl">🏁 الكيلومترات المتبقية</span>
+        <span class="ts-lbl">🏁 كيلومترات متبقية</span>
         <span class="ts-val neu" id="t-km-rem">—</span>
       </div>
       <div class="ts-row">
-        <span class="ts-lbl">🔢 عدد المشاوير اليوم</span>
+        <span class="ts-lbl">🔢 عدد المشاوير</span>
         <span class="ts-val" id="t-count">0</span>
       </div>
     </div>
     <div class="trips-list" id="tripsList"></div>
   </div>
 
-  <!-- Breakdown -->
-  <div class="sec-title">تفصيل مصاريف الشيفت</div>
-  <div class="card">
-    <div class="card-row">
-      <div class="cr-left"><span class="cr-icon">⛽</span>
-        <div><div class="cr-name">تكلفة البنزين</div><div class="cr-desc">بناءً على الكيلومترات</div></div>
-      </div>
-      <span class="cr-val neg" id="b-petrol">—</span>
-    </div>
-    <div class="card-row">
-      <div class="cr-left"><span class="cr-icon">🔧</span>
-        <div><div class="cr-name">تكلفة الزيت</div><div class="cr-desc">استهلاك دوري</div></div>
-      </div>
-      <span class="cr-val neg" id="b-oil">—</span>
-    </div>
-    <div class="card-row">
-      <div class="cr-left"><span class="cr-icon">🛠️</span>
-        <div><div class="cr-name">تكلفة الصيانة</div><div class="cr-desc">صيانة دورية للموتور</div></div>
-      </div>
-      <span class="cr-val neg" id="b-mnt">—</span>
-    </div>
-    <div class="card-row">
-      <div class="cr-left"><span class="cr-icon">📶</span>
-        <div><div class="cr-name">تكلفة الإنترنت</div><div class="cr-desc">بناءً على ساعات العمل</div></div>
-      </div>
-      <span class="cr-val neg" id="b-net">—</span>
-    </div>
-    <div class="card-row">
-      <div class="cr-left"><span class="cr-icon">🏢</span>
-        <div><div class="cr-name">عمولة الشركة</div><div class="cr-desc">نسبة من الإجمالي</div></div>
-      </div>
-      <span class="cr-val neg" id="b-com">—</span>
-    </div>
-    <div class="card-row">
-      <div class="cr-left"><span class="cr-icon">🛒</span>
-        <div><div class="cr-name">المصروف الشخصي</div><div class="cr-desc">أكل + شرب + طوارئ</div></div>
-      </div>
-      <span class="cr-val warn" id="b-pers">—</span>
-    </div>
-  </div>
-
-  <!-- ratio strip - minimal -->
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:12px">
+  <!-- ratio -->
+  <div class="ratio-strip">
     <span style="font-size:11px;color:var(--muted)">نسبة المصاريف</span>
     <span style="font-family:'Tajawal';font-size:15px;font-weight:900;color:var(--red);direction:ltr" id="r-pct">—</span>
     <span style="font-size:10px;color:var(--muted)">الهدف: أقل من 50%</span>
   </div>
 </div>
 
-<!-- ═══ PAGE: SETTINGS ═══ -->
+<!-- PAGE: SETTINGS -->
 <div class="page" id="page-settings">
   <div style="height:12px"></div>
+  <!-- shift alarm -->
+  <div class="setting-card">
+    <div class="setting-hdr">🔔 منبّه الشيفت</div>
+    <div class="setting-row">
+      <div><div class="sr-label">وقت بدء الشيفت</div><div class="sr-desc">سيُنبّهك عند هذا الوقت يومياً</div></div>
+      <div class="sr-right">
+        <input type="time" id="s-alarm" class="setting-input" style="width:100px;font-size:13px"
+               oninput="saveSettings();scheduleAlarm()">
+        <span class="sr-unit"></span>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div><div class="sr-label">تنبيه قبل الشيفت</div><div class="sr-desc">كم دقيقة قبل الوقت المحدد</div></div>
+      <div class="sr-right">
+        <input class="setting-input" id="s-alarm-before" type="number" value="15" min="0" max="60"
+               oninput="saveSettings();scheduleAlarm()">
+        <span class="sr-unit">دقيقة</span>
+      </div>
+    </div>
+    <div class="setting-row" id="notif-status-row">
+      <div><div class="sr-label">حالة الإشعارات</div></div>
+      <button onclick="requestNotifPerm()" id="notif-btn"
+        style="background:rgba(59,139,235,.15);border:1px solid rgba(59,139,235,.3);
+               color:var(--blue2);font-family:'IBM Plex Sans Arabic',sans-serif;
+               font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer">
+        تفعيل الإشعارات
+      </button>
+    </div>
+  </div>
+
   <div class="setting-card">
     <div class="setting-hdr">💵 الكسب والإيرادات</div>
     <div class="setting-row">
@@ -413,35 +538,46 @@ input[type=number]{-moz-appearance:textfield}
   <div class="setting-card">
     <div class="setting-hdr">⛽ الوقود</div>
     <div class="setting-row">
-      <div><div class="sr-label">سعر اللتر</div><div class="sr-desc">سعر البنزين الحالي</div></div>
+      <div><div class="sr-label">سعر اللتر</div></div>
       <div class="sr-right"><input class="setting-input" id="s-pp" type="number" value="22.5" step="0.5" min="0" oninput="recalc()"><span class="sr-unit">جنيه/لتر</span></div>
     </div>
     <div class="setting-row">
-      <div><div class="sr-label">معدل الاستهلاك</div><div class="sr-desc">كم يقطع الموتور باللتر</div></div>
+      <div><div class="sr-label">معدل الاستهلاك</div></div>
       <div class="sr-right"><input class="setting-input" id="s-kpl" type="number" value="30" step="1" min="1" oninput="recalc()"><span class="sr-unit">كم/لتر</span></div>
     </div>
   </div>
   <div class="setting-card">
     <div class="setting-hdr">🔧 صيانة وتشغيل</div>
     <div class="setting-row">
-      <div><div class="sr-label">تكلفة الزيت</div><div class="sr-desc">عند كل تغيير</div></div>
+      <div><div class="sr-label">تكلفة الزيت</div></div>
       <div class="sr-right"><input class="setting-input" id="s-oil" type="number" value="170" step="10" min="0" oninput="recalc()"><span class="sr-unit">جنيه/1000كم</span></div>
     </div>
     <div class="setting-row">
-      <div><div class="sr-label">تكلفة الصيانة</div><div class="sr-desc">صيانة دورية للموتوسيكل</div></div>
+      <div><div class="sr-label">تكلفة الصيانة</div></div>
       <div class="sr-right"><input class="setting-input" id="s-mnt" type="number" value="50" step="10" min="0" oninput="recalc()"><span class="sr-unit">جنيه/1000كم</span></div>
     </div>
     <div class="setting-row">
-      <div><div class="sr-label">تكلفة الإنترنت</div><div class="sr-desc">بيانات موبايل</div></div>
+      <div><div class="sr-label">تكلفة الإنترنت</div></div>
       <div class="sr-right"><input class="setting-input" id="s-iph" type="number" value="10" step="1" min="0" oninput="recalc()"><span class="sr-unit">جنيه/ساعة</span></div>
     </div>
     <div class="setting-row">
-      <div><div class="sr-label">متوسط السرعة</div><div class="sr-desc">لتقدير وقت الشيفت</div></div>
+      <div><div class="sr-label">متوسط السرعة</div></div>
       <div class="sr-right"><input class="setting-input" id="s-spd" type="number" value="20" step="5" min="5" oninput="recalc()"><span class="sr-unit">كم/ساعة</span></div>
     </div>
   </div>
-
-  <!-- data management -->
+  <!-- كيلومترات المحرك -->
+  <div class="setting-card">
+    <div class="setting-hdr">🛵 عداد المحرك</div>
+    <div class="setting-row">
+      <div><div class="sr-label">الكيلومترات الحالية للموتور</div>
+        <div class="sr-desc">لحساب موعد الصيانة</div></div>
+      <div class="sr-right"><input class="setting-input" id="s-motor-km" type="number" value="0" step="10" min="0" oninput="saveSettings();checkMotorKm()"><span class="sr-unit">كم</span></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="sr-label">آخر صيانة عند</div></div>
+      <div class="sr-right"><input class="setting-input" id="s-last-maint" type="number" value="0" step="10" min="0" oninput="saveSettings()"><span class="sr-unit">كم</span></div>
+    </div>
+  </div>
   <div class="sec-title">إدارة البيانات</div>
   <div class="data-btns">
     <button class="data-btn btn-export" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
@@ -451,7 +587,7 @@ input[type=number]{-moz-appearance:textfield}
   <button class="btn-clear-all" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
 </div>
 
-<!-- ═══ PAGE: LOG ═══ -->
+<!-- PAGE: LOG -->
 <div class="page" id="page-log">
   <div style="height:12px"></div>
   <div class="log-table-wrap">
@@ -459,8 +595,8 @@ input[type=number]{-moz-appearance:textfield}
       <thead>
         <tr>
           <th>التاريخ</th><th>الوقت</th><th>الهدف</th>
-          <th>الكيلومترات</th><th>الساعات</th>
-          <th>الإجمالي</th><th>الصافي</th><th>حذف</th>
+          <th>الكم</th><th>الساعات</th>
+          <th>المحصّل</th><th>الصافي</th><th>حذف</th>
         </tr>
       </thead>
       <tbody id="logBody"></tbody>
@@ -470,13 +606,38 @@ input[type=number]{-moz-appearance:textfield}
   <button class="btn-clear-all" onclick="clearLog()">🗑️ مسح كل السجلات</button>
 </div>
 
-<!-- ═══ PAGE: TIPS ═══ -->
-<div class="page" id="page-tips">
-  <div style="height:12px"></div>
-  <div id="tips-container"></div>
+</div><!-- /pages-wrap -->
+
+<!-- ═══ BOTTOM NAV ═══ -->
+<div class="bottom-nav">
+  <button class="bnav-btn active" id="bnav-dash" onclick="showTab('dash','bnav-dash')">
+    <span class="bi">🏠</span><span class="bl">الرئيسية</span>
+  </button>
+  <button class="bnav-btn" id="bnav-settings" onclick="showTab('settings','bnav-settings')">
+    <span class="bi">⚙️</span><span class="bl">الإعدادات</span>
+  </button>
+  <button class="bnav-btn" id="bnav-log" onclick="showTab('log','bnav-log')">
+    <span class="bi">📅</span><span class="bl">السجل</span>
+  </button>
 </div>
 
 </div><!-- /app -->
+
+<!-- KPI BOTTOM SHEET -->
+<div class="sheet-overlay" id="kpiSheet" onclick="closeSheetIfBg(event)">
+  <div class="bottom-sheet">
+    <div class="sheet-drag"></div>
+    <div class="sheet-title" id="sheetTitle">التفاصيل</div>
+    <div class="sheet-sub" id="sheetSub"></div>
+    <div class="sheet-rows" id="sheetRows"></div>
+    <div class="sheet-highlight" id="sheetHighlight"></div>
+    <div class="sheet-progress" id="sheetProgress" style="display:none">
+      <div class="sheet-progress-bar" id="sheetBar"></div>
+    </div>
+    <div style="height:14px"></div>
+    <button class="sheet-ok-btn" onclick="closeSheet()">موافق ✓</button>
+  </div>
+</div>
 
 <!-- PROFILE MODAL -->
 <div class="overlay" id="profileOverlay" onclick="overlayClick(event)">
@@ -491,7 +652,8 @@ input[type=number]{-moz-appearance:textfield}
         <div class="modal-av-ov"><span>📷</span><small>تغيير</small></div>
       </div>
     </div>
-    <input class="name-input" id="nameInput" type="text" placeholder="اكتب اسمك" value="طارق عبد الجليل" maxlength="40">
+    <input class="name-input" id="nameInput" type="text"
+           placeholder="اكتب اسمك" value="طارق عبد الجليل" maxlength="40">
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
       <button class="btn-save" onclick="saveProfile()">💾 حفظ</button>
@@ -501,9 +663,9 @@ input[type=number]{-moz-appearance:textfield}
 <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(event)">
 
 <script>
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // UTILS
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 const num = id => parseFloat($(id)?.value) || 0;
 
@@ -511,7 +673,6 @@ function fmt(n, dec=1) {
   if (!isFinite(n) || isNaN(n) || n === '') return '—';
   return Number(n).toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
 }
-
 function fmtHours(h) {
   if (!isFinite(h) || isNaN(h)) return {str:'—', unit:'ساعة'};
   const totalMins = Math.round(h * 60);
@@ -521,7 +682,13 @@ function fmtHours(h) {
   if (mins === 0) return {str: hrs.toString(), unit: 'ساعة'};
   return {str: `${hrs}:${mins.toString().padStart(2,'0')}`, unit: 'س:د'};
 }
-
+function fmtHrsRemaining(h) {
+  if (!isFinite(h) || h <= 0) return '0:00';
+  const totalMins = Math.round(h * 60);
+  const hrs = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+  return `${hrs}:${mins.toString().padStart(2,'0')}`;
+}
 function setEl(id, val, dec=1) {
   const el = $(id); if (!el) return;
   const txt = fmt(val, dec);
@@ -531,42 +698,55 @@ function setEl(id, val, dec=1) {
   void el.offsetWidth;
   el.classList.add('flash');
 }
-
-function nowDateStr() {
-  return new Date().toLocaleDateString('ar-EG', {year:'numeric', month:'2-digit', day:'2-digit'});
-}
 function nowTimeStr() {
   return new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true});
 }
-function nowISO() { return new Date().toISOString(); }
 
-// ═══════════════════════════════════════════════
-// DATETIME CLOCK
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// CLOCK
+// ═══════════════════════════════════════════════════════════
 function updateClock() {
   const now = new Date();
   const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-  const day = days[now.getDay()];
-  const date = now.toLocaleDateString('ar-EG', {year:'numeric', month:'long', day:'numeric'});
-  $('dtDate').textContent = `${day}، ${date}`;
-  $('dtTime').textContent = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+  $('dtDate').textContent = `${days[now.getDay()]}، ${now.toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}`;
+  $('dtTime').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-// ═══════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════
-function showTab(name, btn) {
+// ═══════════════════════════════════════════════════════════
+// TABS + SWIPE + PAGE PERSISTENCE
+// ═══════════════════════════════════════════════════════════
+const TABS = ['dash','settings','log'];
+let currentTab = localStorage.getItem('tk_tab') || 'dash';
+
+function showTab(name, btnId) {
+  currentTab = name;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
   $('page-'+name).classList.add('active');
-  btn.classList.add('active');
+  $(btnId || 'bnav-'+name).classList.add('active');
+  try { localStorage.setItem('tk_tab', name); } catch(e){}
 }
 
-// ═══════════════════════════════════════════════
-// CORE CALCULATOR (Two-Stage)
-// ═══════════════════════════════════════════════
+// Swipe between pages
+let swipeStartX = 0, swipeStartY = 0;
+document.addEventListener('touchstart', e => {
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+  const dy = e.changedTouches[0].clientY - swipeStartY;
+  if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+  const idx = TABS.indexOf(currentTab);
+  if (dx < 0 && idx < TABS.length-1) showTab(TABS[idx+1], 'bnav-'+TABS[idx+1]);
+  if (dx > 0 && idx > 0)             showTab(TABS[idx-1], 'bnav-'+TABS[idx-1]);
+}, {passive:true});
+
+// ═══════════════════════════════════════════════════════════
+// CORE CALCULATOR
+// ═══════════════════════════════════════════════════════════
 let calcResult = {};
 
 function recalc() {
@@ -581,441 +761,469 @@ function recalc() {
   const pers = num('s-pers');
   const spd  = num('s-spd')  || 1;
 
-  // Stage 1
-  const km1 = goal / pkm;
-  const p1  = km1 / kpl * pp;
-  const o1  = km1 * oil / 1000;
-  const mn1 = km1 * mnt / 1000;
-  const i1  = (km1 / spd) * iph;
-  const t1  = p1 + o1 + mn1 + i1;
+  const km1=goal/pkm, p1=km1/kpl*pp, o1=km1*oil/1000, mn1=km1*mnt/1000, i1=(km1/spd)*iph, t1=p1+o1+mn1+i1;
+  const km2=(t1+pers)/pkm, p2=km2/kpl*pp, o2=km2*oil/1000, mn2=km2*mnt/1000, i2=(km2/spd)*iph, t2=p2+o2+mn2+i2;
+  const kmT=km1+km2, hrsT=kmT/spd, preCom=t1+t2+pers;
+  const revenue=(goal+preCom)/(1-com), comAmt=revenue*com, allCosts=revenue-goal;
+  const kmDisplay=revenue/pkm;
 
-  // Stage 2
-  const km2 = (t1 + pers) / pkm;
-  const p2  = km2 / kpl * pp;
-  const o2  = km2 * oil / 1000;
-  const mn2 = km2 * mnt / 1000;
-  const i2  = (km2 / spd) * iph;
-  const t2  = p2 + o2 + mn2 + i2;
+  calcResult = {goal,pkm,kmT,kmDisplay,hrsT,revenue,allCosts,comAmt,
+    petrol:p1+p2,oil:o1+o2,mnt:mn1+mn2,inet:i1+i2,pers,
+    km1,km2,p1,p2,o1,o2,mn1,mn2,i1,i2,t1,t2,preCom};
 
-  // Finals
-  const kmT     = km1 + km2;
-  const hrsT    = kmT / spd;
-  const preCom  = t1 + t2 + pers;
-  const revenue = (goal + preCom) / (1 - com);
-  const comAmt  = revenue * com;
-  const allCosts= revenue - goal;
-
-  calcResult = {goal, pkm, kmT, hrsT, revenue, allCosts, comAmt,
-    petrol:p1+p2, oil:o1+o2, mnt:mn1+mn2, net:i1+i2, pers,
-    km1, km2, p1, p2, o1, o2, mn1, mn2, i1, i2, t1, t2,
-    preCom, hrsRaw: hrsT};
-
-  // Dashboard KPIs
-  // Km = revenue / pkm (correct: total needed ÷ price per km)
-  const kmDisplay = revenue / pkm;
-  setEl('r-km',   kmDisplay, 1);
-
-  // Hours display with format
+  // KPIs
+  setEl('r-km', kmDisplay, 1);
   const hFmt = fmtHours(hrsT);
   $('r-hrs').textContent = hFmt.str;
   $('r-hrs-fmt').textContent = hFmt.unit;
-
   setEl('r-cost', allCosts, 0);
-  setEl('r-earn', revenue,  0);
-  setEl('r-net',  goal,     0);
-  setEl('b-petrol', p1+p2,  2);
-  setEl('b-oil',    o1+o2,  2);
-  setEl('b-mnt',    mn1+mn2,2);
-  setEl('b-net',    i1+i2,  2);
-  setEl('b-com',    comAmt, 2);
-  setEl('b-pers',   pers,   2);
+  setEl('r-earn', revenue, 0);
+  setEl('r-net',  goal, 0);
   const pctEl = $('r-pct');
-  if(pctEl && revenue > 0) pctEl.textContent = (allCosts/revenue*100).toFixed(1) + '%';
+  if (pctEl && revenue > 0) pctEl.textContent = (allCosts/revenue*100).toFixed(1)+'%';
 
-  // Header stats
-  setEl('hs-km',   kmDisplay, 1);
-  setEl('hs-hrs',  hrsT,      1);
-  setEl('hs-earn', revenue,   0);
-
+  updateRemBar();
   updateTripTracker();
   saveSettings();
 }
 
-// ═══════════════════════════════════════════════
-// SHIFT MANAGEMENT
-// ═══════════════════════════════════════════════
-let shiftActive  = false;
-let shiftStartTS = null;
-let shiftTimerInt= null;
-
-function toggleShift() {
-  if (!shiftActive) {
-    startShift();
-  } else {
-    // already active — ignore (end is separate button)
-  }
+function updateRemBar() {
+  const collected = trips.reduce((s,t)=>s+t.amount,0);
+  const {revenue=0, kmDisplay=0, hrsT=0, pkm=1} = calcResult;
+  const moneyRem = Math.max(0, revenue - collected);
+  const kmRem    = Math.max(0, moneyRem / pkm);
+  // hours remaining estimate
+  const hrsRem   = Math.max(0, kmRem / (num('s-spd')||1));
+  $('hs-km-rem').textContent   = fmt(kmRem, 1);
+  $('hs-hrs-rem').textContent  = fmtHrsRemaining(hrsRem);
+  $('hs-money-rem').textContent= fmt(moneyRem, 0);
 }
 
+// ═══════════════════════════════════════════════════════════
+// KPI BOTTOM SHEET
+// ═══════════════════════════════════════════════════════════
+function showKpiSheet(type) {
+  const R = calcResult;
+  const collected = trips.reduce((s,t)=>s+t.amount,0);
+  const pkm = num('s-pkm')||1;
+  let title='', sub='', rows=[], highlight='', prog=null;
+
+  if (type==='km') {
+    title='🏁 الكيلومترات المطلوبة'; sub='بناءً على هدفك والتكاليف المحسوبة';
+    const done = collected/pkm;
+    const rem  = Math.max(0, R.kmDisplay - done);
+    rows=[
+      ['إجمالي الكيلومترات',   fmt(R.kmDisplay,1)+' كم'],
+      ['كيلومترات الهدف (م١)', fmt(R.km1,1)+' كم'],
+      ['كيلومترات التكاليف (م٢)', fmt(R.km2,1)+' كم'],
+      ['المنجز حتى الآن',      fmt(done,1)+' كم'],
+    ];
+    highlight=`<div style="display:flex;justify-content:space-between">
+      <span style="font-size:12px;color:var(--muted)">المتبقي</span>
+      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--blue2);direction:ltr">${fmt(rem,1)} كم</span></div>`;
+    if(R.kmDisplay>0) prog={pct:Math.min(done/R.kmDisplay,1),color:'var(--blue2)'};
+  }
+  else if (type==='hrs') {
+    title='⏱️ المدة التقديرية'; sub='بناءً على الكيلومترات ومتوسط السرعة';
+    const hFmt=fmtHours(R.hrsT);
+    const spd=num('s-spd')||1;
+    const hrsElapsed = shiftActive ? (Date.now()-shiftStartTS)/3600000 : 0;
+    const hrsRem = Math.max(0, R.hrsT - hrsElapsed);
+    rows=[
+      ['إجمالي الساعات',    hFmt.str+' '+hFmt.unit],
+      ['متوسط السرعة',      fmt(spd,0)+' كم/ساعة'],
+      ['منقضي من الشيفت',   shiftActive ? fmtHours(hrsElapsed).str+' س' : '—'],
+    ];
+    highlight=`<div style="display:flex;justify-content:space-between">
+      <span style="font-size:12px;color:var(--muted)">الوقت المتبقي (تقريبي)</span>
+      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:#c084fc;direction:ltr">${fmtHrsRemaining(hrsRem)}</span></div>`;
+    if(R.hrsT>0&&shiftActive) prog={pct:Math.min(hrsElapsed/R.hrsT,1),color:'#c084fc'};
+  }
+  else if (type==='cost') {
+    title='💸 تفصيل التكاليف'; sub='كل التكاليف المخصومة من إيرادك';
+    rows=[
+      ['⛽ البنزين',        fmt(R.petrol,2)+' جنيه'],
+      ['🔧 الزيت',          fmt(R.oil,2)+' جنيه'],
+      ['🛠️ الصيانة',        fmt(R.mnt,2)+' جنيه'],
+      ['📶 الإنترنت',       fmt(R.inet,2)+' جنيه'],
+      ['🏢 عمولة الشركة',   fmt(R.comAmt,2)+' جنيه'],
+      ['🛒 مصروف شخصي',    fmt(R.pers,2)+' جنيه'],
+    ];
+    highlight=`<div style="display:flex;justify-content:space-between">
+      <span style="font-size:12px;color:var(--muted)">الإجمالي</span>
+      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--red);direction:ltr">${fmt(R.allCosts,0)} جنيه</span></div>`;
+    if(R.revenue>0) prog={pct:Math.min(R.allCosts/R.revenue,1),color:'var(--red)'};
+  }
+  else if (type==='earn') {
+    title='💰 المطلوب تحصيله'; sub='الإيراد الكلي قبل أي خصم';
+    const rem = Math.max(0, R.revenue - collected);
+    rows=[
+      ['الإيراد الكلي المطلوب',   fmt(R.revenue,0)+' جنيه'],
+      ['منه تكاليف',              fmt(R.allCosts,0)+' جنيه'],
+      ['منه صافي للبيت',          fmt(R.goal,0)+' جنيه'],
+      ['المحصّل حتى الآن',         fmt(collected,0)+' جنيه'],
+    ];
+    highlight=`<div style="display:flex;justify-content:space-between">
+      <span style="font-size:12px;color:var(--muted)">المتبقي للهدف</span>
+      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--gold2);direction:ltr">${fmt(rem,0)} جنيه</span></div>`;
+    if(R.revenue>0) prog={pct:Math.min(collected/R.revenue,1),color:'var(--gold2)'};
+  }
+
+  $('sheetTitle').innerHTML = title;
+  $('sheetSub').textContent  = sub;
+  $('sheetRows').innerHTML   = rows.map(([l,v])=>`
+    <div class="sheet-row">
+      <span class="sheet-row-lbl">${l}</span>
+      <span class="sheet-row-val">${v}</span>
+    </div>`).join('');
+  $('sheetHighlight').innerHTML = highlight;
+
+  const progEl = $('sheetProgress');
+  if (prog) {
+    progEl.style.display='block';
+    $('sheetBar').style.width = (prog.pct*100)+'%';
+    $('sheetBar').style.background = prog.color;
+  } else { progEl.style.display='none'; }
+
+  $('kpiSheet').classList.add('open');
+}
+function closeSheet() { $('kpiSheet').classList.remove('open'); }
+function closeSheetIfBg(e) { if(e.target===$('kpiSheet')) closeSheet(); }
+
+// ═══════════════════════════════════════════════════════════
+// SHIFT
+// ═══════════════════════════════════════════════════════════
+let shiftActive=false, shiftStartTS=null, shiftTimerInt=null;
+
+function toggleShift() { if(!shiftActive) startShift(); }
+
 function startShift() {
-  shiftActive   = true;
-  shiftStartTS  = Date.now();
-  trips         = [];
-  renderTrips();
-
+  shiftActive=true; shiftStartTS=Date.now();
+  trips=[]; renderTrips();
   $('btnStart').classList.add('active-shift');
-  $('shiftBtnIcon').textContent = '⏸';
-  $('shiftBtnTxt').textContent  = 'شيفت جارٍ...';
+  $('shiftBtnIcon').textContent='⏸';
+  $('shiftBtnTxt').textContent='شيفت جارٍ...';
   $('btnEnd').classList.add('enabled');
-  $('shiftTimer').style.display = 'block';
-
-  shiftTimerInt = setInterval(() => {
-    const elapsed = Date.now() - shiftStartTS;
-    const h = Math.floor(elapsed/3600000);
-    const m = Math.floor((elapsed%3600000)/60000);
-    const s = Math.floor((elapsed%60000)/1000);
-    $('timerDisplay').textContent =
-      `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-  }, 1000);
-
-  try { localStorage.setItem('tk_shiftStart', shiftStartTS); } catch(e){}
+  $('shiftTimer').style.display='block';
+  shiftTimerInt=setInterval(()=>{
+    const el=Date.now()-shiftStartTS;
+    const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
+    $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  },1000);
+  try{localStorage.setItem('tk_shiftStart',shiftStartTS);}catch(e){}
 }
 
 function endShift() {
-  if (!shiftActive) return;
+  if(!shiftActive) return;
   clearInterval(shiftTimerInt);
+  const endTS=Date.now(), durH=(endTS-shiftStartTS)/3600000;
+  const totalColl=trips.reduce((s,t)=>s+t.amount,0);
+  const com=num('s-com')/100, pers=num('s-pers'), pkm=num('s-pkm')||1;
+  const netActual=totalColl*(1-com)-pers, kmEst=totalColl/pkm;
 
-  const endTS  = Date.now();
-  const durationH = (endTS - shiftStartTS) / 3600000;
-  const totalCollected = trips.reduce((s,t) => s + t.amount, 0);
-  const com  = num('s-com') / 100;
-  const pers = num('s-pers');
-  const netActual = totalCollected * (1 - com) - pers;
-  const pkm  = num('s-pkm') || 1;
-  const kmEst = totalCollected / pkm;
+  // Update motor km
+  const curMotor=num('s-motor-km');
+  if(curMotor>0){
+    const newKm=curMotor+kmEst;
+    $('s-motor-km').value=Math.round(newKm);
+    saveSettings();
+    checkMotorKm();
+  }
 
-  // Log this shift
   addLogEntry({
-    date:     new Date(shiftStartTS).toLocaleDateString('ar-EG'),
-    time:     new Date(shiftStartTS).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
-    goal:     num('goalInput'),
-    km:       kmEst.toFixed(1),
-    hrs:      durationH.toFixed(1),
-    total:    totalCollected,
-    net:      netActual.toFixed(2),
+    date: new Date(shiftStartTS).toLocaleDateString('ar-EG'),
+    time: new Date(shiftStartTS).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
+    goal: num('goalInput'), km:kmEst.toFixed(1), hrs:durH.toFixed(1),
+    total:totalColl, net:netActual.toFixed(2)
   });
 
-  // Reset UI
-  shiftActive = false;
-  $('btnStart').classList.remove('active-shift');
-  $('shiftBtnIcon').textContent = '▶';
-  $('shiftBtnTxt').textContent  = 'بدء الشيفت';
-  $('btnEnd').classList.remove('enabled');
-  $('shiftTimer').style.display = 'none';
-  $('timerDisplay').textContent = '00:00:00';
-  trips = [];
-  renderTrips();
-  updateTripTracker();
+  // End notification
+  sendNotif('🛵 انتهى الشيفت!', `الحمد لله على السلامة يا كابتن! المحصّل: ${fmt(totalColl,0)} جنيه — الصافي: ${fmt(netActual,0)} جنيه. أحسنت صنعاً اليوم 💪`);
 
-  try { localStorage.removeItem('tk_shiftStart'); } catch(e){}
-  alert(`✅ تم إنهاء الشيفت!\nالمحصّل: ${totalCollected} جنيه\nالصافي: ${netActual.toFixed(1)} جنيه\nتم التسجيل تلقائياً في السجل`);
+  shiftActive=false;
+  $('btnStart').classList.remove('active-shift');
+  $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='بدء الشيفت';
+  $('btnEnd').classList.remove('enabled');
+  $('shiftTimer').style.display='none';
+  $('timerDisplay').textContent='00:00:00';
+  trips=[]; renderTrips(); updateTripTracker(); updateRemBar();
+  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_trips');}catch(e){}
 }
 
-// ═══════════════════════════════════════════════
-// TRIP TRACKER
-// ═══════════════════════════════════════════════
-let trips = [];
+// ═══════════════════════════════════════════════════════════
+// TRIP TRACKER + EXPENSE
+// ═══════════════════════════════════════════════════════════
+let trips=[];
 
 function addTrip() {
-  const amt = parseFloat($('tripAmt').value);
-  if (!amt || amt <= 0) { $('tripAmt').focus(); return; }
-  trips.push({ id: Date.now(), amount: amt, time: nowTimeStr() });
-  $('tripAmt').value = '';
-  renderTrips();
-  updateTripTracker();
-  // auto-save trip snapshot
-  try { localStorage.setItem('tk_trips', JSON.stringify(trips)); } catch(e){}
+  const amt=parseFloat($('tripAmt').value);
+  if(!amt||amt<=0){$('tripAmt').focus();return;}
+  trips.push({id:Date.now(),amount:amt,type:'trip',time:nowTimeStr()});
+  $('tripAmt').value='';
+  renderTrips(); updateTripTracker(); updateRemBar();
+  try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
+}
+
+function addExpense() {
+  const amt=parseFloat($('expAmt').value);
+  if(!amt||amt<=0){$('expAmt').focus();return;}
+  // add to s-pers
+  const curPers=num('s-pers');
+  $('s-pers').value=(curPers+amt).toFixed(0);
+  $('expAmt').value='';
+  recalc(); // re-calc with new pers
+  // also log as trip item for reference
+  trips.push({id:Date.now(),amount:-amt,type:'expense',time:nowTimeStr()});
+  renderTrips(); updateTripTracker(); updateRemBar();
+  try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
 }
 
 function removeTrip(id) {
-  trips = trips.filter(t => t.id !== id);
-  renderTrips();
-  updateTripTracker();
-  try { localStorage.setItem('tk_trips', JSON.stringify(trips)); } catch(e){}
+  trips=trips.filter(t=>t.id!==id);
+  renderTrips(); updateTripTracker(); updateRemBar();
+  try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
 }
 
 function renderTrips() {
-  const list = $('tripsList'); if(!list) return;
-  list.innerHTML = '';
-  trips.slice().reverse().forEach(t => {
-    const div = document.createElement('div');
-    div.className = 'trip-item';
-    div.innerHTML = `
+  const list=$('tripsList'); if(!list) return;
+  list.innerHTML='';
+  trips.slice().reverse().forEach(t=>{
+    const div=document.createElement('div');
+    div.className='trip-item';
+    const isExp=t.type==='expense';
+    div.innerHTML=`
       <span style="color:var(--muted);font-size:10px;direction:ltr">${t.time}</span>
-      <span style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">+${fmt(t.amount,2)} جنيه</span>
-      <button class="trip-del" onclick="removeTrip(${t.id})">✕</button>
-    `;
+      <span style="font-family:'Tajawal';font-weight:700;color:${isExp?'var(--red)':'var(--gold2)'};direction:ltr">
+        ${isExp?'−':'+'} ${fmt(Math.abs(t.amount),2)} جنيه ${isExp?'(مصروف)':''}
+      </span>
+      <button class="trip-del" onclick="removeTrip(${t.id})">✕</button>`;
     list.appendChild(div);
   });
 }
 
 function updateTripTracker() {
-  const collected = trips.reduce((s,t) => s + t.amount, 0);
-  const revenue = calcResult.revenue || 0;
-  const pkm = num('s-pkm') || 1;
-  const remaining = Math.max(0, revenue - collected);
-  const kmRem = remaining / pkm;
-
-  $('t-collected').textContent = fmt(collected, 2);
-  $('t-remaining').textContent = remaining > 0 ? fmt(remaining, 2) : '✅ تحقق الهدف!';
-  $('t-km-rem').textContent    = remaining > 0 ? fmt(kmRem, 1) : '0';
-  $('t-count').textContent     = trips.length;
+  const collected=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
+  const revenue=calcResult.revenue||0, pkm=num('s-pkm')||1;
+  const remaining=Math.max(0,revenue-collected), kmRem=remaining/pkm;
+  $('t-collected').textContent=fmt(collected,2);
+  $('t-remaining').textContent=remaining>0?fmt(remaining,2):'✅ تحقق الهدف!';
+  $('t-km-rem').textContent=remaining>0?fmt(kmRem,1):'0';
+  $('t-count').textContent=trips.filter(t=>t.type==='trip').length;
 }
 
-// ═══════════════════════════════════════════════
-// LOG
-// ═══════════════════════════════════════════════
-let logEntries = [];
+// ═══════════════════════════════════════════════════════════
+// LOG — kept 30 days
+// ═══════════════════════════════════════════════════════════
+let logEntries=[];
 
 function addLogEntry(entry) {
-  logEntries.unshift({ id: Date.now(), ...entry });
-  renderLog();
-  saveLog();
+  logEntries.unshift({id:Date.now(),...entry});
+  pruneLog();
+  renderLog(); saveLog();
 }
-
+function pruneLog() {
+  const cutoff=Date.now()-30*24*60*60*1000;
+  logEntries=logEntries.filter(e=>e.id>cutoff);
+}
 function deleteLogEntry(id) {
-  logEntries = logEntries.filter(e => e.id !== id);
-  renderLog();
-  saveLog();
+  logEntries=logEntries.filter(e=>e.id!==id);
+  renderLog(); saveLog();
 }
-
 function renderLog() {
-  const tbody = $('logBody'); if(!tbody) return;
-  tbody.innerHTML = '';
-  if (logEntries.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="color:var(--muted);padding:20px;text-align:center">لا توجد سجلات بعد — ابدأ شيفتك من الرئيسية</td></tr>`;
-    $('logTotals').innerHTML = '';
-    return;
+  const tbody=$('logBody'); if(!tbody) return;
+  tbody.innerHTML='';
+  if(logEntries.length===0){
+    tbody.innerHTML=`<tr><td colspan="8" style="color:var(--muted);padding:20px;text-align:center">لا توجد سجلات بعد</td></tr>`;
+    $('logTotals').innerHTML=''; return;
   }
-  logEntries.forEach(e => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${e.date||'—'}</td>
-      <td>${e.time||'—'}</td>
-      <td>${fmt(e.goal,0)}</td>
-      <td>${fmt(e.km,1)}</td>
-      <td>${e.hrs||'—'}</td>
+  logEntries.forEach(e=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${e.date||'—'}</td><td>${e.time||'—'}</td>
+      <td>${fmt(e.goal,0)}</td><td>${fmt(e.km,1)}</td><td>${e.hrs||'—'}</td>
       <td style="color:var(--gold2)">${fmt(e.total,0)}</td>
       <td style="color:var(--green2)">${fmt(e.net,1)}</td>
-      <td><button class="log-del-btn" onclick="deleteLogEntry(${e.id})">🗑</button></td>
-    `;
+      <td><button class="log-del-btn" onclick="deleteLogEntry(${e.id})">🗑</button></td>`;
     tbody.appendChild(tr);
   });
-  // totals
-  const tfoot = $('logTotals');
-  const sumGoal  = logEntries.reduce((s,e)=>s+(parseFloat(e.goal)||0),0);
-  const sumKm    = logEntries.reduce((s,e)=>s+(parseFloat(e.km)||0),0);
-  const sumTotal = logEntries.reduce((s,e)=>s+(parseFloat(e.total)||0),0);
-  const sumNet   = logEntries.reduce((s,e)=>s+(parseFloat(e.net)||0),0);
-  tfoot.innerHTML = `
-    <td>الإجمالي</td><td>—</td>
-    <td>${fmt(sumGoal,0)}</td>
-    <td>${fmt(sumKm,1)}</td><td>—</td>
-    <td>${fmt(sumTotal,0)}</td>
-    <td>${fmt(sumNet,1)}</td><td>—</td>
-  `;
+  const tfoot=$('logTotals');
+  const sg=logEntries.reduce((s,e)=>s+(parseFloat(e.goal)||0),0);
+  const sk=logEntries.reduce((s,e)=>s+(parseFloat(e.km)||0),0);
+  const st=logEntries.reduce((s,e)=>s+(parseFloat(e.total)||0),0);
+  const sn=logEntries.reduce((s,e)=>s+(parseFloat(e.net)||0),0);
+  tfoot.innerHTML=`<td>الإجمالي</td><td>—</td><td>${fmt(sg,0)}</td><td>${fmt(sk,1)}</td><td>—</td><td>${fmt(st,0)}</td><td>${fmt(sn,1)}</td><td>—</td>`;
+}
+function clearLog(){if(confirm('مسح كل سجلات الشيفتات؟')){logEntries=[];renderLog();saveLog();}}
+function saveLog(){try{localStorage.setItem('tk_log',JSON.stringify(logEntries));}catch(e){}}
+function loadLog(){
+  try{
+    const raw=JSON.parse(localStorage.getItem('tk_log')||'[]');
+    logEntries=raw; pruneLog(); renderLog();
+  }catch(e){}
 }
 
-function clearLog() {
-  if (confirm('هتمسح كل سجلات الشيفتات؟')) {
-    logEntries = []; renderLog(); saveLog();
-  }
+// ═══════════════════════════════════════════════════════════
+// NOTIFICATIONS + ALARM
+// ═══════════════════════════════════════════════════════════
+function sendNotif(title, body) {
+  if(Notification.permission!=='granted') return;
+  try{ new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',lang:'ar'}); }catch(e){}
 }
 
-function saveLog() {
-  try { localStorage.setItem('tk_log', JSON.stringify(logEntries)); } catch(e){}
-}
-function loadLog() {
-  try { logEntries = JSON.parse(localStorage.getItem('tk_log') || '[]'); renderLog(); } catch(e){}
-}
-
-// ═══════════════════════════════════════════════
-// DATA EXPORT / IMPORT
-// ═══════════════════════════════════════════════
-function exportData() {
-  const SKEYS = ['s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd'];
-  const data = {
-    name: $('displayName').textContent,
-    settings: {},
-    log: logEntries,
-    exportDate: new Date().toISOString()
-  };
-  SKEYS.forEach(k => { if($(k)) data.settings[k] = $(k).value; });
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `tarek_shift_${new Date().toLocaleDateString('en-CA')}.json`;
-  a.click();
-}
-
-function importData(e) {
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      if (data.name) {
-        $('displayName').textContent = data.name;
-        $('nameInput').value = data.name;
-        localStorage.setItem('tk_name', data.name);
-      }
-      if (data.settings) {
-        Object.entries(data.settings).forEach(([k,v]) => { if($(k)) $(k).value = v; });
-      }
-      if (data.log) { logEntries = data.log; saveLog(); renderLog(); }
-      recalc();
-      alert('✅ تم استيراد البيانات بنجاح!');
-    } catch(err) { alert('❌ ملف غير صالح'); }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-}
-
-function clearAllData() {
-  if (confirm('هتمسح كل البيانات والإعدادات؟ لا يمكن التراجع عن هذا.')) {
-    try { localStorage.clear(); } catch(e){}
-    location.reload();
-  }
-}
-
-// ═══════════════════════════════════════════════
-// PROFILE
-// ═══════════════════════════════════════════════
-let currentPhoto = null;
-
-function openModal() { $('nameInput').value=$('displayName').textContent; $('profileOverlay').classList.add('open'); }
-function closeModal() { $('profileOverlay').classList.remove('open'); }
-function overlayClick(e) { if(e.target===$('profileOverlay')) closeModal(); }
-
-function handlePhoto(e) {
-  const file = e.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => { currentPhoto = ev.target.result; showPhoto(currentPhoto); };
-  reader.readAsDataURL(file);
-}
-function showPhoto(src) {
-  ['avatarEmoji','modalEmoji'].forEach(id => $(id).style.display='none');
-  ['avatarImg','modalImg'].forEach(id => { $(id).src=src; $(id).style.display='block'; });
-}
-function saveProfile() {
-  const name = $('nameInput').value.trim() || 'طارق عبد الجليل';
-  $('displayName').textContent = name;
-  if (currentPhoto) showPhoto(currentPhoto);
-  closeModal();
-  try { localStorage.setItem('tk_name', name); if(currentPhoto) localStorage.setItem('tk_photo', currentPhoto); } catch(e){}
-}
-
-// ═══════════════════════════════════════════════
-// SETTINGS PERSISTENCE — full restore on load
-// ═══════════════════════════════════════════════
-const SKEYS = ['goalInput','s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd'];
-
-function saveSettings() {
-  try {
-    const d = {};
-    SKEYS.forEach(k => { if($(k)) d[k] = $(k).value; });
-    localStorage.setItem('tk_settings', JSON.stringify(d));
-  } catch(e){}
-}
-
-function loadSettings() {
-  try {
-    const name  = localStorage.getItem('tk_name');
-    const photo = localStorage.getItem('tk_photo');
-    const sett  = JSON.parse(localStorage.getItem('tk_settings') || '{}');
-    if (name)  { $('displayName').textContent = name; $('nameInput').value = name; }
-    if (photo) { currentPhoto = photo; showPhoto(photo); }
-    // restore every field — goal + all settings
-    SKEYS.forEach(k => {
-      if (sett[k] !== undefined && $(k)) {
-        $(k).value = sett[k];
-      }
-    });
-  } catch(e){}
-}
-
-// ═══════════════════════════════════════════════
-// TIPS
-// ═══════════════════════════════════════════════
-const tipsData = [
-  { title:'🚀 زيادة الأرباح', items:[
-    'شغّل أوقات الذروة (الغداء والعشاء) لزيادة عدد الطلبات',
-    'ركّز على المناطق ذات الكثافة العالية لتقليل وقت التنقل',
-    'حاول تحسين سعر الكيلو بالتفاوض أو اختيار الرحلات الأطول',
-    'احتفظ بتقييم عالٍ لضمان الأولوية في توزيع الطلبات',
-  ]},
-  { title:'⛽ توفير الوقود', items:[
-    'سُر بسرعة ثابتة 50-60 كم/س لتحسين استهلاك الوقود',
-    'افحص ضغط الإطارات أسبوعياً — الإطار المنفوخ يزيد الاستهلاك',
-    'غيّر الزيت بانتظام كل 1000 كم لحماية المحرك',
-    'استخدم GPS للمسار الأقصر لتوفير الكيلومترات',
-  ]},
-  { title:'📱 إدارة المصاريف', items:[
-    'خصّص ميزانية يومية ثابتة للأكل ولا تتجاوزها',
-    'اشترِ باقة إنترنت شهرية بدل اليومية',
-    'احتفظ بصندوق طوارئ للأعطال المفاجئة',
-  ]},
-  { title:'📊 تحسين الأداء', items:[
-    'سجّل بياناتك يومياً لمعرفة أفضل أيامك',
-    'راقب نسبة المصاريف — حاول إبقاءها أقل من 50%',
-    'صدّر بياناتك أسبوعياً من الإعدادات للاحتفاظ بها',
-    'اضبط الإعدادات دورياً عند تغير أسعار البنزين',
-  ]},
-];
-
-function buildTips() {
-  const c = $('tips-container');
-  tipsData.forEach(s => {
-    const card = document.createElement('div');
-    card.className = 'card'; card.style.marginBottom = '12px';
-    card.innerHTML = `<div class="tip-section-hdr">${s.title}</div>` +
-      s.items.map(i=>`<div class="tip-row"><span class="tip-check">✅</span><span class="tip-text">${i}</span></div>`).join('');
-    c.appendChild(card);
+function requestNotifPerm() {
+  Notification.requestPermission().then(p=>{
+    updateNotifBtn();
+    if(p==='granted'){ sendNotif('✅ الإشعارات مُفعَّلة','سيصلك منبّه قبل بدء الشيفت وعند بلوغ 800 كم'); scheduleAlarm(); }
   });
 }
 
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-buildTips();
-loadSettings();   // restores all fields from localStorage
-loadLog();
-recalc();         // recalculates with restored values
-// restore active trips if page reloaded mid-shift
-try {
-  const savedTrips = localStorage.getItem('tk_trips');
-  if (savedTrips) { trips = JSON.parse(savedTrips); renderTrips(); updateTripTracker(); }
-} catch(e){}
-// restore shift timer if was running
-try {
-  const savedStart = localStorage.getItem('tk_shiftStart');
-  if (savedStart) {
-    shiftActive = true;
-    shiftStartTS = parseInt(savedStart);
-    $('btnStart').classList.add('active-shift');
-    $('shiftBtnIcon').textContent = '⏸';
-    $('shiftBtnTxt').textContent  = 'شيفت جارٍ...';
-    $('btnEnd').classList.add('enabled');
-    $('shiftTimer').style.display = 'block';
-    shiftTimerInt = setInterval(() => {
-      const elapsed = Date.now() - shiftStartTS;
-      const h = Math.floor(elapsed/3600000);
-      const m = Math.floor((elapsed%3600000)/60000);
-      const s = Math.floor((elapsed%60000)/1000);
-      $('timerDisplay').textContent =
-        `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    }, 1000);
+function updateNotifBtn() {
+  const btn=$('notif-btn');
+  if(!btn) return;
+  if(Notification.permission==='granted'){
+    btn.textContent='✅ إشعارات مفعّلة'; btn.style.color='var(--green2)';
+    btn.style.borderColor='rgba(0,200,150,.3)'; btn.style.background='rgba(0,200,150,.1)';
+  } else if(Notification.permission==='denied'){
+    btn.textContent='❌ محجوب — افتح إعدادات الهاتف'; btn.style.color='var(--red)';
   }
-} catch(e){}
+}
+
+let alarmTimeout=null, alarmBeforeTimeout=null;
+function scheduleAlarm() {
+  clearTimeout(alarmTimeout); clearTimeout(alarmBeforeTimeout);
+  const alarmTime=$('s-alarm')?.value; if(!alarmTime) return;
+  const before=num('s-alarm-before')||15;
+  const [h,m]=alarmTime.split(':').map(Number);
+  const now=new Date();
+  let alarmDate=new Date(now); alarmDate.setHours(h,m,0,0);
+  if(alarmDate<=now) alarmDate.setDate(alarmDate.getDate()+1);
+  const msToAlarm=alarmDate-now;
+  const msToBefore=msToAlarm-(before*60000);
+  if(msToBefore>0){
+    alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`),msToBefore);
+  }
+  alarmTimeout=setTimeout(()=>sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!'),msToAlarm);
+}
+
+// Motor km check (alert at 800+ from last maintenance)
+function checkMotorKm() {
+  const cur=num('s-motor-km'), last=num('s-last-maint');
+  const diff=cur-last;
+  if(diff>=800&&diff<1000){
+    sendNotif('⚠️ تنبيه صيانة',`اقتربت من موعد تغيير الزيت — لقد قطعت ${fmt(diff,0)} كم منذ آخر صيانة. موعد التغيير عند 1000 كم.`);
+  }
+  if(diff>=1000){
+    sendNotif('🔧 تغيير الزيت الآن!',`لقد تجاوزت ${fmt(diff,0)} كم منذ آخر صيانة. يرجى تغيير الزيت وصيانة الموتور فوراً.`);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════════════════
+let currentPhoto=null;
+function openModal(){$('nameInput').value=$('displayName').textContent;$('profileOverlay').classList.add('open');}
+function closeModal(){$('profileOverlay').classList.remove('open');}
+function overlayClick(e){if(e.target===$('profileOverlay'))closeModal();}
+function handlePhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{currentPhoto=ev.target.result;showPhoto(currentPhoto);};
+  reader.readAsDataURL(file);
+}
+function showPhoto(src){
+  ['avatarEmoji','modalEmoji'].forEach(id=>$(id).style.display='none');
+  ['avatarImg','modalImg'].forEach(id=>{$(id).src=src;$(id).style.display='block';});
+}
+function saveProfile(){
+  const name=$('nameInput').value.trim()||'طارق عبد الجليل';
+  $('displayName').textContent=name;
+  if(currentPhoto)showPhoto(currentPhoto);
+  closeModal();
+  try{localStorage.setItem('tk_name',name);if(currentPhoto)localStorage.setItem('tk_photo',currentPhoto);}catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════
+// SETTINGS PERSISTENCE
+// ═══════════════════════════════════════════════════════════
+const SKEYS=['goalInput','s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd','s-alarm','s-alarm-before','s-motor-km','s-last-maint'];
+
+function saveSettings(){
+  try{const d={};SKEYS.forEach(k=>{if($(k))d[k]=$(k).value;});localStorage.setItem('tk_settings',JSON.stringify(d));}catch(e){}
+}
+function loadSettings(){
+  try{
+    const name=localStorage.getItem('tk_name');
+    const photo=localStorage.getItem('tk_photo');
+    const sett=JSON.parse(localStorage.getItem('tk_settings')||'{}');
+    if(name){$('displayName').textContent=name;$('nameInput').value=name;}
+    if(photo){currentPhoto=photo;showPhoto(photo);}
+    SKEYS.forEach(k=>{if(sett[k]!==undefined&&$(k))$(k).value=sett[k];});
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════
+function exportData(){
+  const data={name:$('displayName').textContent,settings:{},log:logEntries,exportDate:new Date().toISOString()};
+  SKEYS.forEach(k=>{if($(k))data.settings[k]=$(k).value;});
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`tarek_shift_${new Date().toLocaleDateString('en-CA')}.json`;
+  a.click();
+}
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.name){$('displayName').textContent=data.name;$('nameInput').value=data.name;localStorage.setItem('tk_name',data.name);}
+      if(data.settings)Object.entries(data.settings).forEach(([k,v])=>{if($(k))$(k).value=v;});
+      if(data.log){logEntries=data.log;saveLog();renderLog();}
+      recalc();alert('✅ تم استيراد البيانات بنجاح!');
+    }catch(err){alert('❌ ملف غير صالح');}
+  };
+  reader.readAsText(file);e.target.value='';
+}
+function clearAllData(){
+  if(confirm('هتمسح كل البيانات والإعدادات؟')){try{localStorage.clear();}catch(e){}location.reload();}
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+loadSettings();
+loadLog();
+recalc();
+updateNotifBtn();
+scheduleAlarm();
+
+// restore active page
+showTab(currentTab, 'bnav-'+currentTab);
+
+// restore trips
+try{
+  const saved=localStorage.getItem('tk_trips');
+  if(saved){trips=JSON.parse(saved);renderTrips();updateTripTracker();updateRemBar();}
+}catch(e){}
+
+// restore shift timer
+try{
+  const savedStart=localStorage.getItem('tk_shiftStart');
+  if(savedStart){
+    shiftActive=true; shiftStartTS=parseInt(savedStart);
+    $('btnStart').classList.add('active-shift');
+    $('shiftBtnIcon').textContent='⏸'; $('shiftBtnTxt').textContent='شيفت جارٍ...';
+    $('btnEnd').classList.add('enabled'); $('shiftTimer').style.display='block';
+    shiftTimerInt=setInterval(()=>{
+      const el=Date.now()-shiftStartTS;
+      const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
+      $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    },1000);
+  }
+}catch(e){}
 </script>
 </body>
 </html>
