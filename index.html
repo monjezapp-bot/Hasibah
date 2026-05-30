@@ -1224,6 +1224,16 @@ try{
     },1000);
   }
 }catch(e){}
+// 
+async function requestNotificationPermission() {
+  const permission = await Notification.requestPermission();
+  if (permission === 'granted') {
+    console.log('تم قبول الإشعارات!');
+  } else {
+    alert('من فضلك، نحتاج إذنك لتفعيل الإشعارات عشان نقدر ننبهك بالشيفت.');
+  }
+}
+  
 </script>
 </body>
 </html>
