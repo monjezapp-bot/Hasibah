@@ -318,9 +318,135 @@ input[type=number]{-moz-appearance:textfield}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── AUTH SCREEN ── */
+#authScreen{position:fixed;inset:0;z-index:999;
+  background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:32px 24px;
+  text-align:center}
+#authScreen.hidden{display:none}
+.auth-logo{font-size:64px;margin-bottom:16px}
+.auth-title{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;
+  color:var(--text);margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.7}
+.auth-user-info{display:flex;flex-direction:column;align-items:center;gap:8px;
+  margin-bottom:28px;display:none}
+.auth-user-info.visible{display:flex}
+.auth-avatar{width:64px;height:64px;border-radius:50%;
+  border:2px solid rgba(240,165,0,.4);object-fit:cover}
+.auth-user-name{font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
+.auth-user-email{font-size:12px;color:var(--muted)}
+.btn-google{width:100%;max-width:320px;padding:14px 20px;border-radius:14px;
+  background:#fff;color:#1f1f1f;font-family:'IBM Plex Sans Arabic',sans-serif;
+  font-size:14px;font-weight:700;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-bottom:12px;transition:.2s;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.btn-google:active{transform:scale(.97)}
+.btn-google img{width:20px;height:20px}
+.btn-anon{width:100%;max-width:320px;padding:12px 20px;border-radius:14px;
+  background:rgba(255,255,255,.06);color:var(--muted);
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;font-weight:600;
+  border:1px solid var(--border2);cursor:pointer;transition:.2s}
+.btn-anon:active{opacity:.7}
+.btn-enter-app{width:100%;max-width:320px;padding:14px 20px;border-radius:14px;
+  background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:15px;font-weight:900;
+  border:none;cursor:pointer;margin-bottom:12px;transition:.2s}
+.btn-enter-app:active{transform:scale(.97)}
+.auth-divider{font-size:11px;color:var(--muted);margin:8px 0;width:100%;max-width:320px}
+.sync-badge{position:fixed;top:12px;left:50%;transform:translateX(-50%);
+  background:rgba(0,200,150,.15);border:1px solid rgba(0,200,150,.3);
+  color:var(--green2);font-size:11px;font-weight:700;
+  padding:5px 14px;border-radius:20px;z-index:90;
+  display:none;align-items:center;gap:5px;white-space:nowrap}
+.sync-badge.show{display:flex}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sync-spin{display:inline-block;animation:spin .8s linear infinite}
 </style>
 </head>
 <body>
+
+<!-- Firebase SDKs -->
+<script type="module" id="firebaseModule">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously, onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBCpI5hcTXGJUxgd_1s8U_rN6ugOvvMpaU",
+  authDomain: "hasbt-elshift.firebaseapp.com",
+  projectId: "hasbt-elshift",
+  storageBucket: "hasbt-elshift.firebasestorage.app",
+  messagingSenderId: "95168484525",
+  appId: "1:95168484525:web:5b57d784b818078f9ba224",
+  measurementId: "G-1VB9NCWTR3"
+};
+
+const fbApp  = initializeApp(firebaseConfig);
+const auth   = getAuth(fbApp);
+const db     = getFirestore(fbApp);
+const gProvider = new GoogleAuthProvider();
+
+// ── expose to global scope ──
+window._fb = { auth, db, gProvider, GoogleAuthProvider,
+  signInWithPopup, signInAnonymously, onAuthStateChanged, signOut,
+  doc, setDoc, getDoc, onSnapshot, serverTimestamp };
+
+// ── Auth state listener ──
+onAuthStateChanged(auth, user => {
+  if (user) {
+    window._fbUser = user;
+    window._onLogin && window._onLogin(user);
+  } else {
+    window._fbUser = null;
+    window._onLogout && window._onLogout();
+  }
+});
+</script>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-logo">🛵</div>
+  <div class="auth-title">حاسبة الشفت</div>
+  <div class="auth-sub">سجّل دخولك لحفظ بياناتك تلقائياً<br>على السحابة وتزامنها على كل أجهزتك</div>
+
+  <!-- logged-in user info -->
+  <div class="auth-user-info" id="authUserInfo">
+    <img class="auth-avatar" id="authAvatar" src="" alt="">
+    <div class="auth-user-name" id="authUserName">—</div>
+    <div class="auth-user-email" id="authUserEmail">—</div>
+  </div>
+
+  <!-- enter app (shown after login) -->
+  <button class="btn-enter-app" id="btnEnterApp" style="display:none" onclick="enterApp()">
+    🚀 دخول التطبيق
+  </button>
+
+  <!-- Google login -->
+  <button class="btn-google" id="btnGoogle" onclick="loginGoogle()">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+    تسجيل الدخول بـ Google
+  </button>
+
+  <div class="auth-divider">— أو —</div>
+
+  <!-- Anonymous -->
+  <button class="btn-anon" id="btnAnon" onclick="loginAnon()">
+    متابعة بدون حساب (بيانات محلية فقط)
+  </button>
+
+  <div style="font-size:10px;color:var(--muted);margin-top:16px;max-width:280px;line-height:1.6">
+    🔒 بياناتك خاصة بك تماماً — لا يمكن لأحد الوصول إليها
+  </div>
+</div>
+
+<!-- Sync badge -->
+<div class="sync-badge" id="syncBadge">
+  <span class="sync-spin">🔄</span> جاري المزامنة...
+</div>
+
 <div class="app">
 
 <!-- ═══ HEADER ═══ -->
@@ -561,6 +687,11 @@ input[type=number]{-moz-appearance:textfield}
   </div>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
   <button class="btn-clear-all" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
+  <div style="height:8px"></div>
+  <button class="btn-clear-all" onclick="signOutUser()"
+    style="background:rgba(59,139,235,.06);border-color:rgba(59,139,235,.2);color:var(--blue2)">
+    🚪 تسجيل الخروج
+  </button>
 </div>
 
 <!-- PAGE: LOG -->
@@ -1291,8 +1422,202 @@ function clearAllData(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// INIT
+// FIREBASE AUTH & SYNC
 // ═══════════════════════════════════════════════════════════
+let fbUser = null;
+let syncUnsubscribe = null;
+let syncTimeout = null;
+
+// ── Auth screen buttons ──
+async function loginGoogle() {
+  const btn = $('btnGoogle');
+  btn.textContent = '⏳ جاري تسجيل الدخول...';
+  btn.disabled = true;
+  try {
+    const { auth, gProvider, signInWithPopup } = window._fb;
+    await signInWithPopup(auth, gProvider);
+    // onAuthStateChanged will handle the rest
+  } catch(e) {
+    btn.textContent = '❌ فشل — حاول مرة أخرى';
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = 'تسجيل الدخول بـ Google'; btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:20px;height:20px"> تسجيل الدخول بـ Google'; }, 2000);
+  }
+}
+
+async function loginAnon() {
+  const btn = $('btnAnon');
+  btn.textContent = '⏳ ...';
+  try {
+    const { auth, signInAnonymously } = window._fb;
+    await signInAnonymously(auth);
+  } catch(e) {
+    // If Firebase fails, just enter app with local storage only
+    enterAppLocal();
+  }
+}
+
+function enterApp() {
+  $('authScreen').classList.add('hidden');
+}
+
+function enterAppLocal() {
+  $('authScreen').classList.add('hidden');
+}
+
+// ── Called when user logs in ──
+window._onLogin = async function(user) {
+  fbUser = user;
+
+  // Update auth screen UI
+  if (user.photoURL) {
+    $('authAvatar').src = user.photoURL;
+  }
+  $('authUserName').textContent = user.isAnonymous ? 'زائر مجهول' : (user.displayName || 'مستخدم');
+  $('authUserEmail').textContent = user.isAnonymous ? 'بدون حساب — بيانات محلية' : (user.email || '');
+  $('authUserInfo').classList.add('visible');
+  $('btnEnterApp').style.display = 'block';
+  $('btnGoogle').style.display = user.isAnonymous ? 'flex' : 'none';
+  $('btnAnon').style.display = user.isAnonymous ? 'none' : 'none';
+
+  // If anonymous, just enter with local data
+  if (user.isAnonymous) {
+    enterAppLocal();
+    return;
+  }
+
+  // Google user — load from Firestore first
+  try {
+    await loadFromFirestore(user.uid);
+  } catch(e) {}
+
+  enterApp();
+  startFirestoreSync(user.uid);
+
+  // Update profile name/photo from Google
+  if (user.displayName && !localStorage.getItem('tk_name')) {
+    $('displayName').textContent = user.displayName;
+    localStorage.setItem('tk_name', user.displayName);
+  }
+  if (user.photoURL && !localStorage.getItem('tk_photo')) {
+    currentPhoto = user.photoURL;
+    showPhoto(user.photoURL);
+    localStorage.setItem('tk_photo', user.photoURL);
+  }
+};
+
+window._onLogout = function() {
+  fbUser = null;
+  if (syncUnsubscribe) { syncUnsubscribe(); syncUnsubscribe = null; }
+  // Show auth screen on logout
+  $('authScreen').classList.remove('hidden');
+  $('btnEnterApp').style.display = 'none';
+  $('authUserInfo').classList.remove('visible');
+  $('btnGoogle').style.display = 'flex';
+  $('btnAnon').style.display = 'block';
+};
+
+// ── Load data from Firestore ──
+async function loadFromFirestore(uid) {
+  showSyncBadge('جاري تحميل بياناتك...');
+  const { db, doc, getDoc } = window._fb;
+
+  try {
+    // Load settings
+    const settDoc = await getDoc(doc(db, 'users', uid, 'data', 'settings'));
+    if (settDoc.exists()) {
+      const d = settDoc.data();
+      if (d.settings) {
+        Object.entries(d.settings).forEach(([k,v]) => { if($(k)) $(k).value = v; });
+      }
+      if (d.name) { $('displayName').textContent = d.name; localStorage.setItem('tk_name', d.name); }
+    }
+
+    // Load log
+    const logDoc = await getDoc(doc(db, 'users', uid, 'data', 'log'));
+    if (logDoc.exists() && logDoc.data().entries) {
+      logEntries = logDoc.data().entries;
+      pruneLog();
+      renderLog();
+      saveLog();
+    }
+
+    hideSyncBadge();
+    recalc();
+  } catch(e) {
+    hideSyncBadge();
+  }
+}
+
+// ── Real-time sync to Firestore ──
+function startFirestoreSync(uid) {
+  if (syncUnsubscribe) syncUnsubscribe();
+  // We push changes — no need to listen (single user, no multi-device conflict needed)
+}
+
+// ── Save to Firestore (debounced) ──
+function saveToFirestore() {
+  if (!fbUser || fbUser.isAnonymous) return;
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(async () => {
+    showSyncBadge('جاري الحفظ...');
+    try {
+      const { db, doc, setDoc, serverTimestamp } = window._fb;
+      const uid = fbUser.uid;
+      const settingsData = {};
+      SKEYS.forEach(k => { if($(k)) settingsData[k] = $(k).value; });
+
+      await setDoc(doc(db, 'users', uid, 'data', 'settings'), {
+        settings: settingsData,
+        name: $('displayName').textContent,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+
+      await setDoc(doc(db, 'users', uid, 'data', 'log'), {
+        entries: logEntries,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+
+      hideSyncBadge();
+    } catch(e) {
+      hideSyncBadge();
+    }
+  }, 1500);
+}
+
+function showSyncBadge(msg = 'جاري المزامنة...') {
+  const b = $('syncBadge');
+  b.innerHTML = `<span class="sync-spin">🔄</span> ${msg}`;
+  b.classList.add('show');
+}
+function hideSyncBadge() {
+  setTimeout(() => {
+    const b = $('syncBadge');
+    b.innerHTML = '✅ تم الحفظ';
+    b.style.background = 'rgba(0,200,150,.15)';
+    setTimeout(() => b.classList.remove('show'), 1500);
+  }, 300);
+}
+
+// ── Sign out ──
+function signOutUser() {
+  if (confirm('هتسجّل خروج؟ بياناتك محفوظة على السحابة.')) {
+    const { auth, signOut } = window._fb;
+    signOut(auth);
+  }
+}
+
+// ── Hook saveSettings & saveLog to also push to Firestore ──
+const _origSaveSettings = saveSettings;
+saveSettings = function() {
+  _origSaveSettings();
+  saveToFirestore();
+};
+const _origSaveLog = saveLog;
+saveLog = function() {
+  _origSaveLog();
+  saveToFirestore();
+};
+
 loadSettings();
 loadLog();
 recalc();
