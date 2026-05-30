@@ -770,15 +770,6 @@ onAuthStateChanged(auth, user => {
 <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(event)">
 
 <script>
-  // تفعيل حفظ تسجيل الدخول في المتصفح
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(() => {
-    console.log("تم تفعيل حفظ الجلسة بنجاح");
-  })
-  .catch((error) => {
-    console.error("خطأ في تثبيت الجلسة:", error);
-  });
-  
 // ═══════════════════════════════════════════════════════════
 // UTILS
 // ═══════════════════════════════════════════════════════════
