@@ -374,11 +374,8 @@ import {
   signInWithPopup,
   signInAnonymously,
   onAuthStateChanged,
-  signOut,
-  setPersistence,
-  browserLocalPersistence
-} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-const firebaseConfig = {
+  signOut
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';const firebaseConfig = {
   apiKey: "AIzaSyBCpI5hcTXGJUxgd_1s8U_rN6ugOvvMpaU",
   authDomain: "hasbt-elshift.firebaseapp.com",
   projectId: "hasbt-elshift",
@@ -390,7 +387,6 @@ const firebaseConfig = {
 
 const fbApp  = initializeApp(firebaseConfig);
 const auth   = getAuth(fbApp);
-await setPersistence(auth, browserLocalPersistence);
 const db     = getFirestore(fbApp);
 const gProvider = new GoogleAuthProvider();
 
