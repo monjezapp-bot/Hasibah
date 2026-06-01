@@ -368,12 +368,16 @@ input[type=number]{-moz-appearance:textfield}
 
 <!-- Firebase SDKs -->
 <script type="module" id="firebaseModule">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously, onAuthStateChanged, signOut }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInAnonymously,
+  onAuthStateChanged,
+  signOut,
+  setPersistence,
+  browserLocalPersistence
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 const firebaseConfig = {
   apiKey: "AIzaSyBCpI5hcTXGJUxgd_1s8U_rN6ugOvvMpaU",
   authDomain: "hasbt-elshift.firebaseapp.com",
@@ -386,6 +390,7 @@ const firebaseConfig = {
 
 const fbApp  = initializeApp(firebaseConfig);
 const auth   = getAuth(fbApp);
+await setPersistence(auth, browserLocalPersistence);
 const db     = getFirestore(fbApp);
 const gProvider = new GoogleAuthProvider();
 
