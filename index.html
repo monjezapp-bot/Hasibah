@@ -2,1662 +2,1370 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>طارق | حاسبة الشفت</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080c14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="شيفت طارق">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>حاسبة الشفت</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
 <style>
+/* ════════ RESET & ROOT ════════ */
 :root{
   --bg:#080c14;--s1:#0d1520;--s2:#111d2e;--s3:#172238;
-  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
-  --gold:#f0a500;--gold2:#ffc840;--blue:#3b8beb;--blue2:#60a8ff;
-  --green:#00c896;--green2:#30e8b0;--red:#ff5757;--purple:#a855f7;
-  --text:#eef2f8;--muted:#5a6a82;--muted2:#8898aa;--r:16px;--r2:10px;
+  --b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.13);
+  --gold:#f0a500;--gold2:#ffc840;
+  --blue:#3b8beb;--blue2:#60a8ff;
+  --green:#00c896;--green2:#30e8b0;
+  --red:#ff5757;--muted:#5a6a82;--muted2:#8898aa;
+  --text:#eef2f8;--r:14px;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
-  -webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
+*{margin:0;padding:0;box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+  user-select:none;-webkit-user-select:none}
 input,textarea{user-select:text;-webkit-user-select:text}
-body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--text);
-  min-height:100dvh;overflow-x:hidden}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);
+  color:var(--text);min-height:100dvh;overflow-x:hidden}
 body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(ellipse 60% 35% at 15% 0%,rgba(240,165,0,.04) 0%,transparent 55%),
-             radial-gradient(ellipse 45% 30% at 85% 100%,rgba(59,139,235,.04) 0%,transparent 55%)}
+  background:
+    radial-gradient(ellipse 60% 35% at 15% 0%,rgba(240,165,0,.04) 0%,transparent 55%),
+    radial-gradient(ellipse 45% 30% at 85% 100%,rgba(59,139,235,.04) 0%,transparent 55%)}
+::-webkit-scrollbar{width:2px;height:2px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
 
-/* ── LAYOUT ── */
-.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding-bottom:72px}
+/* ════════ APP SHELL ════════ */
+#app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding-bottom:68px}
 
-/* ── HEADER ── */
-.header{background:rgba(8,12,20,.97);border-bottom:1px solid var(--border2);
+/* ════════ AUTH SCREEN ════════ */
+#authScreen{position:fixed;inset:0;z-index:300;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:28px 24px;text-align:center;transition:.3s}
+#authScreen.out{opacity:0;pointer-events:none;transform:scale(1.05)}
+.auth-logo-wrap{margin-bottom:16px;position:relative;display:inline-block}
+.auth-logo-img{width:80px;height:80px;border-radius:24px;
+  background:linear-gradient(135deg,#1a3a5c,#0d1520);
+  display:flex;align-items:center;justify-content:center;font-size:40px;
+  box-shadow:0 0 0 2px rgba(240,165,0,.3),0 8px 32px rgba(0,0,0,.4)}
+.auth-title{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;margin-bottom:4px}
+.auth-sub{font-size:12px;color:var(--muted);margin-bottom:24px;line-height:1.7;max-width:260px}
+.auth-card{background:var(--s1);border:1px solid var(--b2);border-radius:20px;
+  padding:20px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
+.auth-step{display:none;flex-direction:column;gap:12px}
+.auth-step.on{display:flex}
+.auth-dots{display:flex;gap:6px;justify-content:center;margin-bottom:4px}
+.auth-dot{width:7px;height:7px;border-radius:50%;background:var(--b2);transition:.3s}
+.auth-dot.on{background:var(--gold);width:18px;border-radius:4px}
+.inp{width:100%;background:var(--s2);border:1.5px solid var(--b2);border-radius:11px;
+  padding:12px 14px;font-size:15px;font-weight:700;color:var(--text);
+  font-family:'IBM Plex Sans Arabic',sans-serif;text-align:right;outline:none;
+  transition:.2s;-webkit-appearance:none}
+.inp:focus{border-color:var(--gold);background:rgba(240,165,0,.04)}
+.inp.ltr{direction:ltr;text-align:center}
+.auth-btn{width:100%;padding:13px;border-radius:12px;
+  background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:14px;
+  border:none;cursor:pointer;transition:.2s}
+.auth-btn:active{transform:scale(.97)}
+.auth-btn:disabled{opacity:.4;pointer-events:none}
+.auth-btn.sec{background:var(--s2);color:var(--muted);
+  border:1px solid var(--b1);font-size:13px;padding:11px}
+.auth-err{font-size:11px;color:var(--red);min-height:16px;text-align:center}
+.auth-hint{font-size:11px;color:var(--muted);line-height:1.7;text-align:center}
+.auth-back{background:none;border:none;color:var(--muted);font-size:12px;
+  cursor:pointer;font-family:'IBM Plex Sans Arabic',sans-serif;padding:4px}
+/* email sent box */
+.sent-box{background:var(--s2);border:1px solid var(--b1);border-radius:11px;
+  padding:12px;font-size:11px;color:var(--muted);line-height:1.9;text-align:right}
+.sent-box strong{color:var(--gold2)}
+
+/* ════════ HEADER ════════ */
+.hdr{background:rgba(8,12,20,.97);border-bottom:1px solid var(--b2);
   backdrop-filter:blur(24px);position:sticky;top:0;z-index:80}
-.header-inner{padding:12px 16px 0}
-.profile-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.avatar-wrap{position:relative;flex-shrink:0;cursor:pointer}
-.avatar{width:42px;height:42px;border-radius:50%;
+.hdr-top{padding:11px 15px 0;display:flex;align-items:center;gap:11px}
+.av-wrap{position:relative;flex-shrink:0;cursor:pointer}
+.av{width:40px;height:40px;border-radius:50%;
   background:linear-gradient(135deg,var(--gold),#c47d00);
-  display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;
-  box-shadow:0 0 0 2px rgba(240,165,0,.3);transition:.2s}
-.avatar:active{transform:scale(.9)}
-.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.avatar-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;
-  border:2px solid var(--bg);background:var(--green)}
-.profile-info{flex:1;min-width:0}
-.profile-name{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;
-  display:flex;align-items:center;gap:5px}
-.profile-name .pen{font-size:11px;color:var(--muted)}
-
-/* remaining bar */
-.rem-bar{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border)}
-.rstat{padding:7px 4px;text-align:center;border-left:1px solid var(--border)}
-.rstat:last-child{border-left:none}
-.rstat-val{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;
+  box-shadow:0 0 0 2px rgba(240,165,0,.25);transition:.2s}
+.av:active{transform:scale(.9)}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.av-dot{position:absolute;bottom:0;right:0;width:11px;height:11px;
+  border-radius:50%;border:2px solid var(--bg);background:var(--green)}
+.p-info{flex:1;min-width:0}
+.p-name{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;
+  cursor:pointer;display:flex;align-items:center;gap:5px}
+.p-name .pen{font-size:10px;color:var(--muted)}
+.p-sub{font-size:10px;color:var(--muted);margin-top:1px}
+/* remaining mini-stats */
+.rem-bar{display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--b1);margin-top:8px}
+.rs{padding:6px 4px;text-align:center;border-left:1px solid var(--b1)}
+.rs:last-child{border-left:none}
+.rs-v{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:900;
   color:var(--gold2);direction:ltr;line-height:1}
-.rstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
+.rs-l{font-size:9px;color:var(--muted);margin-top:2px}
+/* dt bar */
+.dt-bar{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 15px;background:var(--s1);border-bottom:1px solid var(--b1);font-size:11px;color:var(--muted)}
+.dt-time{font-family:'Tajawal',sans-serif;font-weight:700;color:var(--gold2);
+  font-size:12px;direction:ltr}
+/* ticker */
+.ticker-wrap{overflow:hidden;white-space:nowrap;padding:5px 0;
+  background:rgba(240,165,0,.04);border-bottom:1px solid var(--b1)}
+.ticker-inner{display:inline-block;padding-right:100%;
+  animation:ticker 22s linear infinite}
+.ticker-inner span{font-size:11px;color:var(--muted2);padding:0 40px}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
 
-
-/* ── BOTTOM NAV ── */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+/* ════════ BOTTOM NAV ════════ */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:480px;z-index:80;
-  background:rgba(8,12,20,.97);border-top:1px solid var(--border2);
+  background:rgba(8,12,20,.97);border-top:1px solid var(--b2);
   backdrop-filter:blur(24px);display:flex}
-.bnav-btn{flex:1;padding:10px 4px 12px;text-align:center;cursor:pointer;
+.bn{flex:1;padding:9px 4px 11px;text-align:center;cursor:pointer;
   border:none;background:none;font-family:'IBM Plex Sans Arabic',sans-serif;
   transition:.15s;border-top:2px solid transparent}
-.bnav-btn .bi{font-size:20px;display:block;line-height:1;margin-bottom:3px}
-.bnav-btn .bl{font-size:9px;font-weight:700;color:var(--muted)}
-.bnav-btn.active{border-top-color:var(--gold)}
-.bnav-btn.active .bl{color:var(--gold)}
+.bn .bi{font-size:19px;display:block;line-height:1;margin-bottom:2px}
+.bn .bl{font-size:9px;font-weight:700;color:var(--muted)}
+.bn.on{border-top-color:var(--gold)} .bn.on .bl{color:var(--gold)}
+/* notif badge on nav */
+.nb-dot{display:none;position:absolute;top:7px;right:calc(50% - 14px);
+  width:7px;height:7px;border-radius:50%;background:var(--red);
+  border:1.5px solid var(--bg)}
+.nb-dot.show{display:block}
 
-/* ── PAGES ── */
-.page{display:none;padding:14px;
-  transition:transform .25s ease,opacity .25s ease}
-.page.active{display:block;animation:fadeUp .2s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+/* ════════ PAGES ════════ */
+.pg{display:none;padding:13px}
+.pg.on{display:block;animation:fu .18s ease}
+@keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-/* ── GOAL CARD ── */
+/* ════════ GOAL CARD ════════ */
 .goal-card{background:linear-gradient(135deg,#0a1e0e,#062014);
   border:1px solid rgba(0,200,150,.18);border-radius:var(--r);
-  padding:13px 15px;margin-bottom:11px}
-.goal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.goal-badge{font-size:10px;font-weight:700;color:var(--green2);
+  padding:12px 14px;margin-bottom:10px}
+.gc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.gc-lbl{font-size:11px;color:var(--green2);font-weight:600}
+.gc-bdg{font-size:9px;font-weight:700;color:var(--green2);
   background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.2);
   padding:2px 8px;border-radius:20px}
-.goal-label{font-size:11px;color:var(--green2);font-weight:600}
-.goal-row{display:flex;align-items:center;gap:8px}
-.goal-input{flex:1;background:rgba(255,255,255,.05);
+.gc-row{display:flex;align-items:center;gap:8px}
+.gc-inp{flex:1;background:rgba(255,255,255,.05);
   border:1.5px solid rgba(0,200,150,.2);border-radius:10px;
-  padding:7px 12px;font-size:20px;font-weight:500;color:#fff;
+  padding:7px 12px;font-size:20px;font-weight:900;color:#fff;
   font-family:'Tajawal',sans-serif;text-align:right;outline:none;
-  transition:.2s;-webkit-appearance:none}
-.goal-input:focus{border-color:var(--green);background:rgba(0,200,150,.06)}
-.goal-curr{font-size:12px;color:var(--green2);font-weight:700;flex-shrink:0}
+  transition:.2s;-webkit-appearance:none;direction:ltr}
+.gc-inp:focus{border-color:var(--green);background:rgba(0,200,150,.06)}
+.gc-curr{font-size:12px;color:var(--green2);font-weight:700;flex-shrink:0}
+/* shift buttons */
+.shift-row{display:flex;gap:8px;margin-top:9px}
+.sb{flex:1;padding:9px;border-radius:10px;font-family:'IBM Plex Sans Arabic',sans-serif;
+  font-weight:700;font-size:12px;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:5px;border:none}
+.sb.start{background:linear-gradient(135deg,#0f4a1f,#1a7a35);
+  border:1px solid rgba(0,200,150,.3);color:var(--green2)}
+.sb.start.active{background:linear-gradient(135deg,#4a0f0f,#7a1a1a);
+  border-color:rgba(255,87,87,.3);color:var(--red)}
+.sb.end{background:rgba(255,87,87,.08);border:1px solid rgba(255,87,87,.25);
+  color:var(--red);opacity:.35;pointer-events:none}
+.sb.end.on{opacity:1;pointer-events:all}
+.shift-timer{display:none;text-align:center;margin-top:7px;
+  font-size:11px;color:var(--muted)}
+#timerDisp{font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr}
 
-/* ── SHIFT BUTTONS ── */
-.shift-btns{display:flex;gap:8px;margin-top:10px}
-.btn-start{flex:1;background:linear-gradient(135deg,#0f4a1f,#1a7a35);
-  border:1px solid rgba(0,200,150,.3);color:var(--green2);
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:12px;
-  padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
-  display:flex;align-items:center;justify-content:center;gap:5px}
-.btn-start.active-shift{background:linear-gradient(135deg,#0a2a3d,#0d3a55);
-  border-color:rgba(96,168,255,.35);color:var(--blue2)}
-.btn-start.paused-shift{background:linear-gradient(135deg,#2e1f00,#4a3200);
-  border-color:rgba(255,200,64,.35);color:var(--gold2)}
-.pause-badge{display:flex;align-items:center;justify-content:center;gap:5px;
-  font-size:10px;color:var(--gold2);margin-top:5px;animation:pulse-text 1.4s infinite}
-@keyframes pulse-text{0%,100%{opacity:1}50%{opacity:.4}}
-.btn-end{flex:1;background:rgba(255,87,87,.08);border:1px solid rgba(255,87,87,.25);
-  color:var(--red);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;
-  font-size:12px;padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
-  display:flex;align-items:center;justify-content:center;gap:5px;
-  opacity:.35;pointer-events:none}
-.btn-end.enabled{opacity:1;pointer-events:all}
-#shiftTimer{display:none;text-align:center;margin-top:7px;font-size:11px;color:var(--muted)}
-
-/* ── KPI GRID ── */
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
-.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
-  padding:13px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
-.kpi:active{transform:scale(.96);opacity:.85}
-.kpi::after{content:'ⓘ';position:absolute;top:8px;left:10px;
-  font-size:12px;color:var(--border2);font-style:normal}
-.kpi-lbl-top{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;padding-left:16px}
-.kpi-val{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;line-height:1;direction:ltr}
-.kpi-unit{font-size:10px;font-weight:700;color:var(--muted);margin-top:3px}
+/* ════════ KPI GRID ════════ */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.kpi{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);
+  padding:11px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+.kpi:active{transform:scale(.96)}
+.kpi::after{content:'ⓘ';position:absolute;top:7px;left:9px;
+  font-size:11px;color:var(--b2);font-style:normal}
+.kpi-lbl{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;padding-left:14px}
+.kpi-val{font-family:'Tajawal',sans-serif;font-size:21px;font-weight:900;
+  line-height:1;direction:ltr}
+.kpi-unit{font-size:10px;font-weight:700;color:var(--muted);margin-top:2px}
 .kpi.km{border-color:rgba(59,139,235,.3)} .kpi.km .kpi-val{color:var(--blue2)}
 .kpi.hrs{border-color:rgba(168,85,247,.3)} .kpi.hrs .kpi-val{color:#c084fc}
 .kpi.cost{border-color:rgba(255,87,87,.3)} .kpi.cost .kpi-val{color:var(--red)}
 .kpi.earn{border-color:rgba(240,165,0,.3);background:linear-gradient(135deg,#120f00,#100c00)}
 .kpi.earn .kpi-val{color:var(--gold2)}
 
-/* ── NET BAR ── */
+/* ════════ NET BAR ════════ */
 .net-bar{background:linear-gradient(135deg,#041a0e,#031410);
-  border:1px solid rgba(0,200,150,.25);border-radius:var(--r);
-  padding:12px 15px;display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:11px}
-.net-lbl{font-size:11px;color:var(--green2);font-weight:700}
-.net-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.net-val{font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;
+  border:1px solid rgba(0,200,150,.22);border-radius:var(--r);
+  padding:11px 14px;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px}
+.nb-lbl{font-size:11px;color:var(--green2);font-weight:700}
+.nb-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.nb-val{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;
   color:var(--green2);direction:ltr}
 
-/* ── TRACKER ── */
-.tracker-card{background:var(--s2);border:1px solid rgba(240,165,0,.15);
-  border-radius:var(--r);padding:13px;margin-bottom:11px;overflow:hidden}
-.tracker-title{font-size:11px;font-weight:700;color:var(--gold2);
-  margin-bottom:9px;display:flex;align-items:center;gap:5px}
-.tracker-inputs{display:flex;gap:7px;margin-bottom:9px}
-.tracker-inputs .trip-input{flex:1;min-width:0;background:rgba(255,255,255,.06);
-  border:1.5px solid var(--border2);border-radius:9px;padding:8px 11px;
+/* ════════ TRACKER ════════ */
+.tracker{background:var(--s2);border:1px solid rgba(240,165,0,.14);
+  border-radius:var(--r);padding:12px;margin-bottom:10px;overflow:hidden}
+.tr-title{font-size:11px;font-weight:700;color:var(--gold2);margin-bottom:8px}
+.tr-inp-row{display:flex;gap:7px;margin-bottom:8px}
+.tr-inp{flex:1;min-width:0;background:rgba(255,255,255,.05);
+  border:1.5px solid var(--b2);border-radius:9px;padding:8px 10px;
   font-size:14px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;
   text-align:right;outline:none;-webkit-appearance:none;transition:.2s}
-.tracker-inputs .trip-input:focus{border-color:var(--gold);background:rgba(240,165,0,.06)}
-.btn-add-trip{flex-shrink:0;background:linear-gradient(135deg,#c47d00,var(--gold));
+.tr-inp:focus{border-color:var(--gold);background:rgba(240,165,0,.05)}
+.tr-btn{flex-shrink:0;background:linear-gradient(135deg,#c47d00,var(--gold));
   color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:900;
-  font-size:11px;padding:0 14px;border-radius:9px;border:none;cursor:pointer;
-  white-space:nowrap;transition:.2s}
-.btn-add-trip:active{transform:scale(.96)}
-.tracker-status{background:rgba(0,0,0,.2);border-radius:9px;padding:9px 11px}
-.ts-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.ts-row:last-child{margin-bottom:0}
-.ts-lbl{font-size:11px;color:var(--muted)}
-.ts-val{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;direction:ltr}
-.ts-val.green{color:var(--green2)} .ts-val.gold{color:var(--gold2)}
-.ts-val.red{color:var(--red)} .ts-val.neu{color:var(--blue2)}
-.trips-list{margin-top:8px;max-height:100px;overflow-y:auto}
+  font-size:11px;padding:0 13px;border-radius:9px;border:none;cursor:pointer}
+.tr-btn.exp{background:linear-gradient(135deg,#922,var(--red));color:#fff}
+.tr-status{background:rgba(0,0,0,.2);border-radius:9px;padding:9px 11px}
+.tr-row{display:flex;justify-content:space-between;align-items:center;
+  padding:3px 0;font-size:11px}
+.tr-lbl{color:var(--muted)} .tr-val{font-family:'Tajawal';font-weight:700;direction:ltr}
+.tr-val.g{color:var(--green2)} .tr-val.gold{color:var(--gold2)}
+.tr-val.r{color:var(--red)} .tr-val.b{color:var(--blue2)}
+.trips-list{margin-top:7px;max-height:90px;overflow-y:auto}
 .trip-item{display:flex;justify-content:space-between;align-items:center;
   padding:5px 9px;background:rgba(255,255,255,.03);border-radius:7px;
   margin-bottom:3px;font-size:11px}
 .trip-del{background:none;border:none;color:var(--muted);cursor:pointer;
   font-size:12px;padding:2px 5px}
 
-/* ── BREAKDOWN ── */
-.sec-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;
-  letter-spacing:.07em;margin-bottom:7px;padding-right:2px}
-.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
-  overflow:hidden;margin-bottom:11px}
-.card-row{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 13px;border-bottom:1px solid var(--border);transition:.12s}
-.card-row:last-child{border-bottom:none}
-.cr-left{display:flex;align-items:center;gap:9px}
-.cr-icon{font-size:15px;width:22px;text-align:center}
-.cr-name{font-size:12px;font-weight:600}
-.cr-desc{font-size:10px;color:var(--muted);margin-top:1px}
-.cr-val{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;direction:ltr}
-.cr-val.neg{color:var(--red)} .cr-val.warn{color:var(--gold)}
-.cr-val.pos{color:var(--green2)} .cr-val.neu{color:var(--blue2)}
+/* ════════ RATIO STRIP ════════ */
+.ratio-strip{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 12px;background:var(--s1);border:1px solid var(--b1);
+  border-radius:10px;margin-bottom:10px;font-size:11px}
 
-/* ── SETTINGS ── */
-.setting-card{background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;margin-bottom:11px}
-.setting-hdr{padding:9px 13px;background:var(--s2);border-bottom:1px solid var(--border);
-  font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.setting-row{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 13px;border-bottom:1px solid var(--border);gap:10px}
-.setting-row:last-child{border-bottom:none}
-.sr-label{font-size:12px;font-weight:600;flex:1}
-.sr-desc{font-size:10px;color:var(--muted);margin-top:1px}
-.sr-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.setting-input{width:80px;background:rgba(255,255,255,.05);
-  border:1px solid var(--border2);border-radius:8px;padding:6px 9px;
-  font-size:14px;font-weight:700;color:var(--gold);font-family:'Tajawal',sans-serif;
-  text-align:center;outline:none;transition:.2s;-webkit-appearance:none;direction:ltr}
-.setting-input:focus{border-color:var(--gold);background:rgba(240,165,0,.07)}
-.sr-unit{font-size:10px;color:var(--muted);font-weight:600;white-space:nowrap}
+/* ════════ BREAKDOWN ════════ */
+.sec-ttl{font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.card{background:var(--s1);border:1px solid var(--b1);
+  border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.c-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 13px;border-bottom:1px solid var(--b1)}
+.c-row:last-child{border-bottom:none}
+.c-l{display:flex;align-items:center;gap:8px}
+.c-ic{font-size:15px;width:22px;text-align:center}
+.c-nm{font-size:12px;font-weight:600}
+.c-ds{font-size:10px;color:var(--muted);margin-top:1px}
+.c-vl{font-family:'Tajawal';font-size:13px;font-weight:700;direction:ltr}
+.c-vl.neg{color:var(--red)} .c-vl.warn{color:var(--gold)} .c-vl.pos{color:var(--green2)}
 
-/* ── LOG TABLE ── */
-.log-table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);
-  margin-bottom:11px}
-.log-table{width:100%;border-collapse:collapse;min-width:480px}
-.log-table th{padding:9px 10px;font-size:10px;font-weight:700;color:var(--muted);
-  text-align:center;background:var(--s2);border-bottom:1px solid var(--border2);
-  white-space:nowrap;letter-spacing:.04em;text-transform:uppercase}
-.log-table td{padding:8px 10px;font-size:12px;text-align:center;
-  border-bottom:1px solid var(--border);color:var(--text);
+/* ════════ SETTINGS ════════ */
+.sc{background:var(--s1);border:1px solid var(--b1);
+  border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.sc-hdr{padding:9px 13px;background:var(--s2);border-bottom:1px solid var(--b1);
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.05em}
+.s-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 13px;border-bottom:1px solid var(--b1);gap:10px}
+.s-row:last-child{border-bottom:none}
+.s-lbl{font-size:12px;font-weight:600;flex:1}
+.s-ds{font-size:10px;color:var(--muted);margin-top:1px}
+.s-r{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.s-inp{width:78px;background:rgba(255,255,255,.05);border:1px solid var(--b2);
+  border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700;
+  color:var(--gold);font-family:'Tajawal',sans-serif;text-align:center;
+  outline:none;transition:.2s;-webkit-appearance:none;direction:ltr}
+.s-inp:focus{border-color:var(--gold);background:rgba(240,165,0,.06)}
+.s-unit{font-size:10px;color:var(--muted);font-weight:600;white-space:nowrap}
+
+/* ════════ NOTIF PAGE ════════ */
+.notif-list{display:flex;flex-direction:column;gap:8px}
+.notif-item{background:var(--s1);border:1px solid var(--b1);
+  border-radius:var(--r);padding:12px 14px;
+  display:flex;align-items:flex-start;gap:10px;position:relative}
+.notif-item.unread{border-color:rgba(240,165,0,.3);background:rgba(240,165,0,.04)}
+.notif-item.unread::before{content:'';position:absolute;top:12px;left:12px;
+  width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.ni-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.ni-body{flex:1;min-width:0}
+.ni-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.ni-msg{font-size:11px;color:var(--muted2);line-height:1.6}
+.ni-time{font-size:10px;color:var(--muted);margin-top:4px}
+.notif-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.notif-clear{width:100%;padding:10px;background:rgba(255,87,87,.06);
+  border:1px solid rgba(255,87,87,.2);border-radius:10px;color:var(--red);
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:700;
+  cursor:pointer;margin-top:8px}
+
+/* ════════ LOG ════════ */
+.log-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--b1);margin-bottom:10px}
+.log-t{width:100%;border-collapse:collapse;min-width:440px}
+.log-t th{padding:8px 9px;font-size:10px;font-weight:700;color:var(--muted);
+  text-align:center;background:var(--s2);border-bottom:1px solid var(--b2);
+  white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+.log-t td{padding:8px 9px;font-size:12px;text-align:center;
+  border-bottom:1px solid var(--b1);color:var(--text);
   direction:ltr;font-family:'Tajawal',sans-serif}
-.log-table tr:nth-child(even) td{background:rgba(255,255,255,.015)}
-.log-table .totals td{background:var(--s3);font-weight:700;color:var(--gold2);
-  border-top:1px solid var(--border2)}
-.log-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;
-  font-size:12px;padding:2px 5px}
+.log-t tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+.log-t .tots td{background:var(--s3);font-weight:700;color:var(--gold2);
+  border-top:1px solid var(--b2)}
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px}
 
-/* ── DATA BUTTONS ── */
-.data-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
-.data-btn{padding:11px;border-radius:var(--r2);font-family:'IBM Plex Sans Arabic',sans-serif;
+/* ════════ BOTTOM SHEET (KPI detail) ════════ */
+.bs-ov{position:fixed;inset:0;z-index:150;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:.2s}
+.bs-ov.on{opacity:1;pointer-events:all}
+.bs{background:var(--s1);border:1px solid var(--b2);
+  border-radius:20px 20px 0 0;padding:18px 17px 34px;
+  width:100%;max-width:480px;
+  transform:translateY(100%);transition:.26s cubic-bezier(.34,1.3,.64,1)}
+.bs-ov.on .bs{transform:translateY(0)}
+.bs-drag{width:34px;height:4px;border-radius:2px;background:var(--b2);margin:0 auto 14px}
+.bs-title{font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;margin-bottom:3px}
+.bs-sub{font-size:11px;color:var(--muted);margin-bottom:13px}
+.bs-rows{background:var(--s2);border-radius:10px;overflow:hidden;margin-bottom:11px}
+.bs-row{display:flex;justify-content:space-between;align-items:center;
+  padding:9px 13px;border-bottom:1px solid var(--b1);font-size:12px}
+.bs-row:last-child{border-bottom:none}
+.bs-rl{color:var(--muted2)} .bs-rv{font-family:'Tajawal';font-weight:700;direction:ltr}
+.bs-hl{background:rgba(255,255,255,.03);border-radius:0 0 10px 10px;
+  margin:-1px 0 0;padding:11px 13px;border-top:1px solid var(--b2)}
+.bs-prog{height:4px;border-radius:2px;background:var(--b2);overflow:hidden;margin-top:10px}
+.bs-bar{height:100%;border-radius:2px;transition:.4s}
+.bs-ok{width:100%;padding:12px;background:linear-gradient(135deg,#c47d00,var(--gold));
+  color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:900;
+  font-size:14px;border-radius:12px;border:none;cursor:pointer;margin-top:12px}
+
+/* ════════ PROFILE MODAL ════════ */
+.pm-ov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);
+  backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:.22s}
+.pm-ov.on{opacity:1;pointer-events:all}
+.pm{background:var(--s1);border:1px solid var(--b2);
+  border-radius:20px 20px 0 0;padding:18px 17px 34px;
+  width:100%;max-width:480px;
+  transform:translateY(100%);transition:.28s cubic-bezier(.34,1.56,.64,1)}
+.pm-ov.on .pm{transform:translateY(0)}
+.pm-drag{width:34px;height:4px;border-radius:2px;background:var(--b2);margin:0 auto 14px}
+.pm-title{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;margin-bottom:3px}
+.pm-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+.pm-av-wrap{display:flex;justify-content:center;margin-bottom:14px}
+.pm-av{width:78px;height:78px;border-radius:50%;cursor:pointer;
+  background:linear-gradient(135deg,var(--gold),#c47d00);
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+  overflow:hidden;position:relative;box-shadow:0 0 0 2px rgba(240,165,0,.3)}
+.pm-av img{width:100%;height:100%;object-fit:cover}
+.pm-av-ov{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.55);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.pm-av-ov span{font-size:18px} .pm-av-ov small{font-size:9px;color:#fff;font-weight:700}
+.pm-btns{display:flex;gap:9px;margin-top:2px}
+.pm-save{flex:1;background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
+  padding:11px;border-radius:11px;border:none;cursor:pointer}
+.pm-cancel{flex:1;background:var(--s2);color:var(--muted);
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
+  padding:11px;border-radius:11px;border:1px solid var(--b1);cursor:pointer}
+
+/* ════════ DATA BTNS ════════ */
+.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.data-btn{padding:10px;border-radius:10px;font-family:'IBM Plex Sans Arabic',sans-serif;
   font-size:12px;font-weight:700;cursor:pointer;transition:.2s;
   display:flex;align-items:center;justify-content:center;gap:5px;border:none}
 .data-btn:active{transform:scale(.97)}
-.btn-export{background:rgba(59,139,235,.1);border:1px solid rgba(59,139,235,.25);color:var(--blue2)}
-.btn-import{background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.2);color:var(--green2)}
-.btn-clear-all{width:100%;padding:10px;background:rgba(255,87,87,.06);
-  border:1px solid rgba(255,87,87,.2);border-radius:var(--r2);color:var(--red);
+.db-exp{background:rgba(59,139,235,.1);border:1px solid rgba(59,139,235,.25);color:var(--blue2)}
+.db-imp{background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.2);color:var(--green2)}
+.danger-btn{width:100%;padding:10px;background:rgba(255,87,87,.06);
+  border:1px solid rgba(255,87,87,.2);border-radius:10px;color:var(--red);
   font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:700;
-  cursor:pointer;transition:.2s;margin-top:4px}
-.btn-clear-all:active{background:rgba(255,87,87,.12)}
+  cursor:pointer;margin-top:4px}
 
-/* ── RATIO STRIP ── */
-.ratio-strip{display:flex;justify-content:space-between;align-items:center;
-  padding:7px 13px;background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r2);margin-bottom:11px}
-
-/* ── KPI BOTTOM SHEET ── */
-.sheet-overlay{position:fixed;inset:0;z-index:150;
-  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
-  opacity:0;pointer-events:none;transition:.22s;
-  display:flex;align-items:flex-end;justify-content:center}
-.sheet-overlay.open{opacity:1;pointer-events:all}
-.bottom-sheet{background:var(--s1);border:1px solid var(--border2);
-  border-radius:22px 22px 0 0;padding:20px 18px 36px;
-  width:100%;max-width:480px;
-  transform:translateY(100%);transition:.28s cubic-bezier(.34,1.3,.64,1)}
-.sheet-overlay.open .bottom-sheet{transform:translateY(0)}
-.sheet-drag{width:36px;height:4px;border-radius:2px;background:var(--border2);
-  margin:0 auto 16px}
-.sheet-title{font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;
-  margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.sheet-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
-.sheet-rows{background:var(--s2);border-radius:var(--r2);overflow:hidden;margin-bottom:14px}
-.sheet-row{display:flex;justify-content:space-between;align-items:center;
-  padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
-.sheet-row:last-child{border-bottom:none}
-.sheet-row-lbl{color:var(--muted2)}
-.sheet-row-val{font-family:'Tajawal',sans-serif;font-weight:700;direction:ltr}
-.sheet-highlight{background:rgba(255,255,255,.04);margin:0 -14px;padding:12px 14px;
-  border-radius:0 0 var(--r2) var(--r2)}
-.sheet-progress{height:5px;border-radius:3px;background:var(--border2);
-  overflow:hidden;margin-top:10px}
-.sheet-progress-bar{height:100%;border-radius:3px;transition:.4s}
-.sheet-ok-btn{width:100%;padding:13px;
-  background:linear-gradient(135deg,#c47d00,var(--gold));
-  color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;
-  font-weight:700;font-size:14px;border-radius:13px;border:none;cursor:pointer}
-
-/* ── PROFILE MODAL ── */
-.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);
-  backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;
-  opacity:0;pointer-events:none;transition:.25s}
-.overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--s1);border:1px solid var(--border2);
-  border-radius:22px 22px 0 0;padding:20px 18px 36px;
-  width:100%;max-width:480px;
-  transform:translateY(100%);transition:.3s cubic-bezier(.34,1.56,.64,1)}
-.overlay.open .modal{transform:translateY(0)}
-.modal-drag{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 16px}
-.modal-title{font-size:16px;font-weight:900;margin-bottom:4px;font-family:'Tajawal',sans-serif}
-.modal-sub{font-size:11px;color:var(--muted);margin-bottom:18px}
-.modal-avatar-wrap{display:flex;justify-content:center;margin-bottom:16px}
-.modal-avatar{width:84px;height:84px;border-radius:50%;cursor:pointer;
-  background:linear-gradient(135deg,var(--gold),#c47d00);
-  display:flex;align-items:center;justify-content:center;font-size:36px;
-  overflow:hidden;position:relative;box-shadow:0 0 0 3px rgba(240,165,0,.3);transition:.2s}
-.modal-avatar:active{transform:scale(.95)}
-.modal-avatar img{width:100%;height:100%;object-fit:cover}
-.modal-av-ov{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.55);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.modal-av-ov span{font-size:18px}
-.modal-av-ov small{font-size:9px;color:#fff;font-weight:700}
-.name-input{width:100%;background:var(--s2);border:1.5px solid var(--border2);
-  border-radius:12px;padding:11px 13px;font-size:15px;font-weight:700;
-  color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;
-  text-align:right;outline:none;transition:.2s;margin-bottom:13px}
-.name-input:focus{border-color:var(--gold)}
-.modal-btns{display:flex;gap:9px}
-.btn-save{flex:1;background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
-  padding:12px;border-radius:12px;border:none;cursor:pointer}
-.btn-cancel{flex:1;background:var(--s2);color:var(--muted);
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
-  padding:12px;border-radius:12px;border:1px solid var(--border);cursor:pointer}
-
-/* ── MISC ── */
-@keyframes numFlash{0%{opacity:.2;transform:translateY(3px)}100%{opacity:1;transform:none}}
-.flash{animation:numFlash .22s ease}
+/* ════════ SYNC BADGE ════════ */
+.sync-badge{position:fixed;top:10px;left:50%;transform:translateX(-50%);
+  background:rgba(0,200,150,.15);border:1px solid rgba(0,200,150,.3);
+  color:var(--green2);font-size:11px;font-weight:700;padding:4px 13px;
+  border-radius:20px;z-index:90;display:none;align-items:center;gap:4px;white-space:nowrap}
+.sync-badge.on{display:flex}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-ic{display:inline-block;animation:spin .7s linear infinite}
+@keyframes flash{0%{opacity:.2;transform:translateY(3px)}100%{opacity:1;transform:none}}
+.flash{animation:flash .2s ease}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:var(--green);animation:pulse 1.8s infinite;margin-left:4px}
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
-input[type=number]{-moz-appearance:textfield}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-
-/* ── AUTH SCREEN ── */
-#authScreen{position:fixed;inset:0;z-index:999;
-  background:var(--bg);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:32px 24px;
-  text-align:center}
-#authScreen.hidden{display:none}
-.auth-logo{font-size:64px;margin-bottom:16px}
-.auth-title{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;
-  color:var(--text);margin-bottom:6px}
-.auth-sub{font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.7}
-.auth-user-info{display:flex;flex-direction:column;align-items:center;gap:8px;
-  margin-bottom:28px;display:none}
-.auth-user-info.visible{display:flex}
-.auth-avatar{width:64px;height:64px;border-radius:50%;
-  border:2px solid rgba(240,165,0,.4);object-fit:cover}
-.auth-user-name{font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
-.auth-user-email{font-size:12px;color:var(--muted)}
-.btn-google{width:100%;max-width:320px;padding:14px 20px;border-radius:14px;
-  background:#fff;color:#1f1f1f;font-family:'IBM Plex Sans Arabic',sans-serif;
-  font-size:14px;font-weight:700;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  margin-bottom:12px;transition:.2s;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-.btn-google:active{transform:scale(.97)}
-.btn-google img{width:20px;height:20px}
-.btn-anon{width:100%;max-width:320px;padding:12px 20px;border-radius:14px;
-  background:rgba(255,255,255,.06);color:var(--muted);
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;font-weight:600;
-  border:1px solid var(--border2);cursor:pointer;transition:.2s}
-.btn-anon:active{opacity:.7}
-.btn-enter-app{width:100%;max-width:320px;padding:14px 20px;border-radius:14px;
-  background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:15px;font-weight:900;
-  border:none;cursor:pointer;margin-bottom:12px;transition:.2s}
-.btn-enter-app:active{transform:scale(.97)}
-.auth-divider{font-size:11px;color:var(--muted);margin:8px 0;width:100%;max-width:320px}
-.sync-badge{position:fixed;top:12px;left:50%;transform:translateX(-50%);
-  background:rgba(0,200,150,.15);border:1px solid rgba(0,200,150,.3);
-  color:var(--green2);font-size:11px;font-weight:700;
-  padding:5px 14px;border-radius:20px;z-index:90;
-  display:none;align-items:center;gap:5px;white-space:nowrap}
-.sync-badge.show{display:flex}
-@keyframes spin{to{transform:rotate(360deg)}}
-.sync-spin{display:inline-block;animation:spin .8s linear infinite}
+  background:var(--green);animation:pulse 1.8s infinite;margin-left:3px}
 </style>
 </head>
 <body>
 
-<!-- Firebase SDKs -->
-<script type="module" id="firebaseModule">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInAnonymously, onAuthStateChanged, signOut }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBCpI5hcTXGJUxgd_1s8U_rN6ugOvvMpaU",
-  authDomain: "hasbt-elshift.firebaseapp.com",
-  projectId: "hasbt-elshift",
-  storageBucket: "hasbt-elshift.firebasestorage.app",
-  messagingSenderId: "95168484525",
-  appId: "1:95168484525:web:5b57d784b818078f9ba224",
-  measurementId: "G-1VB9NCWTR3"
-};
-
-const fbApp  = initializeApp(firebaseConfig);
-const auth   = getAuth(fbApp);
-const db     = getFirestore(fbApp);
-const gProvider = new GoogleAuthProvider();
-
-// ── expose to global scope ──
-window._fb = { auth, db, gProvider, GoogleAuthProvider,
-  signInWithPopup, signInAnonymously, onAuthStateChanged, signOut,
-  doc, setDoc, getDoc, onSnapshot, serverTimestamp };
-
-// ── Auth state listener ──
-onAuthStateChanged(auth, user => {
-  if (user) {
-    window._fbUser = user;
-    window._onLogin && window._onLogin(user);
-  } else {
-    window._fbUser = null;
-    window._onLogout && window._onLogout();
-  }
-});
-</script>
-
-<!-- AUTH SCREEN -->
+<!-- ════════ AUTH SCREEN ════════ -->
 <div id="authScreen">
-  <div class="auth-logo">🛵</div>
+  <div class="auth-logo-wrap">
+    <div class="auth-logo-img">🛵</div>
+  </div>
   <div class="auth-title">حاسبة الشفت</div>
-  <div class="auth-sub">سجّل دخولك لحفظ بياناتك تلقائياً<br>على السحابة وتزامنها على كل أجهزتك</div>
+  <div class="auth-sub">أدخل بريدك الإلكتروني وهنبعتلك رابط دخول فوري — مجاني تماماً</div>
 
-  <!-- logged-in user info -->
-  <div class="auth-user-info" id="authUserInfo">
-    <img class="auth-avatar" id="authAvatar" src="" alt="">
-    <div class="auth-user-name" id="authUserName">—</div>
-    <div class="auth-user-email" id="authUserEmail">—</div>
-  </div>
-
-  <!-- enter app (shown after login) -->
-  <button class="btn-enter-app" id="btnEnterApp" style="display:none" onclick="enterApp()">
-    🚀 دخول التطبيق
-  </button>
-
-  <!-- Google login -->
-  <button class="btn-google" id="btnGoogle" onclick="loginGoogle()">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-    تسجيل الدخول بـ Google
-  </button>
-
-  <div class="auth-divider">— أو —</div>
-
-  <!-- Anonymous -->
-  <button class="btn-anon" id="btnAnon" onclick="loginAnon()">
-    متابعة بدون حساب (بيانات محلية فقط)
-  </button>
-
-  <div style="font-size:10px;color:var(--muted);margin-top:16px;max-width:280px;line-height:1.6">
-    🔒 بياناتك خاصة بك تماماً — لا يمكن لأحد الوصول إليها
-  </div>
-</div>
-
-<!-- Sync badge -->
-<div class="sync-badge" id="syncBadge">
-  <span class="sync-spin">🔄</span> جاري المزامنة...
-</div>
-
-<div class="app">
-
-<!-- ═══ HEADER ═══ -->
-<div class="header">
-  <div class="header-inner">
-    <div class="profile-row">
-      <div class="avatar-wrap" onclick="openModal()">
-        <div class="avatar" id="headerAvatar">
-          <span id="avatarEmoji">🛵</span>
-          <img id="avatarImg" src="" style="display:none">
-        </div>
-        <div class="avatar-dot"></div>
-      </div>
-      <div class="profile-info">
-        <div class="profile-name" onclick="openModal()">
-          <span id="displayName">طارق عبد الجليل</span>
-          <span class="pen">✏️</span>
-        </div>
-        <div style="font-size:10px;color:var(--muted)">كابتن دليفري <span class="pulse"></span></div>
-      </div>
+  <div class="auth-card">
+    <div class="auth-dots">
+      <div class="auth-dot on" id="dot1"></div>
+      <div class="auth-dot" id="dot2"></div>
+      <div class="auth-dot" id="dot3"></div>
     </div>
-    <!-- remaining bar -->
-    <div class="rem-bar">
-      <div class="rstat">
-        <div class="rstat-val" id="hs-km-rem">—</div>
-        <div class="rstat-lbl">كم متبقي</div>
+
+    <!-- Step 1: Email -->
+    <div class="auth-step on" id="step1">
+      <input class="inp ltr" id="emailInp" type="email"
+             placeholder="example@gmail.com" inputmode="email" autocomplete="email">
+      <div class="auth-err" id="err1"></div>
+      <button class="auth-btn" id="btnSend" onclick="sendLink()">📧 إرسال رابط الدخول</button>
+      <div class="auth-hint">🔒 بدون كلمة مرور — اضغط الرابط في بريدك وادخل فوراً</div>
+    </div>
+
+    <!-- Step 2: Waiting -->
+    <div class="auth-step" id="step2">
+      <div style="text-align:center;font-size:40px">📬</div>
+      <div style="font-family:'Tajawal';font-size:16px;font-weight:900">تم الإرسال!</div>
+      <div class="sent-box">
+        1️⃣ افتح بريدك الإلكتروني<br>
+        2️⃣ ابحث عن رسالة من <strong>Firebase / حاسبة الشفت</strong><br>
+        3️⃣ اضغط الرابط — ستدخل التطبيق فوراً
       </div>
-      <div class="rstat">
-        <div class="rstat-val" id="hs-hrs-rem">—</div>
-        <div class="rstat-lbl">وقت متبقي</div>
-      </div>
-      <div class="rstat">
-        <div class="rstat-val" id="hs-money-rem">—</div>
-        <div class="rstat-lbl">جنيه متبقي</div>
-      </div>
+      <div class="auth-err" id="err2"></div>
+      <button class="auth-btn sec" onclick="sendLink()">🔄 إعادة الإرسال</button>
+      <button class="auth-back" onclick="goStep(1)">← تغيير البريد</button>
+    </div>
+
+    <!-- Step 3: Name -->
+    <div class="auth-step" id="step3">
+      <div style="text-align:center;font-size:36px;margin-bottom:2px">👋</div>
+      <div style="font-family:'Tajawal';font-size:16px;font-weight:900">مرحباً! ما اسمك؟</div>
+      <input class="inp" id="nameInp" type="text" placeholder="اكتب اسمك هنا" maxlength="40">
+      <div class="auth-err" id="err3"></div>
+      <button class="auth-btn" onclick="saveName()">🚀 دخول التطبيق</button>
+      <div class="auth-hint">يمكن تغيير الاسم لاحقاً من الملف الشخصي</div>
     </div>
   </div>
 </div>
 
-<!-- ═══ PAGES ═══ -->
-<div id="pages-wrap">
+<!-- ════════ SYNC BADGE ════════ -->
+<div class="sync-badge" id="syncBadge"><span class="spin-ic">🔄</span><span id="syncMsg">جاري الحفظ</span></div>
+
+<!-- ════════ APP ════════ -->
+<div id="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="av-wrap" onclick="openPM()">
+      <div class="av" id="hdrAv"><span id="avEmoji">🛵</span><img id="avImg" src="" style="display:none"></div>
+      <div class="av-dot"></div>
+    </div>
+    <div class="p-info">
+      <div class="p-name" onclick="openPM()"><span id="dispName">طارق</span><span class="pen">✏️</span></div>
+      <div class="p-sub">كابتن دليفري <span class="pulse"></span></div>
+    </div>
+  </div>
+  <div class="rem-bar">
+    <div class="rs"><div class="rs-v" id="hs-km">—</div><div class="rs-l">كم متبقي</div></div>
+    <div class="rs"><div class="rs-v" id="hs-time">—</div><div class="rs-l">وقت متبقي</div></div>
+    <div class="rs"><div class="rs-v" id="hs-money">—</div><div class="rs-l">جنيه متبقي</div></div>
+  </div>
+  <div class="dt-bar">
+    <span id="dtDate" style="direction:rtl"></span>
+    <span class="dt-time" id="dtTime"></span>
+  </div>
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="tickerInner">
+      <span>💡 شغّل أوقات الذروة لزيادة أرباحك</span>
+      <span>⚡ افحص الإطارات أسبوعياً</span>
+      <span>🔧 غيّر الزيت كل 1000 كم</span>
+      <span>📱 استخدم باقة إنترنت شهرية</span>
+      <span>💰 سجّل شيفتك يومياً لمتابعة أدائك</span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGES CONTAINER -->
+<div id="pagesWrap">
 
 <!-- PAGE: DASHBOARD -->
-<div class="page active" id="page-dash">
-  <div style="height:6px"></div>
+<div class="pg on" id="pg-dash">
+  <div style="height:10px"></div>
 
-  <!-- Goal -->
   <div class="goal-card">
-    <div class="goal-top">
-      <div class="goal-label">الصافي المطلوب للبيت</div>
-      <div class="goal-badge">🎯 هدف الشيفت</div>
+    <div class="gc-top">
+      <div class="gc-lbl">الصافي المطلوب للبيت</div>
+      <div class="gc-bdg">🎯 هدف الشيفت</div>
     </div>
-    <div class="goal-row">
-      <input class="goal-input" id="goalInput" type="number" value="500"
-             inputmode="numeric" min="0" step="50" oninput="recalc()">
-      <span class="goal-curr">جنيه</span>
+    <div class="gc-row">
+      <input class="gc-inp" id="goalInp" type="number" value="500" inputmode="numeric" min="0" step="50" oninput="calc()">
+      <span class="gc-curr">جنيه</span>
     </div>
-    <div class="shift-btns">
-      <button class="btn-start" id="btnStart" onclick="toggleShift()">
-        <span id="shiftBtnIcon">▶</span>
-        <span id="shiftBtnTxt">بدء الشيفت</span>
-      </button>
-      <button class="btn-end" id="btnEnd" onclick="endShift()">⏹ إنهاء</button>
+    <div class="shift-row">
+      <button class="sb start" id="btnStart" onclick="toggleShift()"><span id="sIcon">▶</span><span id="sTxt">بدء الشيفت</span></button>
+      <button class="sb end" id="btnEnd" onclick="endShift()">⏹ إنهاء</button>
     </div>
-    <div id="pauseBadge" style="display:none" class="pause-badge">⏸ الشيفت متوقف مؤقتاً — اضغط للمتابعة</div>
-    <div id="shiftTimer">
-      ⏱ وقت الشيفت:
-      <span id="timerDisplay" style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">00:00:00</span>
-    </div>
+    <div class="shift-timer" id="shiftTimer">⏱ <span id="timerDisp" style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">00:00:00</span></div>
   </div>
 
-  <!-- KPI 2×2 — clickable -->
+  <!-- KPIs -->
   <div class="kpi-grid">
-    <div class="kpi km" onclick="showKpiSheet('km')">
-      <div class="kpi-lbl-top">🏁 الكيلومترات المطلوبة</div>
+    <div class="kpi km" onclick="showBS('km')">
+      <div class="kpi-lbl">🏁 الكيلومترات المطلوبة</div>
       <div class="kpi-val" id="r-km">—</div>
       <div class="kpi-unit">كيلومتر</div>
     </div>
-    <div class="kpi hrs" onclick="showKpiSheet('hrs')">
-      <div class="kpi-lbl-top">⏱️ المدة التقديرية</div>
+    <div class="kpi hrs" onclick="showBS('hrs')">
+      <div class="kpi-lbl">⏱️ المدة التقديرية</div>
       <div class="kpi-val" id="r-hrs">—</div>
-      <div class="kpi-unit" id="r-hrs-fmt">ساعة</div>
+      <div class="kpi-unit" id="r-hrs-u">ساعة</div>
     </div>
-    <div class="kpi cost" onclick="showKpiSheet('cost')">
-      <div class="kpi-lbl-top">💸 إجمالي التكاليف</div>
+    <div class="kpi cost" onclick="showBS('cost')">
+      <div class="kpi-lbl">💸 إجمالي التكاليف</div>
       <div class="kpi-val" id="r-cost">—</div>
       <div class="kpi-unit">جنيه</div>
     </div>
-    <div class="kpi earn" onclick="showKpiSheet('earn')">
-      <div class="kpi-lbl-top">💰 المطلوب تحصيله</div>
+    <div class="kpi earn" onclick="showBS('earn')">
+      <div class="kpi-lbl">💰 المطلوب تحصيله</div>
       <div class="kpi-val" id="r-earn">—</div>
       <div class="kpi-unit">جنيه</div>
     </div>
   </div>
 
-  <!-- Trip Tracker -->
-  <div class="tracker-card">
-    <div class="tracker-title">📍 متتبع المشاوير</div>
-    <div class="tracker-inputs">
-      <input class="trip-input" id="tripAmt" type="number"
-             placeholder="ثمن المشوار (جنيه)" inputmode="numeric" min="0">
-      <button class="btn-add-trip" onclick="addTrip()">+ مشوار</button>
+  <!-- Net -->
+  <div class="net-bar">
+    <div><div class="nb-lbl">✅ صافي الربح للبيت</div><div class="nb-sub">بعد خصم كل التكاليف</div></div>
+    <div style="text-align:left"><span class="nb-val" id="r-net">—</span><span style="font-size:11px;color:var(--green2)"> جنيه</span></div>
+  </div>
+
+  <!-- Tracker -->
+  <div class="tracker">
+    <div class="tr-title">📍 متتبع المشاوير — المتبقي لتحقيق الهدف</div>
+    <div class="tr-inp-row">
+      <input class="tr-inp" id="tripInp" type="number" placeholder="ثمن المشوار (جنيه)" inputmode="numeric" min="0">
+      <button class="tr-btn" onclick="addTrip()">+ مشوار</button>
     </div>
-    <div class="tracker-inputs" style="margin-bottom:9px">
-      <input class="trip-input" id="expAmt" type="number"
-             placeholder="مصروف إضافي (جنيه)" inputmode="numeric" min="0"
-             style="border-color:rgba(255,87,87,.3)">
-      <button class="btn-add-trip" onclick="addExpense()"
-              style="background:linear-gradient(135deg,#922,var(--red));color:#fff">+ مصروف</button>
+    <div class="tr-inp-row">
+      <input class="tr-inp" id="expInp" type="number" placeholder="مصروف إضافي (جنيه)" inputmode="numeric" min="0" style="border-color:rgba(255,87,87,.3)">
+      <button class="tr-btn exp" onclick="addExp()">+ مصروف</button>
     </div>
-    <div class="tracker-status">
-      <div class="ts-row">
-        <span class="ts-lbl">💰 إجمالي المحصّل</span>
-        <span class="ts-val gold" id="t-collected">0</span>
-      </div>
-      <div class="ts-row">
-        <span class="ts-lbl">🎯 المتبقي للهدف</span>
-        <span class="ts-val red" id="t-remaining">—</span>
-      </div>
-      <div class="ts-row">
-        <span class="ts-lbl">🏁 كيلومترات متبقية</span>
-        <span class="ts-val neu" id="t-km-rem">—</span>
-      </div>
-      <div class="ts-row">
-        <span class="ts-lbl">🔢 عدد المشاوير</span>
-        <span class="ts-val" id="t-count">0</span>
-      </div>
+    <div class="tr-status">
+      <div class="tr-row"><span class="tr-lbl">💰 إجمالي المحصّل</span><span class="tr-val gold" id="t-col">0</span></div>
+      <div class="tr-row"><span class="tr-lbl">🎯 المتبقي للهدف</span><span class="tr-val r" id="t-rem">—</span></div>
+      <div class="tr-row"><span class="tr-lbl">🏁 كيلومترات متبقية</span><span class="tr-val b" id="t-km">—</span></div>
+      <div class="tr-row"><span class="tr-lbl">🔢 عدد المشاوير</span><span class="tr-val" id="t-cnt">0</span></div>
     </div>
     <div class="trips-list" id="tripsList"></div>
   </div>
 
-  <!-- ratio -->
   <div class="ratio-strip">
-    <span style="font-size:11px;color:var(--muted)">نسبة المصاريف</span>
+    <span style="color:var(--muted)">نسبة المصاريف</span>
     <span style="font-family:'Tajawal';font-size:15px;font-weight:900;color:var(--red);direction:ltr" id="r-pct">—</span>
-    <span style="font-size:10px;color:var(--muted)">الهدف: أقل من 50%</span>
+    <span style="color:var(--muted)">الهدف: أقل من 50%</span>
   </div>
 </div>
 
 <!-- PAGE: SETTINGS -->
-<div class="page" id="page-settings">
-  <div style="height:12px"></div>
-  <!-- shift alarm -->
-  <div class="setting-card">
-    <div class="setting-hdr">🔔 منبّه الشيفت</div>
-    <div class="setting-row">
-      <div><div class="sr-label">وقت بدء الشيفت</div><div class="sr-desc">سيُنبّهك عند هذا الوقت يومياً</div></div>
-      <div class="sr-right">
-        <input type="time" id="s-alarm" class="setting-input" style="width:100px;font-size:13px"
-               oninput="saveSettings();scheduleAlarm()">
-        <span class="sr-unit"></span>
-      </div>
+<div class="pg" id="pg-settings">
+  <div style="height:10px"></div>
+  <!-- Alarm -->
+  <div class="sc">
+    <div class="sc-hdr">🔔 منبّه الشيفت</div>
+    <div class="s-row">
+      <div><div class="s-lbl">وقت بدء الشيفت</div><div class="s-ds">تنبيه يومي</div></div>
+      <div class="s-r"><input type="time" id="s-alarm" class="s-inp" style="width:95px;font-size:12px" oninput="saveSett();schedAlarm()"></div>
     </div>
-    <div class="setting-row">
-      <div><div class="sr-label">تنبيه قبل الشيفت</div><div class="sr-desc">كم دقيقة قبل الوقت المحدد</div></div>
-      <div class="sr-right">
-        <input class="setting-input" id="s-alarm-before" type="number" value="15" min="0" max="60"
-               oninput="saveSettings();scheduleAlarm()">
-        <span class="sr-unit">دقيقة</span>
-      </div>
+    <div class="s-row">
+      <div><div class="s-lbl">تنبيه قبل الشيفت</div></div>
+      <div class="s-r"><input class="s-inp" id="s-before" type="number" value="15" min="0" max="60" oninput="saveSett();schedAlarm()"><span class="s-unit">دقيقة</span></div>
     </div>
-    <div class="setting-row" id="notif-status-row">
-      <div><div class="sr-label">حالة الإشعارات</div></div>
-      <button onclick="requestNotifPerm()" id="notif-btn"
-        style="background:rgba(59,139,235,.15);border:1px solid rgba(59,139,235,.3);
-               color:var(--blue2);font-family:'IBM Plex Sans Arabic',sans-serif;
-               font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer">
-        تفعيل الإشعارات
-      </button>
+    <div class="s-row">
+      <div><div class="s-lbl">حالة الإشعارات</div></div>
+      <button id="notifBtn" onclick="reqNotif()" style="background:rgba(59,139,235,.15);border:1px solid rgba(59,139,235,.3);color:var(--blue2);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer">تفعيل</button>
     </div>
   </div>
+  <!-- Earnings -->
+  <div class="sc">
+    <div class="sc-hdr">💵 الكسب والإيرادات</div>
+    <div class="s-row"><div><div class="s-lbl">مكسب الكيلو</div><div class="s-ds">جنيه لكل كم</div></div><div class="s-r"><input class="s-inp" id="s-pkm" type="number" value="4" step="0.5" min="0.1" oninput="calc()"><span class="s-unit">جنيه/كم</span></div></div>
+    <div class="s-row"><div><div class="s-lbl">عمولة الشركة</div></div><div class="s-r"><input class="s-inp" id="s-com" type="number" value="17" step="1" min="0" max="60" oninput="calc()"><span class="s-unit">٪</span></div></div>
+    <div class="s-row"><div><div class="s-lbl">المصروف الشخصي</div></div><div class="s-r"><input class="s-inp" id="s-pers" type="number" value="50" step="10" min="0" oninput="calc()"><span class="s-unit">جنيه/يوم</span></div></div>
+  </div>
+  <!-- Fuel -->
+  <div class="sc">
+    <div class="sc-hdr">⛽ الوقود</div>
+    <div class="s-row"><div><div class="s-lbl">سعر اللتر</div></div><div class="s-r"><input class="s-inp" id="s-pp" type="number" value="22.5" step="0.5" min="0" oninput="calc()"><span class="s-unit">جنيه/لتر</span></div></div>
+    <div class="s-row"><div><div class="s-lbl">معدل الاستهلاك</div></div><div class="s-r"><input class="s-inp" id="s-kpl" type="number" value="30" step="1" min="1" oninput="calc()"><span class="s-unit">كم/لتر</span></div></div>
+  </div>
+  <!-- Maintenance -->
+  <div class="sc">
+    <div class="sc-hdr">🔧 صيانة وتشغيل</div>
+    <div class="s-row"><div><div class="s-lbl">تكلفة الزيت</div></div><div class="s-r"><input class="s-inp" id="s-oil" type="number" value="170" step="10" min="0" oninput="calc()"><span class="s-unit">جنيه/1000كم</span></div></div>
+    <div class="s-row"><div><div class="s-lbl">تكلفة الصيانة</div></div><div class="s-r"><input class="s-inp" id="s-mnt" type="number" value="50" step="10" min="0" oninput="calc()"><span class="s-unit">جنيه/1000كم</span></div></div>
+    <div class="s-row"><div><div class="s-lbl">تكلفة الإنترنت</div></div><div class="s-r"><input class="s-inp" id="s-iph" type="number" value="10" step="1" min="0" oninput="calc()"><span class="s-unit">جنيه/ساعة</span></div></div>
+    <div class="s-row"><div><div class="s-lbl">متوسط السرعة</div></div><div class="s-r"><input class="s-inp" id="s-spd" type="number" value="20" step="5" min="5" oninput="calc()"><span class="s-unit">كم/ساعة</span></div></div>
+  </div>
+  <!-- Motor -->
+  <div class="sc">
+    <div class="sc-hdr">🛵 عداد المحرك</div>
+    <div class="s-row"><div><div class="s-lbl">الكيلومترات الحالية</div><div class="s-ds">لحساب موعد الصيانة</div></div><div class="s-r"><input class="s-inp" id="s-mtkm" type="number" value="0" step="10" min="0" oninput="saveSett();chkMotor()"><span class="s-unit">كم</span></div></div>
+    <div class="s-row"><div><div class="s-lbl">آخر صيانة عند</div></div><div class="s-r"><input class="s-inp" id="s-lastm" type="number" value="0" step="10" min="0" oninput="saveSett()"><span class="s-unit">كم</span></div></div>
+  </div>
+  <!-- Data -->
+  <div class="sec-ttl">إدارة البيانات</div>
+  <div class="data-grid">
+    <button class="data-btn db-exp" onclick="exportD()">📤 تصدير نسخة احتياطية</button>
+    <button class="data-btn db-imp" onclick="$id('impF').click()">📥 استيراد بيانات</button>
+  </div>
+  <input type="file" id="impF" accept=".json" style="display:none" onchange="importD(event)">
+  <button class="danger-btn" onclick="signOutUser()">🚪 تسجيل الخروج</button>
+  <button class="danger-btn" style="margin-top:6px" onclick="clearAll()">🗑️ مسح كل البيانات</button>
+</div>
 
-  <div class="setting-card">
-    <div class="setting-hdr">💵 الكسب والإيرادات</div>
-    <div class="setting-row">
-      <div><div class="sr-label">مكسب الكيلو</div><div class="sr-desc">صافي ربحك لكل كيلومتر</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-pkm" type="number" value="4" step="0.5" min="0.1" oninput="recalc()"><span class="sr-unit">جنيه/كم</span></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">عمولة الشركة</div><div class="sr-desc">نسبة من إجمالي الإيراد</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-com" type="number" value="17" step="1" min="0" max="60" oninput="recalc()"><span class="sr-unit">٪</span></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">المصروف الشخصي</div><div class="sr-desc">أكل + شرب + طوارئ يومياً</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-pers" type="number" value="50" step="10" min="0" oninput="recalc()"><span class="sr-unit">جنيه/يوم</span></div>
-    </div>
-  </div>
-  <div class="setting-card">
-    <div class="setting-hdr">⛽ الوقود</div>
-    <div class="setting-row">
-      <div><div class="sr-label">سعر اللتر</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-pp" type="number" value="22.5" step="0.5" min="0" oninput="recalc()"><span class="sr-unit">جنيه/لتر</span></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">معدل الاستهلاك</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-kpl" type="number" value="30" step="1" min="1" oninput="recalc()"><span class="sr-unit">كم/لتر</span></div>
-    </div>
-  </div>
-  <div class="setting-card">
-    <div class="setting-hdr">🔧 صيانة وتشغيل</div>
-    <div class="setting-row">
-      <div><div class="sr-label">تكلفة الزيت</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-oil" type="number" value="170" step="10" min="0" oninput="recalc()"><span class="sr-unit">جنيه/1000كم</span></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">تكلفة الصيانة</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-mnt" type="number" value="50" step="10" min="0" oninput="recalc()"><span class="sr-unit">جنيه/1000كم</span></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">تكلفة الإنترنت</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-iph" type="number" value="10" step="1" min="0" oninput="recalc()"><span class="sr-unit">جنيه/ساعة</span></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">متوسط السرعة</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-spd" type="number" value="20" step="5" min="5" oninput="recalc()"><span class="sr-unit">كم/ساعة</span></div>
-    </div>
-  </div>
-  <!-- كيلومترات المحرك -->
-  <div class="setting-card">
-    <div class="setting-hdr">🛵 عداد المحرك</div>
-    <div class="setting-row">
-      <div><div class="sr-label">الكيلومترات الحالية للموتور</div>
-        <div class="sr-desc">لحساب موعد الصيانة</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-motor-km" type="number" value="0" step="10" min="0" oninput="saveSettings();checkMotorKm()"><span class="sr-unit">كم</span></div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">آخر صيانة عند</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-last-maint" type="number" value="0" step="10" min="0" oninput="saveSettings()"><span class="sr-unit">كم</span></div>
-    </div>
-  </div>
-  <div class="sec-title">إدارة البيانات</div>
-  <div style="background:rgba(59,139,235,.07);border:1px solid rgba(59,139,235,.2);border-radius:10px;padding:10px 13px;margin-bottom:9px;font-size:11px;color:var(--blue2);line-height:1.6">
-    💾 <strong>بياناتك محفوظة تلقائياً</strong> في المتصفح. صدّر نسخة احتياطية بانتظام لضمان عدم فقدانها عند تحديث التطبيق أو تغيير الجهاز.
-  </div>
-  <div class="data-btns">
-    <button class="data-btn btn-export" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
-    <button class="data-btn btn-import" onclick="$('importFile').click()">📥 استيراد بيانات</button>
-  </div>
-  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-  <button class="btn-clear-all" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
-  <div style="height:8px"></div>
-  <button class="btn-clear-all" onclick="signOutUser()"
-    style="background:rgba(59,139,235,.06);border-color:rgba(59,139,235,.2);color:var(--blue2)">
-    🚪 تسجيل الخروج
-  </button>
+<!-- PAGE: NOTIFICATIONS -->
+<div class="pg" id="pg-notif">
+  <div style="height:10px"></div>
+  <div class="notif-list" id="notifList"></div>
+  <button class="notif-clear" onclick="clearNotifs()" id="notifClearBtn" style="display:none">🗑️ مسح كل الإشعارات</button>
 </div>
 
 <!-- PAGE: LOG -->
-<div class="page" id="page-log">
-  <div style="height:12px"></div>
-  <div class="log-table-wrap">
-    <table class="log-table">
-      <thead>
-        <tr>
-          <th>التاريخ</th><th>الوقت</th><th>الهدف</th>
-          <th>الكم</th><th>الساعات</th>
-          <th>المحصّل</th><th>الصافي</th><th>حذف</th>
-        </tr>
-      </thead>
+<div class="pg" id="pg-log">
+  <div style="height:10px"></div>
+  <div class="log-wrap">
+    <table class="log-t">
+      <thead><tr>
+        <th>التاريخ</th><th>الوقت</th><th>الهدف</th>
+        <th>الكم</th><th>ساعات</th><th>المحصّل</th><th>الصافي</th><th>حذف</th>
+      </tr></thead>
       <tbody id="logBody"></tbody>
-      <tfoot><tr class="totals" id="logTotals"></tr></tfoot>
+      <tfoot><tr class="tots" id="logTots"></tr></tfoot>
     </table>
   </div>
-  <button class="btn-clear-all" onclick="clearLog()">🗑️ مسح كل السجلات</button>
+  <button class="danger-btn" onclick="clearLog()">🗑️ مسح كل السجلات</button>
 </div>
 
-</div><!-- /pages-wrap -->
+</div><!-- /pagesWrap -->
 
-<!-- ═══ BOTTOM NAV ═══ -->
-<div class="bottom-nav">
-  <button class="bnav-btn active" id="bnav-dash" onclick="showTab('dash','bnav-dash')">
-    <span class="bi">🏠</span><span class="bl">الرئيسية</span>
-  </button>
-  <button class="bnav-btn" id="bnav-settings" onclick="showTab('settings','bnav-settings')">
-    <span class="bi">⚙️</span><span class="bl">الإعدادات</span>
-  </button>
-  <button class="bnav-btn" id="bnav-log" onclick="showTab('log','bnav-log')">
-    <span class="bi">📅</span><span class="bl">السجل</span>
-  </button>
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <button class="bn on" id="bn-dash" onclick="goTab('dash','bn-dash')"><span class="bi">🏠</span><span class="bl">الرئيسية</span></button>
+  <button class="bn" id="bn-settings" onclick="goTab('settings','bn-settings')"><span class="bi">⚙️</span><span class="bl">الإعدادات</span></button>
+  <button class="bn" id="bn-notif" onclick="goTab('notif','bn-notif')" style="position:relative"><span class="bi">🔔</span><span class="bl">الإشعارات</span><div class="nb-dot" id="notifDot"></div></button>
+  <button class="bn" id="bn-log" onclick="goTab('log','bn-log')"><span class="bi">📅</span><span class="bl">السجل</span></button>
 </div>
 
 </div><!-- /app -->
 
 <!-- KPI BOTTOM SHEET -->
-<div class="sheet-overlay" id="kpiSheet" onclick="closeSheetIfBg(event)">
-  <div class="bottom-sheet">
-    <div class="sheet-drag"></div>
-    <div class="sheet-title" id="sheetTitle">التفاصيل</div>
-    <div class="sheet-sub" id="sheetSub"></div>
-    <div class="sheet-rows" id="sheetRows"></div>
-    <div class="sheet-highlight" id="sheetHighlight"></div>
-    <div class="sheet-progress" id="sheetProgress" style="display:none">
-      <div class="sheet-progress-bar" id="sheetBar"></div>
-    </div>
-    <div style="height:14px"></div>
-    <button class="sheet-ok-btn" onclick="closeSheet()">موافق ✓</button>
+<div class="bs-ov" id="bsOv" onclick="closeBSOv(event)">
+  <div class="bs">
+    <div class="bs-drag"></div>
+    <div class="bs-title" id="bsTitle"></div>
+    <div class="bs-sub" id="bsSub"></div>
+    <div class="bs-rows" id="bsRows"></div>
+    <div class="bs-hl" id="bsHl"></div>
+    <div class="bs-prog" id="bsProg" style="display:none"><div class="bs-bar" id="bsBar"></div></div>
+    <button class="bs-ok" onclick="closeBS()">موافق ✓</button>
   </div>
 </div>
 
 <!-- PROFILE MODAL -->
-<div class="overlay" id="profileOverlay" onclick="overlayClick(event)">
-  <div class="modal">
-    <div class="modal-drag"></div>
-    <div class="modal-title">تعديل الملف الشخصي</div>
-    <div class="modal-sub">اضغط على الصورة لتغييرها</div>
-    <div class="modal-avatar-wrap">
-      <div class="modal-avatar" onclick="$('photoInput').click()">
-        <span id="modalEmoji">🛵</span>
-        <img id="modalImg" src="" style="display:none">
-        <div class="modal-av-ov"><span>📷</span><small>تغيير</small></div>
+<div class="pm-ov" id="pmOv" onclick="closePMOv(event)">
+  <div class="pm">
+    <div class="pm-drag"></div>
+    <div class="pm-title">تعديل الملف الشخصي</div>
+    <div class="pm-sub">اضغط على الصورة لتغييرها</div>
+    <div class="pm-av-wrap">
+      <div class="pm-av" onclick="$id('photoInp').click()">
+        <span id="pmEmoji">🛵</span><img id="pmImg" src="" style="display:none">
+        <div class="pm-av-ov"><span>📷</span><small>تغيير</small></div>
       </div>
     </div>
-    <input class="name-input" id="nameInput" type="text"
-           placeholder="اكتب اسمك" value="طارق عبد الجليل" maxlength="40">
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">إلغاء</button>
-      <button class="btn-save" onclick="saveProfile()">💾 حفظ</button>
+    <input class="inp" id="nameEdit" type="text" placeholder="اكتب اسمك" maxlength="40" style="margin-bottom:12px">
+    <div class="pm-btns">
+      <button class="pm-cancel" onclick="closePM()">إلغاء</button>
+      <button class="pm-save" onclick="saveProfile()">💾 حفظ</button>
     </div>
   </div>
 </div>
-<input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(event)">
+<input type="file" id="photoInp" accept="image/*" style="display:none" onchange="handlePhoto(event)">
 
+<!-- ════════ FIREBASE MODULE ════════ -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, browserLocalPersistence, setPersistence,
+         sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
+         onAuthStateChanged, signOut }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const FC = {
+  apiKey:"AIzaSyBCpI5hcTXGJUxgd_1s8U_rN6ugOvvMpaU",
+  authDomain:"hasbt-elshift.firebaseapp.com",
+  projectId:"hasbt-elshift",
+  storageBucket:"hasbt-elshift.firebasestorage.app",
+  messagingSenderId:"95168484525",
+  appId:"1:95168484525:web:5b57d784b818078f9ba224"
+};
+
+const app  = initializeApp(FC);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+await setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
+window._fb = { auth, db, sendSignInLinkToEmail, isSignInWithEmailLink,
+               signInWithEmailLink, signOut, doc, setDoc, getDoc, serverTimestamp };
+
+// Handle email link return
+if (isSignInWithEmailLink(auth, location.href)) {
+  const em = localStorage.getItem('tk_em') || prompt('أدخل بريدك للتأكيد:');
+  if (em) signInWithEmailLink(auth, em, location.href)
+    .then(()=>{ localStorage.removeItem('tk_em'); history.replaceState(null,'',location.pathname); })
+    .catch(e=>console.error(e));
+}
+
+onAuthStateChanged(auth, user => {
+  window._user = user || null;
+  user ? window._onLogin?.(user) : window._onLogout?.();
+});
+</script>
+
+<!-- ════════ APP SCRIPT ════════ -->
 <script>
-// ═══════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════
-const $ = id => document.getElementById(id);
-const num = id => parseFloat($(id)?.value) || 0;
+'use strict';
+// ── helpers ──────────────────────────────────────────────────────────
+const $id = id => document.getElementById(id);
+const N   = id => parseFloat($id(id)?.value) || 0;
 
-function fmt(n, dec=1) {
-  if (!isFinite(n) || isNaN(n) || n === '') return '—';
-  return Number(n).toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+function fmt(n, d=1) {
+  if (!isFinite(n)||isNaN(n)) return '—';
+  return Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
 }
-function fmtHours(h) {
-  if (!isFinite(h) || isNaN(h)) return {str:'—', unit:'ساعة'};
-  const totalMins = Math.round(h * 60);
-  const hrs = Math.floor(totalMins / 60);
-  const mins = totalMins % 60;
-  if (hrs === 0) return {str: mins.toString(), unit: 'دقيقة'};
-  if (mins === 0) return {str: hrs.toString(), unit: 'ساعة'};
-  return {str: `${hrs}:${mins.toString().padStart(2,'0')}`, unit: 'س:د'};
+function fmtH(h) {
+  if (!isFinite(h)||isNaN(h)) return {s:'—',u:'ساعة'};
+  const tm=Math.round(h*60), hr=Math.floor(tm/60), mn=tm%60;
+  if (hr===0) return {s:String(mn),u:'دقيقة'};
+  if (mn===0) return {s:String(hr),u:'ساعة'};
+  return {s:`${hr}:${String(mn).padStart(2,'0')}`,u:'س:د'};
 }
-function fmtHrsRemaining(h) {
-  if (!isFinite(h) || h <= 0) return '0:00';
-  const totalMins = Math.round(h * 60);
-  const hrs = Math.floor(totalMins / 60);
-  const mins = totalMins % 60;
-  return `${hrs}:${mins.toString().padStart(2,'0')}`;
+function fmtHR(h) {
+  if (!isFinite(h)||h<=0) return '0:00';
+  const tm=Math.round(h*60), hr=Math.floor(tm/60), mn=tm%60;
+  return `${hr}:${String(mn).padStart(2,'0')}`;
 }
-function setEl(id, val, dec=1) {
-  const el = $(id); if (!el) return;
-  const txt = fmt(val, dec);
-  if (el.textContent === txt) return;
-  el.textContent = txt;
-  el.classList.remove('flash');
-  void el.offsetWidth;
-  el.classList.add('flash');
+function setV(id,val,d=1) {
+  const el=$id(id); if(!el) return;
+  const t=fmt(val,d);
+  if (el.textContent===t) return;
+  el.textContent=t;
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
 }
-function nowTimeStr() {
-  return new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true});
+function nowTime() { return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}); }
+function todayDate() { return new Date().toLocaleDateString('ar-EG'); }
+
+// ── clock ─────────────────────────────────────────────────────────────
+(function clock(){
+  const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  function tick(){
+    const n=new Date();
+    $id('dtDate').textContent=`${days[n.getDay()]}، ${n.toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}`;
+    $id('dtTime').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+  }
+  tick(); setInterval(tick,1000);
+})();
+
+// ── tabs + swipe ──────────────────────────────────────────────────────
+const TABS=['dash','settings','notif','log'];
+let curTab = 'dash';
+
+function goTab(name, btnId) {
+  curTab=name;
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
+  $id('pg-'+name).classList.add('on');
+  $id(btnId||'bn-'+name).classList.add('on');
+  try { localStorage.setItem('tk_tab',name); } catch(e){}
+  if (name==='notif') markNotifsRead();
 }
 
-// ═══════════════════════════════════════════════════════════
-// TABS + PAGE PERSISTENCE
-// ═══════════════════════════════════════════════════════════
-const TABS = ['dash','settings','log'];
-let currentTab = localStorage.getItem('tk_tab') || 'dash';
+let sx=0,sy=0;
+document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+  if (Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx)) return;
+  const i=TABS.indexOf(curTab);
+  if (dx<0&&i<TABS.length-1) goTab(TABS[i+1],'bn-'+TABS[i+1]);
+  if (dx>0&&i>0)              goTab(TABS[i-1],'bn-'+TABS[i-1]);
+},{passive:true});
 
-function showTab(name, btnId) {
-  currentTab = name;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
-  $('page-'+name).classList.add('active');
-  $(btnId || 'bnav-'+name).classList.add('active');
-  try { localStorage.setItem('tk_tab', name); } catch(e){}
-}
-
-// ═══════════════════════════════════════════════════════════
-// CORE CALCULATOR
-// ═══════════════════════════════════════════════════════════
-let calcResult = {};
-
-function recalc() {
-  const goal = num('goalInput');
-  const pkm  = num('s-pkm')  || 1;
-  const pp   = num('s-pp');
-  const kpl  = num('s-kpl')  || 1;
-  const oil  = num('s-oil');
-  const mnt  = num('s-mnt');
-  const iph  = num('s-iph');
-  const com  = num('s-com') / 100;
-  const pers = num('s-pers');
-  const spd  = num('s-spd')  || 1;
+// ── CORE CALCULATOR ───────────────────────────────────────────────────
+let CR={};
+function calc() {
+  const goal=N('goalInp'), pkm=N('s-pkm')||1, pp=N('s-pp'),
+        kpl=N('s-kpl')||1, oil=N('s-oil'), mnt=N('s-mnt'),
+        iph=N('s-iph'), com=N('s-com')/100, pers=N('s-pers'), spd=N('s-spd')||1;
 
   const km1=goal/pkm, p1=km1/kpl*pp, o1=km1*oil/1000, mn1=km1*mnt/1000, i1=(km1/spd)*iph, t1=p1+o1+mn1+i1;
   const km2=(t1+pers)/pkm, p2=km2/kpl*pp, o2=km2*oil/1000, mn2=km2*mnt/1000, i2=(km2/spd)*iph, t2=p2+o2+mn2+i2;
   const kmT=km1+km2, hrsT=kmT/spd, preCom=t1+t2+pers;
-  const revenue=(goal+preCom)/(1-com), comAmt=revenue*com, allCosts=revenue-goal;
-  const kmDisplay=revenue/pkm;
+  const rev=(goal+preCom)/(1-com), comA=rev*com, allC=rev-goal, kmD=rev/pkm;
+  CR={goal,pkm,kmD,hrsT,rev,allC,comA,petrol:p1+p2,oil:o1+o2,mnt:mn1+mn2,inet:i1+i2,pers,km1,km2,t1,t2,preCom,spd};
 
-  calcResult = {goal,pkm,kmT,kmDisplay,hrsT,revenue,allCosts,comAmt,
-    petrol:p1+p2,oil:o1+o2,mnt:mn1+mn2,inet:i1+i2,pers,
-    km1,km2,p1,p2,o1,o2,mn1,mn2,i1,i2,t1,t2,preCom};
-
-  // KPIs
-  setEl('r-km', kmDisplay, 1);
-  const hFmt = fmtHours(hrsT);
-  $('r-hrs').textContent = hFmt.str;
-  $('r-hrs-fmt').textContent = hFmt.unit;
-  setEl('r-cost', allCosts, 0);
-  setEl('r-earn', revenue, 0);
-  setEl('r-net',  goal, 0);
-  const pctEl = $('r-pct');
-  if (pctEl && revenue > 0) pctEl.textContent = (allCosts/revenue*100).toFixed(1)+'%';
-
-  updateRemBar();
-  updateTripTracker();
-  saveSettings();
+  setV('r-km',kmD,1);
+  const hf=fmtH(hrsT); $id('r-hrs').textContent=hf.s; $id('r-hrs-u').textContent=hf.u;
+  setV('r-cost',allC,0); setV('r-earn',rev,0); setV('r-net',goal,0);
+  const pe=$id('r-pct'); if(pe&&rev>0) pe.textContent=(allC/rev*100).toFixed(1)+'%';
+  updRem(); updTracker(); saveSett();
 }
 
-function updateRemBar() {
-  const collected = trips.reduce((s,t)=>s+t.amount,0);
-  const {revenue=0, kmDisplay=0, hrsT=0, pkm=1} = calcResult;
-  const moneyRem = Math.max(0, revenue - collected);
-  const kmRem    = Math.max(0, moneyRem / pkm);
-  // hours remaining estimate
-  const hrsRem   = Math.max(0, kmRem / (num('s-spd')||1));
-  $('hs-km-rem').textContent   = fmt(kmRem, 1);
-  $('hs-hrs-rem').textContent  = fmtHrsRemaining(hrsRem);
-  $('hs-money-rem').textContent= fmt(moneyRem, 0);
+function updRem() {
+  const col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
+  const monRem=Math.max(0,(CR.rev||0)-col);
+  const kmRem=monRem/(CR.pkm||1);
+  const hrsRem=kmRem/(CR.spd||1);
+  $id('hs-km').textContent=fmt(kmRem,1);
+  $id('hs-time').textContent=fmtHR(hrsRem);
+  $id('hs-money').textContent=fmt(monRem,0);
 }
 
-// ═══════════════════════════════════════════════════════════
-// KPI BOTTOM SHEET
-// ═══════════════════════════════════════════════════════════
-function showKpiSheet(type) {
-  const R = calcResult;
-  const collected = trips.reduce((s,t)=>s+t.amount,0);
-  const pkm = num('s-pkm')||1;
-  let title='', sub='', rows=[], highlight='', prog=null;
+// ── SHIFT ─────────────────────────────────────────────────────────────
+let shiftOn=false, shiftStart=null, timerInt=null;
 
-  if (type==='km') {
-    title='🏁 الكيلومترات المطلوبة'; sub='بناءً على هدفك والتكاليف المحسوبة';
-    const done = collected/pkm;
-    const rem  = Math.max(0, R.kmDisplay - done);
-    rows=[
-      ['إجمالي الكيلومترات',   fmt(R.kmDisplay,1)+' كم'],
-      ['كيلومترات الهدف (م١)', fmt(R.km1,1)+' كم'],
-      ['كيلومترات التكاليف (م٢)', fmt(R.km2,1)+' كم'],
-      ['المنجز حتى الآن',      fmt(done,1)+' كم'],
-    ];
-    highlight=`<div style="display:flex;justify-content:space-between">
-      <span style="font-size:12px;color:var(--muted)">المتبقي</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--blue2);direction:ltr">${fmt(rem,1)} كم</span></div>`;
-    if(R.kmDisplay>0) prog={pct:Math.min(done/R.kmDisplay,1),color:'var(--blue2)'};
-  }
-  else if (type==='hrs') {
-    title='⏱️ المدة التقديرية'; sub='بناءً على الكيلومترات ومتوسط السرعة';
-    const hFmt=fmtHours(R.hrsT);
-    const spd=num('s-spd')||1;
-    const hrsElapsed = shiftActive ? (Date.now()-shiftStartTS)/3600000 : 0;
-    const hrsRem = Math.max(0, R.hrsT - hrsElapsed);
-    rows=[
-      ['إجمالي الساعات',    hFmt.str+' '+hFmt.unit],
-      ['متوسط السرعة',      fmt(spd,0)+' كم/ساعة'],
-      ['منقضي من الشيفت',   shiftActive ? fmtHours(hrsElapsed).str+' س' : '—'],
-    ];
-    highlight=`<div style="display:flex;justify-content:space-between">
-      <span style="font-size:12px;color:var(--muted)">الوقت المتبقي (تقريبي)</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:#c084fc;direction:ltr">${fmtHrsRemaining(hrsRem)}</span></div>`;
-    if(R.hrsT>0&&shiftActive) prog={pct:Math.min(hrsElapsed/R.hrsT,1),color:'#c084fc'};
-  }
-  else if (type==='cost') {
-    title='💸 تفصيل التكاليف'; sub='كل التكاليف المخصومة من إيرادك';
-    rows=[
-      ['⛽ البنزين',        fmt(R.petrol,2)+' جنيه'],
-      ['🔧 الزيت',          fmt(R.oil,2)+' جنيه'],
-      ['🛠️ الصيانة',        fmt(R.mnt,2)+' جنيه'],
-      ['📶 الإنترنت',       fmt(R.inet,2)+' جنيه'],
-      ['🏢 عمولة الشركة',   fmt(R.comAmt,2)+' جنيه'],
-      ['🛒 مصروف شخصي',    fmt(R.pers,2)+' جنيه'],
-    ];
-    highlight=`<div style="display:flex;justify-content:space-between">
-      <span style="font-size:12px;color:var(--muted)">الإجمالي</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--red);direction:ltr">${fmt(R.allCosts,0)} جنيه</span></div>`;
-    if(R.revenue>0) prog={pct:Math.min(R.allCosts/R.revenue,1),color:'var(--red)'};
-  }
-  else if (type==='earn') {
-    title='💰 المطلوب تحصيله'; sub='الإيراد الكلي قبل أي خصم';
-    const rem = Math.max(0, R.revenue - collected);
-    rows=[
-      ['الإيراد الكلي المطلوب',   fmt(R.revenue,0)+' جنيه'],
-      ['منه تكاليف',              fmt(R.allCosts,0)+' جنيه'],
-      ['منه صافي للبيت',          fmt(R.goal,0)+' جنيه'],
-      ['المحصّل حتى الآن',         fmt(collected,0)+' جنيه'],
-    ];
-    highlight=`<div style="display:flex;justify-content:space-between">
-      <span style="font-size:12px;color:var(--muted)">المتبقي للهدف</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--gold2);direction:ltr">${fmt(rem,0)} جنيه</span></div>`;
-    if(R.revenue>0) prog={pct:Math.min(collected/R.revenue,1),color:'var(--gold2)'};
-  }
-
-  $('sheetTitle').innerHTML = title;
-  $('sheetSub').textContent  = sub;
-  $('sheetRows').innerHTML   = rows.map(([l,v])=>`
-    <div class="sheet-row">
-      <span class="sheet-row-lbl">${l}</span>
-      <span class="sheet-row-val">${v}</span>
-    </div>`).join('');
-  $('sheetHighlight').innerHTML = highlight;
-
-  const progEl = $('sheetProgress');
-  if (prog) {
-    progEl.style.display='block';
-    $('sheetBar').style.width = (prog.pct*100)+'%';
-    $('sheetBar').style.background = prog.color;
-  } else { progEl.style.display='none'; }
-
-  $('kpiSheet').classList.add('open');
-}
-function closeSheet() { $('kpiSheet').classList.remove('open'); }
-function closeSheetIfBg(e) { if(e.target===$('kpiSheet')) closeSheet(); }
-
-// ═══════════════════════════════════════════════════════════
-// SHIFT
-// ═══════════════════════════════════════════════════════════
-let shiftActive=false, shiftPaused=false, shiftStartTS=null, shiftTimerInt=null;
-let shiftElapsedMs=0; // accumulated elapsed before pause
-
-function toggleShift() {
-  if(!shiftActive) { startShift(); return; }
-  if(shiftPaused) resumeShift(); else pauseShift();
-}
+function toggleShift() { shiftOn ? pauseShift() : startShift(); }
 
 function startShift() {
-  shiftActive=true; shiftPaused=false; shiftElapsedMs=0;
-  shiftStartTS=Date.now();
-  trips=[]; renderTrips();
-  $('btnStart').className='btn-start active-shift';
-  $('shiftBtnIcon').textContent='⏸';
-  $('shiftBtnTxt').textContent='إيقاف مؤقت';
-  $('btnEnd').classList.add('enabled');
-  $('shiftTimer').style.display='block';
-  $('pauseBadge').style.display='none';
-  startTimerTick();
-  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftElapsed','0');localStorage.setItem('tk_shiftPaused','0');}catch(e){}
+  shiftOn=true; shiftStart=shiftStart||Date.now(); trips=[];
+  renderTrips();
+  $id('btnStart').className='sb start active';
+  $id('sIcon').textContent='⏸'; $id('sTxt').textContent='إيقاف مؤقت';
+  $id('btnEnd').classList.add('on'); $id('shiftTimer').style.display='block';
+  timerInt=setInterval(()=>{
+    const e=Date.now()-shiftStart;
+    const h=Math.floor(e/3600000),m=Math.floor((e%3600000)/60000),s=Math.floor((e%60000)/1000);
+    $id('timerDisp').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  },1000);
+  try{localStorage.setItem('tk_ss',shiftStart);}catch(e){}
 }
 
 function pauseShift() {
-  shiftPaused=true;
-  shiftElapsedMs += Date.now()-shiftStartTS;
-  clearInterval(shiftTimerInt);
-  $('btnStart').className='btn-start paused-shift';
-  $('shiftBtnIcon').textContent='▶';
-  $('shiftBtnTxt').textContent='متابعة';
-  $('pauseBadge').style.display='flex';
-  try{localStorage.setItem('tk_shiftElapsed',shiftElapsedMs);localStorage.setItem('tk_shiftPaused','1');}catch(e){}
-  sendNotif('⏸ شيفت متوقف مؤقتاً','خد راحتك يا كابتن، الوقت واقف لما ترجع 💪');
-}
-
-function resumeShift() {
-  shiftPaused=false;
-  shiftStartTS=Date.now();
-  $('btnStart').className='btn-start active-shift';
-  $('shiftBtnIcon').textContent='⏸';
-  $('shiftBtnTxt').textContent='إيقاف مؤقت';
-  $('pauseBadge').style.display='none';
-  startTimerTick();
-  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftPaused','0');}catch(e){}
-  sendNotif('▶ الشيفت مستمر','يلا يا كابتن — بالتوفيق والرزق 🛵');
-}
-
-function startTimerTick() {
-  clearInterval(shiftTimerInt);
-  shiftTimerInt=setInterval(()=>{
-    const el=shiftElapsedMs+(Date.now()-shiftStartTS);
-    const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
-    $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-  },1000);
+  shiftOn=false; clearInterval(timerInt);
+  $id('btnStart').className='sb start';
+  $id('sIcon').textContent='▶'; $id('sTxt').textContent='استئناف الشيفت';
 }
 
 function endShift() {
-  if(!shiftActive) return;
-  clearInterval(shiftTimerInt);
-  const totalMs = shiftPaused ? shiftElapsedMs : shiftElapsedMs+(Date.now()-shiftStartTS);
-  const durH=totalMs/3600000;
-  const totalColl=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
-  const com=num('s-com')/100, pers=num('s-pers'), pkm=num('s-pkm')||1;
-  const netActual=totalColl*(1-com)-pers, kmEst=totalColl/pkm;
+  if (!shiftStart) return;
+  clearInterval(timerInt);
+  const dur=(Date.now()-shiftStart)/3600000;
+  const col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
+  const com=N('s-com')/100, pers=N('s-pers'), pkm=N('s-pkm')||1;
+  const net=col*(1-com)-pers, km=col/pkm;
 
-  // Update motor km
-  const curMotor=num('s-motor-km');
-  if(curMotor>0){
-    const newKm=curMotor+kmEst;
-    $('s-motor-km').value=Math.round(newKm);
-    saveSettings();
-    checkMotorKm();
-  }
+  // update motor km
+  const mk=N('s-mtkm');
+  if(mk>0){$id('s-mtkm').value=Math.round(mk+km);saveSett();chkMotor();}
 
-  addLogEntry({
-    date: new Date().toLocaleDateString('ar-EG'),
-    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
-    goal: num('goalInput'), km:kmEst.toFixed(1), hrs:durH.toFixed(1),
-    total:totalColl, net:netActual.toFixed(2)
-  });
+  addLog({date:todayDate(),time:nowTime(),goal:N('goalInp'),km:km.toFixed(1),hrs:dur.toFixed(1),total:col,net:net.toFixed(2)});
+  pushNotif('🛵 انتهى الشيفت!',`الحمد لله على السلامة يا كابتن!\nالمحصّل: ${fmt(col,0)} جنيه — الصافي: ${fmt(net,0)} جنيه\nأحسنت صنعاً اليوم 💪`,'shift_end');
+  playSound('end');
 
-  sendNotif('🛵 انتهى الشيفت!', `الحمد لله على السلامة يا كابتن! المحصّل: ${fmt(totalColl,0)} جنيه — الصافي: ${fmt(netActual,0)} جنيه. أحسنت صنعاً اليوم 💪`);
-
-  shiftActive=false; shiftPaused=false; shiftElapsedMs=0;
-  $('btnStart').className='btn-start';
-  $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='بدء الشيفت';
-  $('btnEnd').classList.remove('enabled');
-  $('shiftTimer').style.display='none';
-  $('pauseBadge').style.display='none';
-  $('timerDisplay').textContent='00:00:00';
-  trips=[]; renderTrips(); updateTripTracker(); updateRemBar();
-  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_shiftElapsed');localStorage.removeItem('tk_shiftPaused');localStorage.removeItem('tk_trips');}catch(e){}
+  shiftOn=false; shiftStart=null;
+  $id('btnStart').className='sb start';
+  $id('sIcon').textContent='▶'; $id('sTxt').textContent='بدء الشيفت';
+  $id('btnEnd').classList.remove('on'); $id('shiftTimer').style.display='none';
+  $id('timerDisp').textContent='00:00:00';
+  trips=[]; renderTrips(); updTracker(); updRem();
+  try{localStorage.removeItem('tk_ss');localStorage.removeItem('tk_trips');}catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
-// TRIP TRACKER + EXPENSE
-// ═══════════════════════════════════════════════════════════
+// ── TRIPS ─────────────────────────────────────────────────────────────
 let trips=[];
 
 function addTrip() {
-  const amt=parseFloat($('tripAmt').value);
-  if(!amt||amt<=0){$('tripAmt').focus();return;}
-  trips.push({id:Date.now(),amount:amt,type:'trip',time:nowTimeStr()});
-  $('tripAmt').value='';
-  renderTrips(); updateTripTracker(); updateRemBar();
+  const a=parseFloat($id('tripInp').value); if(!a||a<=0){$id('tripInp').focus();return;}
+  trips.push({id:Date.now(),amount:a,type:'trip',time:nowTime()});
+  $id('tripInp').value='';
+  renderTrips(); updTracker(); updRem();
   try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
 }
 
-function addExpense() {
-  const amt=parseFloat($('expAmt').value);
-  if(!amt||amt<=0){$('expAmt').focus();return;}
-  // add to s-pers
-  const curPers=num('s-pers');
-  $('s-pers').value=(curPers+amt).toFixed(0);
-  $('expAmt').value='';
-  recalc(); // re-calc with new pers
-  // also log as trip item for reference
-  trips.push({id:Date.now(),amount:-amt,type:'expense',time:nowTimeStr()});
-  renderTrips(); updateTripTracker(); updateRemBar();
+function addExp() {
+  const a=parseFloat($id('expInp').value); if(!a||a<=0){$id('expInp').focus();return;}
+  const cur=N('s-pers'); $id('s-pers').value=(cur+a).toFixed(0);
+  $id('expInp').value='';
+  trips.push({id:Date.now(),amount:-a,type:'expense',time:nowTime()});
+  renderTrips(); updTracker(); updRem(); calc();
   try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
 }
 
 function removeTrip(id) {
   trips=trips.filter(t=>t.id!==id);
-  renderTrips(); updateTripTracker(); updateRemBar();
+  renderTrips(); updTracker(); updRem();
   try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
 }
 
 function renderTrips() {
-  const list=$('tripsList'); if(!list) return;
-  list.innerHTML='';
+  const l=$id('tripsList'); if(!l) return; l.innerHTML='';
   trips.slice().reverse().forEach(t=>{
-    const div=document.createElement('div');
-    div.className='trip-item';
-    const isExp=t.type==='expense';
-    div.innerHTML=`
-      <span style="color:var(--muted);font-size:10px;direction:ltr">${t.time}</span>
-      <span style="font-family:'Tajawal';font-weight:700;color:${isExp?'var(--red)':'var(--gold2)'};direction:ltr">
-        ${isExp?'−':'+'} ${fmt(Math.abs(t.amount),2)} جنيه ${isExp?'(مصروف)':''}
-      </span>
+    const d=document.createElement('div'); d.className='trip-item';
+    const isE=t.type==='expense';
+    d.innerHTML=`<span style="color:var(--muted);font-size:10px;direction:ltr">${t.time}</span>
+      <span style="font-family:'Tajawal';font-weight:700;color:${isE?'var(--red)':'var(--gold2)'};direction:ltr">
+        ${isE?'−':'+'} ${fmt(Math.abs(t.amount),2)} جنيه</span>
       <button class="trip-del" onclick="removeTrip(${t.id})">✕</button>`;
-    list.appendChild(div);
+    l.appendChild(d);
   });
 }
 
-function updateTripTracker() {
-  const collected=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
-  const revenue=calcResult.revenue||0, pkm=num('s-pkm')||1;
-  const remaining=Math.max(0,revenue-collected), kmRem=remaining/pkm;
-  $('t-collected').textContent=fmt(collected,2);
-  $('t-remaining').textContent=remaining>0?fmt(remaining,2):'✅ تحقق الهدف!';
-  $('t-km-rem').textContent=remaining>0?fmt(kmRem,1):'0';
-  $('t-count').textContent=trips.filter(t=>t.type==='trip').length;
+function updTracker() {
+  const col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
+  const rem=Math.max(0,(CR.rev||0)-col), pkm=CR.pkm||1;
+  $id('t-col').textContent=fmt(col,2);
+  $id('t-rem').textContent=rem>0?fmt(rem,2):'✅ تحقق الهدف!';
+  $id('t-km').textContent=rem>0?fmt(rem/pkm,1):'0';
+  $id('t-cnt').textContent=trips.filter(t=>t.type==='trip').length;
 }
 
-// ═══════════════════════════════════════════════════════════
-// LOG — kept 30 days
-// ═══════════════════════════════════════════════════════════
-let logEntries=[];
+// ── KPI BOTTOM SHEET ─────────────────────────────────────────────────
+function showBS(type) {
+  const R=CR, col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0), pkm=R.pkm||1;
+  let title='',sub='',rows=[],hl='',prog=null;
 
-function addLogEntry(entry) {
-  logEntries.unshift({id:Date.now(),...entry});
-  pruneLog();
-  renderLog(); saveLog();
-}
-function pruneLog() {
-  const cutoff=Date.now()-30*24*60*60*1000;
-  logEntries=logEntries.filter(e=>e.id>cutoff);
-}
-function deleteLogEntry(id) {
-  logEntries=logEntries.filter(e=>e.id!==id);
-  renderLog(); saveLog();
-}
-function renderLog() {
-  const tbody=$('logBody'); if(!tbody) return;
-  tbody.innerHTML='';
-  if(logEntries.length===0){
-    tbody.innerHTML=`<tr><td colspan="8" style="color:var(--muted);padding:20px;text-align:center">لا توجد سجلات بعد</td></tr>`;
-    $('logTotals').innerHTML=''; return;
+  if(type==='km'){
+    title='🏁 الكيلومترات المطلوبة'; sub='بناءً على هدفك والتكاليف';
+    const done=col/pkm, rem=Math.max(0,R.kmD-done);
+    rows=[['كيلومترات الهدف (م١)',fmt(R.km1,1)+' كم'],['كيلومترات التكاليف (م٢)',fmt(R.km2,1)+' كم'],
+          ['الإجمالي المطلوب',fmt(R.kmD,1)+' كم'],['المنجز حتى الآن',fmt(done,1)+' كم']];
+    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">المتبقي</span>
+       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:var(--blue2);direction:ltr">${fmt(rem,1)} كم</span></div>`;
+    if(R.kmD>0) prog={p:Math.min(done/R.kmD,1),c:'var(--blue2)'};
+  } else if(type==='hrs'){
+    title='⏱️ المدة التقديرية'; sub='بناءً على الكيلومترات والسرعة';
+    const hf=fmtH(R.hrsT), el=shiftStart?(Date.now()-shiftStart)/3600000:0;
+    rows=[['إجمالي الساعات',hf.s+' '+hf.u],['متوسط السرعة',fmt(N('s-spd'),0)+' كم/ساعة'],
+          ['منقضي من الشيفت',shiftStart?fmtH(el).s+' س':'—']];
+    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">الوقت المتبقي</span>
+       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:#c084fc;direction:ltr">${fmtHR(Math.max(0,R.hrsT-el))}</span></div>`;
+    if(R.hrsT>0&&shiftStart) prog={p:Math.min(el/R.hrsT,1),c:'#c084fc'};
+  } else if(type==='cost'){
+    title='💸 تفصيل التكاليف'; sub='كل التكاليف المخصومة من إيرادك';
+    rows=[['⛽ البنزين',fmt(R.petrol,2)+' جنيه'],['🔧 الزيت',fmt(R.oil,2)+' جنيه'],
+          ['🛠️ الصيانة',fmt(R.mnt,2)+' جنيه'],['📶 الإنترنت',fmt(R.inet,2)+' جنيه'],
+          ['🏢 عمولة الشركة',fmt(R.comA,2)+' جنيه'],['🛒 مصروف شخصي',fmt(R.pers,2)+' جنيه']];
+    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">الإجمالي</span>
+       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:var(--red);direction:ltr">${fmt(R.allC,0)} جنيه</span></div>`;
+    if(R.rev>0) prog={p:Math.min(R.allC/R.rev,1),c:'var(--red)'};
+  } else {
+    title='💰 المطلوب تحصيله'; sub='الإيراد الكلي قبل أي خصم';
+    const rem=Math.max(0,R.rev-col);
+    rows=[['الإيراد الكلي',fmt(R.rev,0)+' جنيه'],['منه تكاليف',fmt(R.allC,0)+' جنيه'],
+          ['منه صافي للبيت',fmt(R.goal,0)+' جنيه'],['المحصّل حتى الآن',fmt(col,0)+' جنيه']];
+    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">المتبقي للهدف</span>
+       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:var(--gold2);direction:ltr">${fmt(rem,0)} جنيه</span></div>`;
+    if(R.rev>0) prog={p:Math.min(col/R.rev,1),c:'var(--gold2)'};
   }
-  logEntries.forEach(e=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${e.date||'—'}</td><td>${e.time||'—'}</td>
-      <td>${fmt(e.goal,0)}</td><td>${fmt(e.km,1)}</td><td>${e.hrs||'—'}</td>
-      <td style="color:var(--gold2)">${fmt(e.total,0)}</td>
-      <td style="color:var(--green2)">${fmt(e.net,1)}</td>
-      <td><button class="log-del-btn" onclick="deleteLogEntry(${e.id})">🗑</button></td>`;
-    tbody.appendChild(tr);
-  });
-  const tfoot=$('logTotals');
-  const sg=logEntries.reduce((s,e)=>s+(parseFloat(e.goal)||0),0);
-  const sk=logEntries.reduce((s,e)=>s+(parseFloat(e.km)||0),0);
-  const st=logEntries.reduce((s,e)=>s+(parseFloat(e.total)||0),0);
-  const sn=logEntries.reduce((s,e)=>s+(parseFloat(e.net)||0),0);
-  tfoot.innerHTML=`<td>الإجمالي</td><td>—</td><td>${fmt(sg,0)}</td><td>${fmt(sk,1)}</td><td>—</td><td>${fmt(st,0)}</td><td>${fmt(sn,1)}</td><td>—</td>`;
+
+  $id('bsTitle').textContent=title; $id('bsSub').textContent=sub;
+  $id('bsRows').innerHTML=rows.map(([l,v])=>`<div class="bs-row"><span class="bs-rl">${l}</span><span class="bs-rv">${v}</span></div>`).join('');
+  $id('bsHl').innerHTML=hl;
+  const pr=$id('bsProg');
+  if(prog){pr.style.display='block';$id('bsBar').style.width=(prog.p*100)+'%';$id('bsBar').style.background=prog.c;}
+  else pr.style.display='none';
+  $id('bsOv').classList.add('on');
 }
-function clearLog(){if(confirm('مسح كل سجلات الشيفتات؟')){logEntries=[];renderLog();saveLog();}}
-function saveLog(){try{localStorage.setItem('tk_log',JSON.stringify(logEntries));}catch(e){}}
-function loadLog(){
-  try{
-    const raw=JSON.parse(localStorage.getItem('tk_log')||'[]');
-    logEntries=raw; pruneLog(); renderLog();
-  }catch(e){}
+function closeBS(){$id('bsOv').classList.remove('on');}
+function closeBSOv(e){if(e.target===$id('bsOv'))closeBS();}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────
+let notifs=[];
+
+function pushNotif(title, msg, type='general') {
+  const n={id:Date.now(),title,msg,type,time:nowTime(),date:todayDate(),read:false};
+  notifs.unshift(n);
+  if(notifs.length>50) notifs=notifs.slice(0,50);
+  saveNotifs(); renderNotifs(); updNotifDot();
+  // system notification
+  sendSysNotif(title, msg, type);
 }
 
-// ═══════════════════════════════════════════════════════════
-// NOTIFICATIONS + ALARM
-// ═══════════════════════════════════════════════════════════
-function sendNotif(title, body) {
+function sendSysNotif(title, body, type='general') {
   if(Notification.permission!=='granted') return;
-  try{
-    const n = new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',lang:'ar',requireInteraction:true,vibrate:[300,100,300]});
-    // play beep sound when notification fires
-    playBeep();
-  }catch(e){}
+  const opts={body,icon:'/icon-192.png',badge:'/icon-72.png',
+    vibrate:type==='shift_start'?[300,100,300,100,300]:[200,100,200],
+    tag:type,renotify:true,lang:'ar',
+    requireInteraction:type==='shift_start'};
+  try{ new Notification(title,opts); } catch(e){}
 }
 
-function playBeep() {
+function renderNotifs() {
+  const l=$id('notifList'); if(!l) return;
+  const cb=$id('notifClearBtn');
+  if(notifs.length===0){
+    l.innerHTML='<div class="notif-empty">📭 لا توجد إشعارات بعد</div>';
+    if(cb) cb.style.display='none'; return;
+  }
+  if(cb) cb.style.display='block';
+  const icons={shift_start:'⏰',shift_end:'🏁',oil:'🔧',general:'🔔',alarm:'⏰'};
+  l.innerHTML=notifs.map(n=>`
+    <div class="notif-item ${n.read?'':'unread'}">
+      <span class="ni-icon">${icons[n.type]||'🔔'}</span>
+      <div class="ni-body">
+        <div class="ni-title">${n.title}</div>
+        <div class="ni-msg">${n.msg}</div>
+        <div class="ni-time">${n.date} — ${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function markNotifsRead() {
+  notifs=notifs.map(n=>({...n,read:true}));
+  saveNotifs(); updNotifDot();
+}
+
+function updNotifDot() {
+  const d=$id('notifDot'), un=notifs.filter(n=>!n.read).length;
+  if(d) d.classList.toggle('show',un>0);
+}
+
+function clearNotifs(){if(confirm('مسح كل الإشعارات؟')){notifs=[];saveNotifs();renderNotifs();updNotifDot();}}
+function saveNotifs(){try{localStorage.setItem('tk_notifs',JSON.stringify(notifs));}catch(e){}}
+function loadNotifs(){try{notifs=JSON.parse(localStorage.getItem('tk_notifs')||'[]');renderNotifs();updNotifDot();}catch(e){}}
+
+// ── SOUND ─────────────────────────────────────────────────────────────
+function playSound(type='notif') {
   try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.6, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 1.2);
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    const patterns={
+      notif:   [[440,.1,.05],[550,.1,.05],[660,.15,.1]],
+      alarm:   [[523,.15,.05],[523,.15,.05],[659,.15,.05],[784,.3,.15]],
+      end:     [[784,.15,.05],[659,.1,.05],[523,.2,.1]],
+    };
+    const seq=patterns[type]||patterns.notif;
+    let t=ctx.currentTime;
+    seq.forEach(([freq,dur,gap])=>{
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='sine'; o.frequency.value=freq;
+      g.gain.setValueAtTime(.3,t);
+      g.gain.exponentialRampToValueAtTime(.001,t+dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t); o.stop(t+dur);
+      t+=dur+gap;
+    });
   } catch(e){}
 }
 
-function requestNotifPerm() {
-  Notification.requestPermission().then(p=>{
-    updateNotifBtn();
-    if(p==='granted'){ sendNotif('✅ الإشعارات مُفعَّلة','سيصلك منبّه قبل بدء الشيفت وعند بلوغ 800 كم'); scheduleAlarm(); }
-  });
+// ── ALARM ─────────────────────────────────────────────────────────────
+let alTo=null, alToB=null;
+
+async function reqNotif() {
+  const p=await Notification.requestPermission();
+  updNotifBtn();
+  if(p==='granted'){
+    sendSysNotif('✅ الإشعارات مُفعَّلة','ستصلك إشعارات الشيفت والصيانة');
+    schedAlarm();
+    // Register periodic sync
+    if('serviceWorker' in navigator && 'periodicSync' in (await navigator.serviceWorker.ready).sync){
+      const sw=await navigator.serviceWorker.ready;
+      try{ await sw.periodicSync.register('alarm-check',{minInterval:60*1000}); }catch(e){}
+    }
+  }
 }
 
-function updateNotifBtn() {
-  const btn=$('notif-btn');
-  if(!btn) return;
+function updNotifBtn() {
+  const b=$id('notifBtn'); if(!b) return;
   if(Notification.permission==='granted'){
-    btn.textContent='✅ إشعارات مفعّلة'; btn.style.color='var(--green2)';
-    btn.style.borderColor='rgba(0,200,150,.3)'; btn.style.background='rgba(0,200,150,.1)';
+    b.textContent='✅ مفعّلة'; b.style.color='var(--green2)';
+    b.style.background='rgba(0,200,150,.12)'; b.style.borderColor='rgba(0,200,150,.3)';
   } else if(Notification.permission==='denied'){
-    btn.textContent='❌ محجوب — افتح إعدادات الهاتف'; btn.style.color='var(--red)';
+    b.textContent='❌ محجوبة — افتح الإعدادات'; b.style.color='var(--red)';
   }
 }
 
-let alarmTimeout=null, alarmBeforeTimeout=null;
-let alarmCheckInterval=null;
+function schedAlarm() {
+  clearTimeout(alTo); clearTimeout(alToB);
+  const t=$id('s-alarm')?.value; if(!t) return;
+  const before=N('s-before')||15;
+  const [h,m]=t.split(':').map(Number);
+  const now=new Date(), al=new Date(now); al.setHours(h,m,0,0);
+  if(al<=now) al.setDate(al.getDate()+1);
+  const msAl=al-now, msBef=msAl-(before*60000);
 
-function scheduleAlarm() {
-  clearTimeout(alarmTimeout); clearTimeout(alarmBeforeTimeout);
-  clearInterval(alarmCheckInterval);
-  const alarmTime=$('s-alarm')?.value; if(!alarmTime) return;
-  const before=parseInt($('s-alarm-before')?.value)||15;
-
-  // Save alarm config to localStorage for visibility check
-  try{ localStorage.setItem('tk_alarm_time', alarmTime); localStorage.setItem('tk_alarm_before', before); }catch(e){}
-
-  function getNextAlarmDate(timeStr) {
-    const [h,m]=timeStr.split(':').map(Number);
-    const now=new Date();
-    let d=new Date(now); d.setHours(h,m,0,0);
-    if(d<=now) d.setDate(d.getDate()+1);
-    return d;
+  if(msBef>0){
+    alToB=setTimeout(()=>{
+      const msg=`استعد يا كابتن! شيفتك بيبدأ بعد ${before} دقيقة`;
+      pushNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,msg,'alarm');
+      playSound('alarm');
+    },msBef);
   }
+  alTo=setTimeout(()=>{
+    pushNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!','shift_start');
+    playSound('alarm');
+  },msAl);
 
-  function scheduleTimeouts() {
-    const alarmDate=getNextAlarmDate(alarmTime);
-    const now=new Date();
-    const msToAlarm=alarmDate-now;
-    const msToBefore=msToAlarm-(before*60000);
-    if(msToBefore>0){
-      alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`),msToBefore);
-    } else if(msToAlarm>0 && msToBefore<=0 && msToBefore>-(before*60000)){
-      // We're in the "before" window right now
-      sendNotif(`⏰ تنبيه: الشيفت قريباً`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`);
-    }
-    alarmTimeout=setTimeout(()=>{
-      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
-      // Reschedule for next day
-      setTimeout(scheduleTimeouts, 5000);
-    },msToAlarm);
+  // Tell SW to schedule too (for background)
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.ready.then(sw=>{
+      sw.active?.postMessage({type:'SCHEDULE_ALARM',time:t,before});
+    });
   }
-
-  scheduleTimeouts();
-
-  // Fallback: check every minute in case page was in background and setTimeout drifted
-  alarmCheckInterval = setInterval(()=>{
-    const now=new Date();
-    const [h,m]=(localStorage.getItem('tk_alarm_time')||'').split(':').map(Number);
-    if(isNaN(h)) return;
-    const b=parseInt(localStorage.getItem('tk_alarm_before'))||15;
-    const nowMin=now.getHours()*60+now.getMinutes();
-    const alarmMin=h*60+m;
-    const beforeMin=alarmMin-b;
-    const lastFired=parseInt(localStorage.getItem('tk_alarm_last_fired')||'0');
-    const todayKey=now.toLocaleDateString('en-CA');
-    const lastFiredKey=localStorage.getItem('tk_alarm_last_fired_day')||'';
-    if(nowMin===alarmMin && lastFiredKey!==todayKey){
-      localStorage.setItem('tk_alarm_last_fired_day',todayKey);
-      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
-    }
-    if(nowMin===beforeMin && localStorage.getItem('tk_alarm_before_fired_day')!==todayKey){
-      localStorage.setItem('tk_alarm_before_fired_day',todayKey);
-      sendNotif(`⏰ تنبيه: الشيفت بعد ${b} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`);
-    }
-  }, 30000);
+  saveSett();
 }
 
-// Motor km check (alert at 800+ from last maintenance)
-function checkMotorKm() {
-  const cur=num('s-motor-km'), last=num('s-last-maint');
-  const diff=cur-last;
+// ── MOTOR CHECK ───────────────────────────────────────────────────────
+function chkMotor() {
+  const cur=N('s-mtkm'), last=N('s-lastm'), diff=cur-last;
   if(diff>=800&&diff<1000){
-    sendNotif('⚠️ تنبيه صيانة',`اقتربت من موعد تغيير الزيت — لقد قطعت ${fmt(diff,0)} كم منذ آخر صيانة. موعد التغيير عند 1000 كم.`);
-  }
-  if(diff>=1000){
-    sendNotif('🔧 تغيير الزيت الآن!',`لقد تجاوزت ${fmt(diff,0)} كم منذ آخر صيانة. يرجى تغيير الزيت وصيانة الموتور فوراً.`);
+    pushNotif('⚠️ تنبيه صيانة مقترب',`قطعت ${fmt(diff,0)} كم منذ آخر صيانة. موعد تغيير الزيت عند 1000 كم.`,'oil');
+    playSound('notif');
+  } else if(diff>=1000){
+    pushNotif('🔧 تغيير الزيت الآن!',`تجاوزت ${fmt(diff,0)} كم منذ آخر صيانة. غيّر الزيت وصيانة الموتور فوراً.`,'oil');
+    playSound('alarm');
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// PROFILE
-// ═══════════════════════════════════════════════════════════
-let currentPhoto=null;
-function openModal(){$('nameInput').value=$('displayName').textContent;$('profileOverlay').classList.add('open');}
-function closeModal(){$('profileOverlay').classList.remove('open');}
-function overlayClick(e){if(e.target===$('profileOverlay'))closeModal();}
-function handlePhoto(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{currentPhoto=ev.target.result;showPhoto(currentPhoto);};
-  reader.readAsDataURL(file);
+// ── LOG ───────────────────────────────────────────────────────────────
+let logs=[];
+
+function addLog(e){
+  logs.unshift({id:Date.now(),...e});
+  // keep 90 days
+  const cut=Date.now()-90*24*60*60*1000;
+  logs=logs.filter(l=>l.id>cut);
+  renderLog(); saveLogDB(); fbSave();
 }
-function showPhoto(src){
-  ['avatarEmoji','modalEmoji'].forEach(id=>$(id).style.display='none');
-  ['avatarImg','modalImg'].forEach(id=>{$(id).src=src;$(id).style.display='block';});
+function deleteLog(id){logs=logs.filter(l=>l.id!==id);renderLog();saveLogDB();fbSave();}
+function renderLog(){
+  const tb=$id('logBody'); if(!tb) return; tb.innerHTML='';
+  if(!logs.length){
+    tb.innerHTML='<tr><td colspan="8" style="color:var(--muted);padding:18px;text-align:center">لا توجد سجلات</td></tr>';
+    $id('logTots').innerHTML=''; return;
+  }
+  logs.forEach(e=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${e.date||'—'}</td><td>${e.time||'—'}</td><td>${fmt(e.goal,0)}</td>
+      <td>${fmt(e.km,1)}</td><td>${e.hrs||'—'}</td>
+      <td style="color:var(--gold2)">${fmt(e.total,0)}</td>
+      <td style="color:var(--green2)">${fmt(e.net,1)}</td>
+      <td><button class="del-btn" onclick="deleteLog(${e.id})">🗑</button></td>`;
+    tb.appendChild(tr);
+  });
+  const sg=logs.reduce((s,e)=>s+(+e.goal||0),0);
+  const sk=logs.reduce((s,e)=>s+(+e.km||0),0);
+  const st=logs.reduce((s,e)=>s+(+e.total||0),0);
+  const sn=logs.reduce((s,e)=>s+(+e.net||0),0);
+  $id('logTots').innerHTML=`<td>الإجمالي</td><td>—</td><td>${fmt(sg,0)}</td>
+    <td>${fmt(sk,1)}</td><td>—</td><td>${fmt(st,0)}</td><td>${fmt(sn,1)}</td><td>—</td>`;
+}
+function clearLog(){if(confirm('مسح كل سجلات الشيفتات؟')){logs=[];renderLog();saveLogDB();fbSave();}}
+function saveLogDB(){try{localStorage.setItem('tk_log',JSON.stringify(logs));}catch(e){}}
+function loadLogDB(){try{logs=JSON.parse(localStorage.getItem('tk_log')||'[]');renderLog();}catch(e){}}
+
+// ── FIREBASE SYNC ─────────────────────────────────────────────────────
+let syncTimer=null;
+function fbSave(){
+  clearTimeout(syncTimer);
+  syncTimer=setTimeout(async()=>{
+    if(!window._user||window._user.isAnonymous) return;
+    showSync('جاري الحفظ...');
+    try{
+      const {db,doc,setDoc,serverTimestamp}=window._fb;
+      const uid=window._user.uid;
+      const sett={}; SKEYS.forEach(k=>{if($id(k))sett[k]=$id(k).value;});
+      await setDoc(doc(db,'users',uid,'data','settings'),
+        {settings:sett,name:$id('dispName').textContent,updatedAt:serverTimestamp()},{merge:true});
+      await setDoc(doc(db,'users',uid,'data','log'),
+        {entries:logs,updatedAt:serverTimestamp()},{merge:true});
+      hideSync(true);
+    }catch(e){hideSync(false);}
+  },1500);
+}
+
+async function fbLoad(uid){
+  showSync('جاري تحميل بياناتك...');
+  try{
+    const {db,doc,getDoc}=window._fb;
+    const sd=await getDoc(doc(db,'users',uid,'data','settings'));
+    if(sd.exists()){
+      const d=sd.data();
+      if(d.settings) Object.entries(d.settings).forEach(([k,v])=>{if($id(k))$id(k).value=v;});
+      if(d.name){$id('dispName').textContent=d.name;localStorage.setItem('tk_name',d.name);}
+    }
+    const ld=await getDoc(doc(db,'users',uid,'data','log'));
+    if(ld.exists()&&ld.data().entries){logs=ld.data().entries;saveLogDB();renderLog();}
+    hideSync(true);
+    calc();
+  }catch(e){hideSync(false);}
+}
+
+function showSync(msg){const b=$id('syncBadge');$id('syncMsg').textContent=msg;b.classList.add('on');}
+function hideSync(ok){
+  setTimeout(()=>{
+    $id('syncMsg').textContent=ok?'✅ تم الحفظ':'⚠️ خطأ في الحفظ';
+    setTimeout(()=>$id('syncBadge').classList.remove('on'),1200);
+  },300);
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────
+window._onLogin = async function(user){
+  const localName=localStorage.getItem('tk_name');
+  if(localName){
+    $id('dispName').textContent=localName;
+    $id('authScreen').classList.add('out');
+    fbLoad(user.uid).catch(()=>{});
+    return;
+  }
+  try{
+    await fbLoad(user.uid);
+    const n=localStorage.getItem('tk_name');
+    if(n){$id('dispName').textContent=n;$id('authScreen').classList.add('out');}
+    else{goStep(3);$id('nameInp').focus();}
+  }catch(e){$id('authScreen').classList.add('out');}
+};
+window._onLogout=function(){
+  window._user=null;
+  $id('authScreen').classList.remove('out');
+  goStep(1);
+};
+
+function goStep(n){
+  document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('on'));
+  $id('step'+n)?.classList.add('on');
+  [1,2,3].forEach(i=>{const d=$id('dot'+i);if(d)d.classList.toggle('on',i<=n);});
+  ['err1','err2','err3'].forEach(id=>{const e=$id(id);if(e)e.textContent='';});
+}
+
+async function sendLink(){
+  const em=($id('emailInp')?.value||'').trim();
+  if(!em||!em.includes('@')){if($id('err1'))$id('err1').textContent='⚠️ أدخل بريد إلكتروني صحيح';return;}
+  const btn=$id('btnSend'); if(btn){btn.textContent='⏳...';btn.disabled=true;}
+  try{
+    const {auth,sendSignInLinkToEmail}=window._fb;
+    await sendSignInLinkToEmail(auth,em,{url:location.href,handleCodeInApp:true});
+    localStorage.setItem('tk_em',em);
+    goStep(2);
+  }catch(e){
+    const m={'auth/invalid-email':'❌ بريد غير صحيح','auth/operation-not-allowed':'❌ غير مفعّل في Firebase','auth/network-request-failed':'❌ تحقق من الإنترنت'};
+    if($id('err1'))$id('err1').textContent=m[e.code]||'❌ خطأ — حاول مرة أخرى';
+  }finally{if(btn){btn.textContent='📧 إرسال رابط الدخول';btn.disabled=false;}}
+}
+
+function saveName(){
+  const n=($id('nameInp')?.value||'').trim();
+  if(!n){if($id('err3'))$id('err3').textContent='⚠️ أدخل اسمك';return;}
+  $id('dispName').textContent=n; localStorage.setItem('tk_name',n);
+  if(window._user) fbSave();
+  $id('authScreen').classList.add('out');
+}
+
+function signOutUser(){
+  if(confirm('تسجيل خروج؟ بياناتك محفوظة.')){
+    window._fb?.signOut(window._fb.auth);
+  }
+}
+
+// ── PROFILE MODAL ─────────────────────────────────────────────────────
+let photo=null;
+function openPM(){$id('nameEdit').value=$id('dispName').textContent;$id('pmOv').classList.add('on');}
+function closePM(){$id('pmOv').classList.remove('on');}
+function closePMOv(e){if(e.target===$id('pmOv'))closePM();}
+function handlePhoto(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{photo=ev.target.result;showPhoto(photo);};
+  r.readAsDataURL(f);
+}
+function showPhoto(s){
+  ['avEmoji','pmEmoji'].forEach(id=>$id(id).style.display='none');
+  ['avImg','pmImg'].forEach(id=>{$id(id).src=s;$id(id).style.display='block';});
 }
 function saveProfile(){
-  const name=$('nameInput').value.trim()||'طارق عبد الجليل';
-  $('displayName').textContent=name;
-  if(currentPhoto)showPhoto(currentPhoto);
-  closeModal();
-  try{localStorage.setItem('tk_name',name);if(currentPhoto)localStorage.setItem('tk_photo',currentPhoto);}catch(e){}
+  const n=($id('nameEdit').value||'').trim()||'طارق';
+  $id('dispName').textContent=n; if(photo)showPhoto(photo); closePM();
+  try{localStorage.setItem('tk_name',n);if(photo)localStorage.setItem('tk_photo',photo);}catch(e){}
+  fbSave();
 }
 
-// ═══════════════════════════════════════════════════════════
-// DATA VERSION & MIGRATION — يحمي البيانات عند التحديث
-// ═══════════════════════════════════════════════════════════
-const APP_VERSION = '2.1';
+// ── SETTINGS PERSISTENCE ──────────────────────────────────────────────
+const SKEYS=['goalInp','s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd','s-alarm','s-before','s-mtkm','s-lastm'];
 
-function migrateData() {
-  try {
-    const storedVersion = localStorage.getItem('tk_version');
-    if (storedVersion === APP_VERSION) return; // لا يحتاج ترحيل
-
-    // ── v1.x → v2.x ──
-    // الإصدارات القديمة لم يكن عندها tk_version، نتحقق من وجود البيانات فقط
-    // وننقلها بأمان دون حذف شيء
-
-    // تحقق من بيانات السجل القديمة
-    const oldLog = localStorage.getItem('tk_log');
-    if (oldLog && !localStorage.getItem('tk_log_migrated')) {
-      // السجل موجود ومحفوظ — لا نتغير عليه
-      localStorage.setItem('tk_log_migrated', '1');
-    }
-
-    // تحقق من الإعدادات القديمة — إذا كانت موجودة نحتفظ بها
-    const oldSettings = localStorage.getItem('tk_settings');
-    // لا نحذف شيء، فقط نحدث الإصدار
-
-    localStorage.setItem('tk_version', APP_VERSION);
-    console.log(`✅ البيانات محمية — تم التحديث إلى v${APP_VERSION}`);
-  } catch(e) {}
+function saveSett(){
+  try{const d={};SKEYS.forEach(k=>{if($id(k))d[k]=$id(k).value;});localStorage.setItem('tk_sett',JSON.stringify(d));}catch(e){}
 }
-
-migrateData();
-
-// ═══════════════════════════════════════════════════════════
-// SETTINGS PERSISTENCE
-// ═══════════════════════════════════════════════════════════
-const SKEYS=['goalInput','s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd','s-alarm','s-alarm-before','s-motor-km','s-last-maint'];
-
-function saveSettings(){
-  try{const d={};SKEYS.forEach(k=>{if($(k))d[k]=$(k).value;});localStorage.setItem('tk_settings',JSON.stringify(d));}catch(e){}
-}
-function loadSettings(){
+function loadSett(){
   try{
-    const name=localStorage.getItem('tk_name');
-    const photo=localStorage.getItem('tk_photo');
-    const sett=JSON.parse(localStorage.getItem('tk_settings')||'{}');
-    if(name){$('displayName').textContent=name;$('nameInput').value=name;}
-    if(photo){currentPhoto=photo;showPhoto(photo);}
-    SKEYS.forEach(k=>{if(sett[k]!==undefined&&$(k))$(k).value=sett[k];});
+    const d=JSON.parse(localStorage.getItem('tk_sett')||'{}');
+    const name=localStorage.getItem('tk_name'), ph=localStorage.getItem('tk_photo');
+    if(name){$id('dispName').textContent=name;$id('nameEdit').value=name;}
+    if(ph){photo=ph;showPhoto(ph);}
+    SKEYS.forEach(k=>{if(d[k]!==undefined&&$id(k))$id(k).value=d[k];});
   }catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
-// EXPORT / IMPORT
-// ═══════════════════════════════════════════════════════════
-function exportData(){
-  const data={
-    version: APP_VERSION,
-    exportDate: new Date().toISOString(),
-    name: $('displayName').textContent,
-    photo: localStorage.getItem('tk_photo') || null,
-    settings:{},
-    log: logEntries,
-    trips: trips,
-    shiftState: {
-      active: shiftActive,
-      paused: shiftPaused,
-      startTS: shiftStartTS,
-      elapsedMs: shiftElapsedMs
-    }
-  };
-  SKEYS.forEach(k=>{if($(k))data.settings[k]=$(k).value;});
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+// ── DATA EXPORT / IMPORT ──────────────────────────────────────────────
+function exportD(){
+  const d={name:$id('dispName').textContent,settings:{},log:logs,notifs,version:'2.0',date:new Date().toISOString()};
+  SKEYS.forEach(k=>{if($id(k))d.settings[k]=$id(k).value;});
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`tarek_shift_backup_${new Date().toLocaleDateString('en-CA')}.json`;
+  a.download=`shift-backup-${new Date().toLocaleDateString('en-CA')}.json`;
   a.click();
 }
-function importData(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
+function importD(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{
     try{
-      const data=JSON.parse(ev.target.result);
-      if(data.name){$('displayName').textContent=data.name;$('nameInput').value=data.name;localStorage.setItem('tk_name',data.name);}
-      if(data.photo){currentPhoto=data.photo;showPhoto(data.photo);localStorage.setItem('tk_photo',data.photo);}
-      if(data.settings)Object.entries(data.settings).forEach(([k,v])=>{if($(k))$(k).value=v;});
-      if(data.log){logEntries=data.log;saveLog();renderLog();}
-      if(data.trips&&Array.isArray(data.trips)){trips=data.trips;renderTrips();updateTripTracker();updateRemBar();localStorage.setItem('tk_trips',JSON.stringify(trips));}
-      recalc();
-      alert(`✅ تم استيراد البيانات بنجاح!\n📅 النسخة: ${data.version||'قديمة'}\n📆 تاريخ النسخة: ${data.exportDate?new Date(data.exportDate).toLocaleDateString('ar-EG'):'غير معروف'}`);
+      const d=JSON.parse(ev.target.result);
+      if(d.name){$id('dispName').textContent=d.name;localStorage.setItem('tk_name',d.name);}
+      if(d.settings)Object.entries(d.settings).forEach(([k,v])=>{if($id(k))$id(k).value=v;});
+      if(d.log){logs=d.log;saveLogDB();renderLog();}
+      if(d.notifs){notifs=d.notifs;saveNotifs();renderNotifs();updNotifDot();}
+      calc(); alert('✅ تم الاستيراد بنجاح!');
     }catch(err){alert('❌ ملف غير صالح');}
   };
-  reader.readAsText(file);e.target.value='';
+  r.readAsText(f); e.target.value='';
 }
-function clearAllData(){
-  if(confirm('هتمسح كل البيانات والإعدادات؟')){try{localStorage.clear();}catch(e){}location.reload();}
-}
-
-// ═══════════════════════════════════════════════════════════
-// FIREBASE AUTH & SYNC
-// ═══════════════════════════════════════════════════════════
-let fbUser = null;
-let syncUnsubscribe = null;
-let syncTimeout = null;
-
-// ── Auth screen buttons ──
-async function loginGoogle() {
-  const btn = $('btnGoogle');
-  btn.textContent = '⏳ جاري تسجيل الدخول...';
-  btn.disabled = true;
-  try {
-    const { auth, gProvider, signInWithPopup } = window._fb;
-    await signInWithPopup(auth, gProvider);
-    // onAuthStateChanged will handle the rest
-  } catch(e) {
-    btn.textContent = '❌ فشل — حاول مرة أخرى';
-    btn.disabled = false;
-    setTimeout(() => { btn.textContent = 'تسجيل الدخول بـ Google'; btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:20px;height:20px"> تسجيل الدخول بـ Google'; }, 2000);
+function clearAll(){
+  if(confirm('هتمسح كل البيانات؟ لا يمكن التراجع.')){
+    try{localStorage.clear();}catch(e){} location.reload();
   }
 }
 
-async function loginAnon() {
-  const btn = $('btnAnon');
-  btn.textContent = '⏳ ...';
-  try {
-    const { auth, signInAnonymously } = window._fb;
-    await signInAnonymously(auth);
-  } catch(e) {
-    // If Firebase fails, just enter app with local storage only
-    enterAppLocal();
-  }
+// ── SERVICE WORKER REGISTRATION ───────────────────────────────────────
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  // Listen for sound requests from SW
+  navigator.serviceWorker.addEventListener('message',e=>{
+    if(e.data?.type==='PLAY_SOUND') playSound(e.data.sound||'notif');
+  });
 }
 
-function enterApp() {
-  $('authScreen').classList.add('hidden');
-}
+// ── INIT ─────────────────────────────────────────────────────────────
+loadSett();
+loadLogDB();
+loadNotifs();
+calc();
+updNotifBtn();
+schedAlarm();
 
-function enterAppLocal() {
-  $('authScreen').classList.add('hidden');
-}
-
-// ── Called when user logs in ──
-window._onLogin = async function(user) {
-  fbUser = user;
-
-  // Update auth screen UI
-  if (user.photoURL) {
-    $('authAvatar').src = user.photoURL;
-  }
-  $('authUserName').textContent = user.isAnonymous ? 'زائر مجهول' : (user.displayName || 'مستخدم');
-  $('authUserEmail').textContent = user.isAnonymous ? 'بدون حساب — بيانات محلية' : (user.email || '');
-  $('authUserInfo').classList.add('visible');
-  $('btnEnterApp').style.display = 'block';
-  $('btnGoogle').style.display = user.isAnonymous ? 'flex' : 'none';
-  $('btnAnon').style.display = user.isAnonymous ? 'none' : 'none';
-
-  // If anonymous, just enter with local data
-  if (user.isAnonymous) {
-    enterAppLocal();
-    return;
-  }
-
-  // Google user — load from Firestore first
-  try {
-    await loadFromFirestore(user.uid);
-  } catch(e) {}
-
-  enterApp();
-  startFirestoreSync(user.uid);
-
-  // Update profile name/photo from Google
-  if (user.displayName && !localStorage.getItem('tk_name')) {
-    $('displayName').textContent = user.displayName;
-    localStorage.setItem('tk_name', user.displayName);
-  }
-  if (user.photoURL && !localStorage.getItem('tk_photo')) {
-    currentPhoto = user.photoURL;
-    showPhoto(user.photoURL);
-    localStorage.setItem('tk_photo', user.photoURL);
-  }
-};
-
-window._onLogout = function() {
-  fbUser = null;
-  if (syncUnsubscribe) { syncUnsubscribe(); syncUnsubscribe = null; }
-  // Show auth screen on logout
-  $('authScreen').classList.remove('hidden');
-  $('btnEnterApp').style.display = 'none';
-  $('authUserInfo').classList.remove('visible');
-  $('btnGoogle').style.display = 'flex';
-  $('btnAnon').style.display = 'block';
-};
-
-// ── Load data from Firestore ──
-async function loadFromFirestore(uid) {
-  showSyncBadge('جاري تحميل بياناتك...');
-  const { db, doc, getDoc } = window._fb;
-
-  try {
-    // Load settings
-    const settDoc = await getDoc(doc(db, 'users', uid, 'data', 'settings'));
-    if (settDoc.exists()) {
-      const d = settDoc.data();
-      if (d.settings) {
-        Object.entries(d.settings).forEach(([k,v]) => { if($(k)) $(k).value = v; });
-      }
-      if (d.name) { $('displayName').textContent = d.name; localStorage.setItem('tk_name', d.name); }
-    }
-
-    // Load log
-    const logDoc = await getDoc(doc(db, 'users', uid, 'data', 'log'));
-    if (logDoc.exists() && logDoc.data().entries) {
-      logEntries = logDoc.data().entries;
-      pruneLog();
-      renderLog();
-      saveLog();
-    }
-
-    hideSyncBadge();
-    recalc();
-  } catch(e) {
-    hideSyncBadge();
-  }
-}
-
-// ── Real-time sync to Firestore ──
-function startFirestoreSync(uid) {
-  if (syncUnsubscribe) syncUnsubscribe();
-  // We push changes — no need to listen (single user, no multi-device conflict needed)
-}
-
-// ── Save to Firestore (debounced) ──
-function saveToFirestore() {
-  if (!fbUser || fbUser.isAnonymous) return;
-  clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(async () => {
-    showSyncBadge('جاري الحفظ...');
-    try {
-      const { db, doc, setDoc, serverTimestamp } = window._fb;
-      const uid = fbUser.uid;
-      const settingsData = {};
-      SKEYS.forEach(k => { if($(k)) settingsData[k] = $(k).value; });
-
-      await setDoc(doc(db, 'users', uid, 'data', 'settings'), {
-        settings: settingsData,
-        name: $('displayName').textContent,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-
-      await setDoc(doc(db, 'users', uid, 'data', 'log'), {
-        entries: logEntries,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-
-      hideSyncBadge();
-    } catch(e) {
-      hideSyncBadge();
-    }
-  }, 1500);
-}
-
-function showSyncBadge(msg = 'جاري المزامنة...') {
-  const b = $('syncBadge');
-  b.innerHTML = `<span class="sync-spin">🔄</span> ${msg}`;
-  b.classList.add('show');
-}
-function hideSyncBadge() {
-  setTimeout(() => {
-    const b = $('syncBadge');
-    b.innerHTML = '✅ تم الحفظ';
-    b.style.background = 'rgba(0,200,150,.15)';
-    setTimeout(() => b.classList.remove('show'), 1500);
-  }, 300);
-}
-
-// ── Sign out ──
-function signOutUser() {
-  if (confirm('هتسجّل خروج؟ بياناتك محفوظة على السحابة.')) {
-    const { auth, signOut } = window._fb;
-    signOut(auth);
-  }
-}
-
-// ── Hook saveSettings & saveLog to also push to Firestore ──
-const _origSaveSettings = saveSettings;
-saveSettings = function() {
-  _origSaveSettings();
-  saveToFirestore();
-};
-const _origSaveLog = saveLog;
-saveLog = function() {
-  _origSaveLog();
-  saveToFirestore();
-};
-
-loadSettings();
-loadLog();
-recalc();
-updateNotifBtn();
-scheduleAlarm();
-
-// restore active page
-showTab(currentTab, 'bnav-'+currentTab);
+// restore active tab → always start on DASHBOARD
+const savedTab = localStorage.getItem('tk_tab') || 'dash';
+goTab('dash', 'bn-dash'); // always open on dashboard
 
 // restore trips
-try{
-  const saved=localStorage.getItem('tk_trips');
-  if(saved){trips=JSON.parse(saved);renderTrips();updateTripTracker();updateRemBar();}
-}catch(e){}
+try{const t=localStorage.getItem('tk_trips');if(t){trips=JSON.parse(t);renderTrips();updTracker();updRem();}}catch(e){}
 
 // restore shift timer
 try{
-  const savedStart=localStorage.getItem('tk_shiftStart');
-  const savedElapsed=parseInt(localStorage.getItem('tk_shiftElapsed')||'0');
-  const savedPaused=localStorage.getItem('tk_shiftPaused')==='1';
-  if(savedStart){
-    shiftActive=true;
-    shiftElapsedMs=savedElapsed||0;
-    $('btnEnd').classList.add('enabled');
-    $('shiftTimer').style.display='block';
-    if(savedPaused){
-      shiftPaused=true;
-      $('btnStart').className='btn-start paused-shift';
-      $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='متابعة';
-      $('pauseBadge').style.display='flex';
-      // show paused time
-      const el=shiftElapsedMs;
+  const ss=localStorage.getItem('tk_ss');
+  if(ss){
+    shiftStart=parseInt(ss); shiftOn=true;
+    $id('btnStart').className='sb start active';
+    $id('sIcon').textContent='⏸'; $id('sTxt').textContent='إيقاف مؤقت';
+    $id('btnEnd').classList.add('on'); $id('shiftTimer').style.display='block';
+    timerInt=setInterval(()=>{
+      const el=Date.now()-shiftStart;
       const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
-      $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    } else {
-      shiftStartTS=parseInt(savedStart);
-      $('btnStart').className='btn-start active-shift';
-      $('shiftBtnIcon').textContent='⏸'; $('shiftBtnTxt').textContent='إيقاف مؤقت';
-      startTimerTick();
-    }
+      $id('timerDisp').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    },1000);
   }
 }catch(e){}
 </script>
