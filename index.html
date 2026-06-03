@@ -362,7 +362,6 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   padding:11px;border-radius:11px;border:1px solid var(--b1);cursor:pointer}
 
 /* ════════ DATA BTNS ════════ */
-.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .data-btn{padding:10px;border-radius:10px;font-family:'IBM Plex Sans Arabic',sans-serif;
   font-size:12px;font-weight:700;cursor:pointer;transition:.2s;
   display:flex;align-items:center;justify-content:center;gap:5px;border:none}
@@ -606,12 +605,27 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <div class="s-row"><div><div class="s-lbl">آخر صيانة عند</div></div><div class="s-r"><input class="s-inp" id="s-lastm" type="number" value="0" step="10" min="0" oninput="saveSett()"><span class="s-unit">كم</span></div></div>
   </div>
   <!-- Data -->
-  <div class="sec-ttl">إدارة البيانات</div>
-  <div class="data-grid">
-    <button class="data-btn db-exp" onclick="exportD()">📤 تصدير نسخة احتياطية</button>
-    <button class="data-btn db-imp" onclick="$id('impF').click()">📥 استيراد بيانات</button>
+  <div class="sc">
+    <div class="sc-hdr">🔔 نغمة الإشعارات</div>
+    <div class="s-row">
+      <div><div class="s-lbl">اختر نغمة التنبيه</div><div class="s-ds">تُشغَّل عند الإشعارات والمنبّه</div></div>
+      <div class="s-r">
+        <select class="s-inp" id="s-tone" style="width:95px;font-size:11px;padding:5px 6px" onchange="onToneChange(this)">
+          <option value="default">افتراضي</option>
+          <option value="custom">من الهاتف...</option>
+        </select>
+      </div>
+    </div>
+    <div class="s-row" id="customToneRow" style="display:none">
+      <div><div class="s-lbl" id="toneFileName">لم يتم الاختيار</div><div class="s-ds">النغمة المختارة</div></div>
+      <div class="s-r">
+        <button onclick="$id('toneFileInp').click()" style="background:rgba(240,165,0,.15);border:1px solid rgba(240,165,0,.3);color:var(--gold2);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer">تغيير</button>
+        <button onclick="testTone()" style="background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.2);color:var(--green2);font-family:'IBM Plex Sans Arabic',sans-serif;font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;cursor:pointer;margin-right:5px">▶ اختبار</button>
+      </div>
+    </div>
+    <input type="file" id="toneFileInp" accept="audio/*" style="display:none" onchange="loadCustomTone(event)">
   </div>
-  <input type="file" id="impF" accept=".json" style="display:none" onchange="importD(event)">
+  <div class="sec-ttl">إدارة الحساب</div>
   <button class="danger-btn" onclick="signOutUser()">🚪 تسجيل الخروج</button>
   <button class="danger-btn" style="margin-top:6px" onclick="clearAll()">🗑️ مسح كل البيانات</button>
 </div>
@@ -641,12 +655,12 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 
 </div><!-- /pagesWrap -->
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV — الإشعارات آخر حاجة -->
 <div class="bnav">
   <button class="bn on" id="bn-dash" onclick="goTab('dash','bn-dash')"><span class="bi">🏠</span><span class="bl">الرئيسية</span></button>
   <button class="bn" id="bn-settings" onclick="goTab('settings','bn-settings')"><span class="bi">⚙️</span><span class="bl">الإعدادات</span></button>
-  <button class="bn" id="bn-notif" onclick="goTab('notif','bn-notif')" style="position:relative"><span class="bi">🔔</span><span class="bl">الإشعارات</span><div class="nb-dot" id="notifDot"></div></button>
   <button class="bn" id="bn-log" onclick="goTab('log','bn-log')"><span class="bi">📅</span><span class="bl">السجل</span></button>
+  <button class="bn" id="bn-notif" onclick="goTab('notif','bn-notif')" style="position:relative"><span class="bi">🔔</span><span class="bl">الإشعارات</span><div class="nb-dot" id="notifDot"></div></button>
 </div>
 
 </div><!-- /app -->
@@ -771,8 +785,8 @@ function todayDate() { return new Date().toLocaleDateString('ar-EG'); }
   tick(); setInterval(tick,1000);
 })();
 
-// ── tabs + swipe ──────────────────────────────────────────────────────
-const TABS=['dash','settings','notif','log'];
+// ── tabs ──────────────────────────────────────────────────────────────
+const TABS=['dash','settings','log','notif'];
 let curTab = 'dash';
 
 function goTab(name, btnId) {
@@ -785,15 +799,15 @@ function goTab(name, btnId) {
   if (name==='notif') markNotifsRead();
 }
 
-let sx=0,sy=0;
-document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
-document.addEventListener('touchend',e=>{
-  const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
-  if (Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx)) return;
-  const i=TABS.indexOf(curTab);
-  if (dx<0&&i<TABS.length-1) goTab(TABS[i+1],'bn-'+TABS[i+1]);
-  if (dx>0&&i>0)              goTab(TABS[i-1],'bn-'+TABS[i-1]);
-},{passive:true});
+// ── Enter key = بدء / إيقاف الشيفت ──────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.activeElement.tagName !== 'INPUT'
+      && document.activeElement.tagName !== 'TEXTAREA'
+      && document.activeElement.tagName !== 'BUTTON') {
+    e.preventDefault();
+    toggleShift();
+  }
+});
 
 // ── CORE CALCULATOR ───────────────────────────────────────────────────
 let CR={};
@@ -985,13 +999,26 @@ function pushNotif(title, msg, type='general') {
   sendSysNotif(title, msg, type);
 }
 
-function sendSysNotif(title, body, type='general') {
-  if(Notification.permission!=='granted') return;
-  const opts={body,icon:'/icon-192.png',badge:'/icon-72.png',
-    vibrate:type==='shift_start'?[300,100,300,100,300]:[200,100,200],
-    tag:type,renotify:true,lang:'ar',
-    requireInteraction:type==='shift_start'};
-  try{ new Notification(title,opts); } catch(e){}
+async function sendSysNotif(title, body, type='general') {
+  if (Notification.permission !== 'granted') return;
+  const opts = {
+    body, icon:'/icon-192.png', badge:'/icon-72.png',
+    vibrate: type==='shift_start' ? [300,100,300,100,300] : [200,100,200],
+    tag: type, renotify: true, lang:'ar',
+    requireInteraction: type==='shift_start',
+    data: { type }
+  };
+  try {
+    // استخدم Service Worker لإظهار الإشعار — يشتغل حتى لو التطبيق مقفول
+    if ('serviceWorker' in navigator) {
+      const sw = await navigator.serviceWorker.ready;
+      await sw.showNotification(title, opts);
+    } else {
+      new Notification(title, opts);
+    }
+  } catch(e) {
+    try { new Notification(title, opts); } catch(e2) {}
+  }
 }
 
 function renderNotifs() {
@@ -1299,33 +1326,106 @@ function loadSett(){
 }
 
 // ── DATA EXPORT / IMPORT ──────────────────────────────────────────────
-function exportD(){
-  const d={name:$id('dispName').textContent,settings:{},log:logs,notifs,version:'2.0',date:new Date().toISOString()};
-  SKEYS.forEach(k=>{if($id(k))d.settings[k]=$id(k).value;});
-  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`shift-backup-${new Date().toLocaleDateString('en-CA')}.json`;
-  a.click();
+// ── CUSTOM TONE ───────────────────────────────────────────────────────
+let customToneBuffer = null;   // decoded AudioBuffer
+let customToneB64    = null;   // base64 للحفظ
+
+function onToneChange(sel) {
+  const row = $id('customToneRow');
+  if (sel.value === 'custom') {
+    row.style.display = 'flex';
+    // لو مفيش نغمة محفوظة — افتح الملف فوراً
+    if (!customToneB64) $id('toneFileInp').click();
+  } else {
+    row.style.display = 'none';
+    customToneBuffer = null;
+  }
+  saveSett();
 }
-function importD(e){
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    try{
-      const d=JSON.parse(ev.target.result);
-      if(d.name){$id('dispName').textContent=d.name;localStorage.setItem('tk_name',d.name);}
-      if(d.settings)Object.entries(d.settings).forEach(([k,v])=>{if($id(k))$id(k).value=v;});
-      if(d.log){logs=d.log;saveLogDB();renderLog();}
-      if(d.notifs){notifs=d.notifs;saveNotifs();renderNotifs();updNotifDot();}
-      calc(); alert('✅ تم الاستيراد بنجاح!');
-    }catch(err){alert('❌ ملف غير صالح');}
+
+function loadCustomTone(e) {
+  const f = e.target.files[0]; if (!f) return;
+  // حجم أقصى 2MB
+  if (f.size > 2 * 1024 * 1024) {
+    alert('⚠️ الملف أكبر من 2MB — اختر ملفاً أصغر'); return;
+  }
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    try {
+      customToneB64 = ev.target.result;
+      // decode للـ AudioBuffer
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const arr = Uint8Array.from(atob(customToneB64.split(',')[1]), c => c.charCodeAt(0));
+      customToneBuffer = await ctx.decodeAudioData(arr.buffer).catch(() => null);
+      $id('toneFileName').textContent = f.name;
+      // حفظ محلياً
+      try { localStorage.setItem('tk_tone', customToneB64);
+            localStorage.setItem('tk_tone_name', f.name); } catch(err) {}
+      saveSett();
+    } catch(err) { alert('❌ تعذّر تحميل النغمة — جرّب ملفاً آخر'); }
   };
-  r.readAsText(f); e.target.value='';
+  reader.readAsDataURL(f);
+  e.target.value = '';
 }
-function clearAll(){
-  if(confirm('هتمسح كل البيانات؟ لا يمكن التراجع.')){
-    try{localStorage.clear();}catch(e){} location.reload();
+
+async function playSound(type = 'notif') {
+  // لو عنده نغمة مخصصة — شغّلها
+  if (customToneB64) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!customToneBuffer) {
+        const arr = Uint8Array.from(atob(customToneB64.split(',')[1]), c => c.charCodeAt(0));
+        customToneBuffer = await ctx.decodeAudioData(arr.buffer);
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = customToneBuffer;
+      src.connect(ctx.destination);
+      src.start(0);
+      return;
+    } catch(e) {}
+  }
+  // نغمة افتراضية بـ Web Audio API
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const patterns = {
+      notif: [[440,.1,.05],[550,.1,.05],[660,.15,.1]],
+      alarm: [[523,.15,.05],[523,.15,.05],[659,.15,.05],[784,.3,.15]],
+      end:   [[784,.15,.05],[659,.1,.05],[523,.2,.1]],
+    };
+    const seq = patterns[type] || patterns.notif;
+    let t = ctx.currentTime;
+    seq.forEach(([freq, dur, gap]) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(.3, t);
+      g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t); o.stop(t + dur);
+      t += dur + gap;
+    });
+  } catch(e) {}
+}
+
+function testTone() { playSound('alarm'); }
+
+function loadCustomToneFromStorage() {
+  try {
+    const b64  = localStorage.getItem('tk_tone');
+    const name = localStorage.getItem('tk_tone_name');
+    if (b64) {
+      customToneB64 = b64;
+      if ($id('s-tone'))    $id('s-tone').value = 'custom';
+      if ($id('toneFileName')) $id('toneFileName').textContent = name || 'نغمة مخصصة';
+      if ($id('customToneRow')) $id('customToneRow').style.display = 'flex';
+    }
+  } catch(e) {}
+}
+
+// ── DATA MANAGEMENT ───────────────────────────────────────────────────
+function clearAll() {
+  if (confirm('هتمسح كل البيانات؟ لا يمكن التراجع.')) {
+    try { localStorage.clear(); } catch(e) {}
+    location.reload();
   }
 }
 
@@ -1338,10 +1438,36 @@ if('serviceWorker' in navigator){
   });
 }
 
-// ── INIT ─────────────────────────────────────────────────────────────
+// ── Auto-save عند إغلاق أو تحديث الصفحة ──────────────────────────
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    // حفظ فوري بدون debounce لما المستخدم يخرج
+    clearTimeout(syncTimer);
+    if (!window._user || window._user.isAnonymous) return;
+    const sett = {};
+    SKEYS.forEach(k => { if ($id(k)) sett[k] = $id(k).value; });
+    const {db, doc, setDoc, serverTimestamp} = window._fb || {};
+    if (!db) return;
+    const uid = window._user.uid;
+    setDoc(doc(db,'users',uid,'data','settings'),
+      {settings:sett, name:$id('dispName').textContent, updatedAt:serverTimestamp()},
+      {merge:true}).catch(()=>{});
+    setDoc(doc(db,'users',uid,'data','log'),
+      {entries:logs, updatedAt:serverTimestamp()},
+      {merge:true}).catch(()=>{});
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  // حفظ محلي فوري دايماً
+  saveSett();
+  saveLogDB();
+  saveNotifs();
+});
 loadSett();
 loadLogDB();
 loadNotifs();
+loadCustomToneFromStorage();
 calc();
 updNotifBtn();
 schedAlarm();
