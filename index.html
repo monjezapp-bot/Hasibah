@@ -719,33 +719,38 @@ gProvider.setCustomParameters({ prompt: 'select_account' });
 window._fb = { auth, db, gProvider, signInWithRedirect, getRedirectResult,
                signOut, doc, setDoc, getDoc, serverTimestamp };
 
-// ── Auth state — ننتظر الـ app script يكون جاهز أول ──
-onAuthStateChanged(auth, user => {
+// ── Auth state listener ──
+onAuthStateChanged(auth, async user => {
   window._user = user || null;
-  // لو _onLogin موجود نناديه فوراً، لو لأ نحفظه للاحقاً
   if (user) {
-    if (typeof window._onLogin === 'function') {
-      window._onLogin(user);
-    } else {
-      window._pendingUser = user;
+    window._pendingUser = user;
+    // نستنى الـ app script يجهّز _onLogin (max 2 ثانية)
+    let waited = 0;
+    while (typeof window._onLogin !== 'function' && waited < 2000) {
+      await new Promise(r => setTimeout(r, 50));
+      waited += 50;
     }
+    if (typeof window._onLogin === 'function') window._onLogin(user);
   } else {
     window._pendingUser = null;
     if (typeof window._onLogout === 'function') window._onLogout();
   }
 });
 
-// ── Handle redirect result بعد رجوع Google ──
+// ── Handle redirect result after Google returns ──
 getRedirectResult(auth).then(result => {
-  if (result?.user) {
-    history.replaceState(null, '', location.pathname);
-  }
+  if (result?.user) history.replaceState(null, '', location.pathname);
 }).catch(e => {
+  console.error('Redirect error:', e.code, e.message);
+  const btn = document.getElementById('btnGoogle');
+  if (!btn) return;
   if (e.code === 'auth/unauthorized-domain') {
-    const btn = document.getElementById('btnGoogle');
-    if (btn) { btn.innerHTML = '⚠️ النطاق غير مضاف في Firebase Console'; btn.style.color='#ff5757'; }
+    btn.innerHTML = '⚠️ أضف النطاق في Firebase Console';
+    btn.style.background = '#fff3cd'; btn.style.color = '#856404';
+  } else if (e.code !== 'auth/no-auth-event') {
+    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="20" height="20"> المتابعة بحساب Google';
+    btn.disabled = false;
   }
-  console.error('Redirect error:', e.code);
 });
 </script>
 
@@ -756,6 +761,14 @@ getRedirectResult(auth).then(result => {
 window._onLogin  = null;
 window._onLogout = null;
 window._pendingUser = null;
+
+// ── لو Firebase بعت المستخدم قبل ما _onLogin يتعرّف — طبّقه هنا ──
+function _applyPendingUser() {
+  if (window._pendingUser && typeof window._onLogin === 'function') {
+    window._onLogin(window._pendingUser);
+    window._pendingUser = null;
+  }
+}
 // ── helpers ──────────────────────────────────────────────────────────
 const $id = id => document.getElementById(id);
 const N   = id => parseFloat($id(id)?.value) || 0;
