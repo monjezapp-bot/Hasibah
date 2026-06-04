@@ -719,23 +719,43 @@ gProvider.setCustomParameters({ prompt: 'select_account' });
 window._fb = { auth, db, gProvider, signInWithRedirect, getRedirectResult,
                signOut, doc, setDoc, getDoc, serverTimestamp };
 
-// ── Handle Google redirect result ──
-try {
-  const result = await getRedirectResult(auth);
+// ── Auth state — ننتظر الـ app script يكون جاهز أول ──
+onAuthStateChanged(auth, user => {
+  window._user = user || null;
+  // لو _onLogin موجود نناديه فوراً، لو لأ نحفظه للاحقاً
+  if (user) {
+    if (typeof window._onLogin === 'function') {
+      window._onLogin(user);
+    } else {
+      window._pendingUser = user;
+    }
+  } else {
+    window._pendingUser = null;
+    if (typeof window._onLogout === 'function') window._onLogout();
+  }
+});
+
+// ── Handle redirect result بعد رجوع Google ──
+getRedirectResult(auth).then(result => {
   if (result?.user) {
     history.replaceState(null, '', location.pathname);
   }
-} catch(e) { console.error('Redirect error:', e.code); }
-
-onAuthStateChanged(auth, user => {
-  window._user = user || null;
-  user ? window._onLogin?.(user) : window._onLogout?.();
+}).catch(e => {
+  if (e.code === 'auth/unauthorized-domain') {
+    const btn = document.getElementById('btnGoogle');
+    if (btn) { btn.innerHTML = '⚠️ النطاق غير مضاف في Firebase Console'; btn.style.color='#ff5757'; }
+  }
+  console.error('Redirect error:', e.code);
 });
 </script>
 
 <!-- ════════ APP SCRIPT ════════ -->
 <script>
 'use strict';
+// ── Pre-declare auth callbacks ──────────────────────────────────────
+window._onLogin  = null;
+window._onLogout = null;
+window._pendingUser = null;
 // ── helpers ──────────────────────────────────────────────────────────
 const $id = id => document.getElementById(id);
 const N   = id => parseFloat($id(id)?.value) || 0;
@@ -1484,7 +1504,12 @@ calc();
 updNotifBtn();
 schedAlarm();
 
-// restore active tab → always start on DASHBOARD
+// ── لو Firebase كان سبق وبعت المستخدم قبل ما _onLogin يتعرّف ──
+if (window._pendingUser) {
+  window._onLogin(window._pendingUser);
+  window._pendingUser = null;
+}
+
 const savedTab = localStorage.getItem('tk_tab') || 'dash';
 goTab('dash', 'bn-dash'); // always open on dashboard
 
