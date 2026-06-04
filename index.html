@@ -67,6 +67,14 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   transition:.2s;-webkit-appearance:none}
 .inp:focus{border-color:var(--gold);background:rgba(240,165,0,.04)}
 .inp.ltr{direction:ltr;text-align:center}
+.auth-btn-google{width:100%;padding:14px;border-radius:13px;
+  background:#fff;color:#1f1f1f;
+  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:15px;
+  border:none;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.auth-btn-google:active{transform:scale(.97);opacity:.9}
+.auth-btn-google:disabled{opacity:.5;pointer-events:none}
 .auth-btn{width:100%;padding:13px;border-radius:12px;
   background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
   font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:900;font-size:14px;
@@ -396,42 +404,23 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <div class="auth-logo-img">🛵</div>
   </div>
   <div class="auth-title">حاسبة الشفت</div>
-  <div class="auth-sub">أدخل بريدك الإلكتروني وهنبعتلك رابط دخول فوري — مجاني تماماً</div>
+  <div class="auth-sub">سجّل دخولك بضغطة واحدة لحفظ بياناتك على السحابة</div>
 
   <div class="auth-card">
-    <div class="auth-dots">
-      <div class="auth-dot on" id="dot1"></div>
-      <div class="auth-dot" id="dot2"></div>
-      <div class="auth-dot" id="dot3"></div>
-    </div>
-
-    <!-- Step 1: Email -->
+    <!-- Step 1: Google button -->
     <div class="auth-step on" id="step1">
-      <input class="inp ltr" id="emailInp" type="email"
-             placeholder="example@gmail.com" inputmode="email" autocomplete="email">
+      <button class="auth-btn-google" id="btnGoogle" onclick="loginGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="20" height="20">
+        المتابعة بحساب Google
+      </button>
       <div class="auth-err" id="err1"></div>
-      <button class="auth-btn" id="btnSend" onclick="sendLink()">📧 إرسال رابط الدخول</button>
-      <div class="auth-hint">🔒 بدون كلمة مرور — اضغط الرابط في بريدك وادخل فوراً</div>
+      <div class="auth-hint">🔒 بياناتك خاصة بك تماماً — لا أحد يستطيع الوصول إليها</div>
     </div>
 
-    <!-- Step 2: Waiting -->
-    <div class="auth-step" id="step2">
-      <div style="text-align:center;font-size:40px">📬</div>
-      <div style="font-family:'Tajawal';font-size:16px;font-weight:900">تم الإرسال!</div>
-      <div class="sent-box">
-        1️⃣ افتح بريدك الإلكتروني<br>
-        2️⃣ ابحث عن رسالة من <strong>Firebase / حاسبة الشفت</strong><br>
-        3️⃣ اضغط الرابط — ستدخل التطبيق فوراً
-      </div>
-      <div class="auth-err" id="err2"></div>
-      <button class="auth-btn sec" onclick="sendLink()">🔄 إعادة الإرسال</button>
-      <button class="auth-back" onclick="goStep(1)">← تغيير البريد</button>
-    </div>
-
-    <!-- Step 3: Name -->
+    <!-- Step 2: Name (first time only) -->
     <div class="auth-step" id="step3">
       <div style="text-align:center;font-size:36px;margin-bottom:2px">👋</div>
-      <div style="font-family:'Tajawal';font-size:16px;font-weight:900">مرحباً! ما اسمك؟</div>
+      <div style="font-family:'Tajawal';font-size:16px;font-weight:900;text-align:center">مرحباً! ما اسمك؟</div>
       <input class="inp" id="nameInp" type="text" placeholder="اكتب اسمك هنا" maxlength="40">
       <div class="auth-err" id="err3"></div>
       <button class="auth-btn" onclick="saveName()">🚀 دخول التطبيق</button>
@@ -703,7 +692,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, browserLocalPersistence, setPersistence,
-         sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink,
+         GoogleAuthProvider, signInWithRedirect, getRedirectResult,
          onAuthStateChanged, signOut }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
@@ -724,16 +713,19 @@ const db   = getFirestore(app);
 
 await setPersistence(auth, browserLocalPersistence).catch(()=>{});
 
-window._fb = { auth, db, sendSignInLinkToEmail, isSignInWithEmailLink,
-               signInWithEmailLink, signOut, doc, setDoc, getDoc, serverTimestamp };
+const gProvider = new GoogleAuthProvider();
+gProvider.setCustomParameters({ prompt: 'select_account' });
 
-// Handle email link return
-if (isSignInWithEmailLink(auth, location.href)) {
-  const em = localStorage.getItem('tk_em') || prompt('أدخل بريدك للتأكيد:');
-  if (em) signInWithEmailLink(auth, em, location.href)
-    .then(()=>{ localStorage.removeItem('tk_em'); history.replaceState(null,'',location.pathname); })
-    .catch(e=>console.error(e));
-}
+window._fb = { auth, db, gProvider, signInWithRedirect, getRedirectResult,
+               signOut, doc, setDoc, getDoc, serverTimestamp };
+
+// ── Handle Google redirect result ──
+try {
+  const result = await getRedirectResult(auth);
+  if (result?.user) {
+    history.replaceState(null, '', location.pathname);
+  }
+} catch(e) { console.error('Redirect error:', e.code); }
 
 onAuthStateChanged(auth, user => {
   window._user = user || null;
@@ -1231,19 +1223,39 @@ function hideSync(ok){
 
 // ── AUTH ──────────────────────────────────────────────────────────────
 window._onLogin = async function(user){
-  const localName=localStorage.getItem('tk_name');
-  if(localName){
-    $id('dispName').textContent=localName;
+  const localName = localStorage.getItem('tk_name');
+  // لو عنده اسم محفوظ — ادخله مباشرة
+  if (localName) {
+    $id('dispName').textContent = localName;
     $id('authScreen').classList.add('out');
     fbLoad(user.uid).catch(()=>{});
     return;
   }
-  try{
+  // جرّب تحمّل من Firestore
+  try {
     await fbLoad(user.uid);
-    const n=localStorage.getItem('tk_name');
-    if(n){$id('dispName').textContent=n;$id('authScreen').classList.add('out');}
-    else{goStep(3);$id('nameInp').focus();}
-  }catch(e){$id('authScreen').classList.add('out');}
+    const n = localStorage.getItem('tk_name');
+    if (n) {
+      $id('dispName').textContent = n;
+      $id('authScreen').classList.add('out');
+    } else {
+      // مستخدم جديد — لو عنده اسم Google استخدمه
+      const googleName = user.displayName || '';
+      if (googleName) {
+        $id('nameInp').value = googleName;
+      }
+      // لو عنده صورة Google
+      if (user.photoURL && !localStorage.getItem('tk_photo')) {
+        photo = user.photoURL;
+        showPhoto(user.photoURL);
+        localStorage.setItem('tk_photo', user.photoURL);
+      }
+      goStep(3);
+      $id('nameInp').focus();
+    }
+  } catch(e) {
+    $id('authScreen').classList.add('out');
+  }
 };
 window._onLogout=function(){
   window._user=null;
@@ -1251,26 +1263,26 @@ window._onLogout=function(){
   goStep(1);
 };
 
-function goStep(n){
-  document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('on'));
-  $id('step'+n)?.classList.add('on');
-  [1,2,3].forEach(i=>{const d=$id('dot'+i);if(d)d.classList.toggle('on',i<=n);});
-  ['err1','err2','err3'].forEach(id=>{const e=$id(id);if(e)e.textContent='';});
+// ── GOOGLE LOGIN ──────────────────────────────────────────────────────
+async function loginGoogle() {
+  const btn = $id('btnGoogle');
+  if (btn) { btn.disabled=true; btn.innerHTML='⏳ جاري التوجيه إلى Google...'; }
+  if ($id('err1')) $id('err1').textContent='';
+  try {
+    const {auth,gProvider,signInWithRedirect} = window._fb;
+    await signInWithRedirect(auth, gProvider);
+  } catch(e) {
+    console.error('Google login error:', e.code);
+    if (btn) { btn.disabled=false; btn.innerHTML='<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="20" height="20"> المتابعة بحساب Google'; }
+    const msgs={'auth/network-request-failed':'❌ تحقق من الإنترنت','auth/unauthorized-domain':'❌ النطاق غير مضاف في Firebase','auth/operation-not-allowed':'❌ Google Login غير مفعّل'};
+    if ($id('err1')) $id('err1').textContent = msgs[e.code]||'❌ خطأ — حاول مرة أخرى';
+  }
 }
 
-async function sendLink(){
-  const em=($id('emailInp')?.value||'').trim();
-  if(!em||!em.includes('@')){if($id('err1'))$id('err1').textContent='⚠️ أدخل بريد إلكتروني صحيح';return;}
-  const btn=$id('btnSend'); if(btn){btn.textContent='⏳...';btn.disabled=true;}
-  try{
-    const {auth,sendSignInLinkToEmail}=window._fb;
-    await sendSignInLinkToEmail(auth,em,{url:location.href,handleCodeInApp:true});
-    localStorage.setItem('tk_em',em);
-    goStep(2);
-  }catch(e){
-    const m={'auth/invalid-email':'❌ بريد غير صحيح','auth/operation-not-allowed':'❌ غير مفعّل في Firebase','auth/network-request-failed':'❌ تحقق من الإنترنت'};
-    if($id('err1'))$id('err1').textContent=m[e.code]||'❌ خطأ — حاول مرة أخرى';
-  }finally{if(btn){btn.textContent='📧 إرسال رابط الدخول';btn.disabled=false;}}
+function goStep(n) {
+  document.querySelectorAll('.auth-step').forEach(s=>s.classList.remove('on'));
+  $id('step'+n)?.classList.add('on');
+  ['err1','err3'].forEach(id=>{const e=$id(id);if(e)e.textContent='';});
 }
 
 function saveName(){
