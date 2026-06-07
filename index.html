@@ -403,72 +403,62 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
     <div class="auth-logo-img">🛵</div>
   </div>
   <div class="auth-title">حاسبة الشفت</div>
-  <div class="auth-sub" id="authSub">أدخل رقم هاتفك لإنشاء حسابك</div>
-
-  <!-- progress dots -->
-  <div class="auth-dots">
-    <div class="auth-dot on" id="dot1"></div>
-    <div class="auth-dot" id="dot2"></div>
-    <div class="auth-dot" id="dot3"></div>
-  </div>
+  <div class="auth-sub" id="authSubTxt">سجّل دخولك للمتابعة</div>
 
   <div class="auth-card">
+    <div class="auth-dots">
+      <div class="auth-dot on" id="dot1"></div>
+      <div class="auth-dot" id="dot2"></div>
+    </div>
 
-    <!-- STEP 1: Phone number -->
-    <div class="auth-step on" id="step1">
-      <div style="font-size:12px;color:var(--muted2);align-self:flex-start">رقم الهاتف</div>
+    <!-- LOGIN -->
+    <div class="auth-step on" id="stepLogin">
+      <input class="inp ltr" id="loginEmail" type="email"
+             placeholder="البريد الإلكتروني" inputmode="email" autocomplete="email">
+      <div style="position:relative;width:100%">
+        <input class="inp ltr" id="loginPass" type="password"
+               placeholder="كلمة المرور" autocomplete="current-password"
+               style="width:100%;padding-left:42px">
+        <button onclick="togglePass('loginPass',this)"
+          style="position:absolute;left:12px;top:50%;transform:translateY(-50%);
+                 background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">👁</button>
+      </div>
+      <div class="auth-err" id="errLogin"></div>
+      <button class="auth-btn" id="btnLogin" onclick="doLogin()">🚀 تسجيل الدخول</button>
+      <button class="auth-back" onclick="switchMode('register')">ليس لديك حساب؟ سجّل الآن</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-step" id="stepRegister">
       <div style="display:flex;gap:8px;width:100%">
-        <input class="inp ltr" id="countryCode" type="tel" value="+20"
-               maxlength="5" style="width:70px;flex-shrink:0;text-align:center;font-size:15px">
-        <input class="inp ltr" id="phoneInp" type="tel"
-               placeholder="01XXXXXXXXX" inputmode="tel" maxlength="11"
-               style="flex:1;font-size:17px;letter-spacing:.05em">
+        <input class="inp" id="regFirst" type="text" placeholder="الاسم الأول" maxlength="20" style="flex:1">
+        <input class="inp" id="regLast"  type="text" placeholder="الاسم الأخير" maxlength="20" style="flex:1">
       </div>
-      <!-- reCAPTCHA invisible -->
-      <div id="recaptcha-container"></div>
-      <div class="auth-err" id="err1"></div>
-      <button class="auth-btn" id="btnSendOtp" onclick="sendOTP()">
-        📱 إرسال كود التحقق
-      </button>
-      <div class="auth-hint">سيصلك كود SMS مكوّن من 6 أرقام</div>
-    </div>
-
-    <!-- STEP 2: OTP -->
-    <div class="auth-step" id="step2">
-      <div style="font-size:12px;color:var(--muted2)">كود التحقق</div>
-      <div class="auth-hint" id="otpHint">تم إرسال الكود إلى رقمك</div>
-      <!-- 6 OTP boxes -->
-      <div style="display:flex;gap:8px;justify-content:center;direction:ltr">
-        <input class="otp-box" maxlength="1" inputmode="numeric" id="otp0" oninput="otpMove(this,0)">
-        <input class="otp-box" maxlength="1" inputmode="numeric" id="otp1" oninput="otpMove(this,1)">
-        <input class="otp-box" maxlength="1" inputmode="numeric" id="otp2" oninput="otpMove(this,2)">
-        <input class="otp-box" maxlength="1" inputmode="numeric" id="otp3" oninput="otpMove(this,3)">
-        <input class="otp-box" maxlength="1" inputmode="numeric" id="otp4" oninput="otpMove(this,4)">
-        <input class="otp-box" maxlength="1" inputmode="numeric" id="otp5" oninput="otpMove(this,5)">
+      <input class="inp ltr" id="regEmail" type="email"
+             placeholder="البريد الإلكتروني" inputmode="email" autocomplete="email">
+      <div style="position:relative;width:100%">
+        <input class="inp ltr" id="regPass" type="password"
+               placeholder="كلمة المرور (6 أحرف على الأقل)"
+               autocomplete="new-password" style="width:100%;padding-left:42px">
+        <button onclick="togglePass('regPass',this)"
+          style="position:absolute;left:12px;top:50%;transform:translateY(-50%);
+                 background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">👁</button>
       </div>
-      <div class="auth-err" id="err2"></div>
-      <button class="auth-btn" id="btnVerify" onclick="verifyOTP()">✅ تحقق</button>
-      <button class="auth-back" id="btnResend" style="display:none" onclick="resendOTP()">🔄 إعادة الإرسال</button>
-      <button class="auth-back" onclick="goStep(1)">← تغيير الرقم</button>
-    </div>
-
-    <!-- STEP 3: Name + info -->
-    <div class="auth-step" id="step3">
-      <div style="text-align:center;font-size:34px">👋</div>
-      <div style="font-family:'Tajawal';font-size:16px;font-weight:900;text-align:center">أهلاً! عرّف بنفسك</div>
-      <input class="inp" id="firstNameInp" type="text"
-             placeholder="الاسم الأول" maxlength="20">
-      <input class="inp" id="lastNameInp" type="text"
-             placeholder="الاسم الأخير" maxlength="20" style="margin-top:-4px">
-      <input class="inp ltr" id="phoneDisplay" type="tel"
-             placeholder="رقم الهاتف" readonly
-             style="background:rgba(255,255,255,.03);color:var(--muted);cursor:not-allowed">
-      <div class="auth-err" id="err3"></div>
-      <button class="auth-btn" onclick="saveUserInfo()">🚀 دخول التطبيق</button>
+      <div style="position:relative;width:100%">
+        <input class="inp ltr" id="regConfirm" type="password"
+               placeholder="تأكيد كلمة المرور"
+               autocomplete="new-password" style="width:100%;padding-left:42px">
+        <button onclick="togglePass('regConfirm',this)"
+          style="position:absolute;left:12px;top:50%;transform:translateY(-50%);
+                 background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px">👁</button>
+      </div>
+      <div class="auth-err" id="errRegister"></div>
+      <button class="auth-btn" id="btnRegister" onclick="doRegister()">✅ إنشاء الحساب</button>
+      <button class="auth-back" onclick="switchMode('login')">لديك حساب بالفعل؟ سجّل دخولك</button>
     </div>
 
   </div>
-</div>
+</div></div>
 
 <!-- ════════ SYNC BADGE ════════ -->
 <div class="sync-badge" id="syncBadge"><span class="spin-ic">🔄</span><span id="syncMsg">جاري الحفظ</span></div>
@@ -732,11 +722,9 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 <!-- ════════ FIREBASE MODULE ════════ -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, browserLocalPersistence, setPersistence,
-         RecaptchaVerifier, signInWithPhoneNumber,
-         onAuthStateChanged, signOut }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, serverTimestamp }
+// Firebase Authentication غير مستخدم — نظام مخصص عبر Firestore
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp,
+         collection, query, where, getDocs, addDoc }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const FC = {
@@ -748,722 +736,202 @@ const FC = {
   appId:"1:95168484525:web:5b57d784b818078f9ba224"
 };
 
-const app  = initializeApp(FC);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app = initializeApp(FC);
+const db  = getFirestore(app);
 
-await setPersistence(auth, browserLocalPersistence).catch(()=>{});
-
-window._fb = { auth, db, RecaptchaVerifier, signInWithPhoneNumber,
-               signOut, doc, setDoc, getDoc, serverTimestamp };
-
-// ── Auth state listener ──
-onAuthStateChanged(auth, async user => {
-  window._user = user || null;
-  if (user) {
-    window._pendingUser = user;
-    // نستنى الـ app script يجهّز _onLogin (max 2 ثانية)
-    let waited = 0;
-    while (typeof window._onLogin !== 'function' && waited < 2000) {
-      await new Promise(r => setTimeout(r, 50));
-      waited += 50;
-    }
-    if (typeof window._onLogin === 'function') window._onLogin(user);
-  } else {
-    window._pendingUser = null;
-    if (typeof window._onLogout === 'function') window._onLogout();
-  }
-});
-
-// Phone Auth — no redirect needed
+window._fb = { db, doc, setDoc, getDoc, serverTimestamp,
+  collection, query, where, getDocs, addDoc };
 </script>
 
 <!-- ════════ APP SCRIPT ════════ -->
 <script>
 'use strict';
 // ── Pre-declare auth callbacks ──────────────────────────────────────
-window._onLogin  = null;
-window._onLogout = null;
-window._pendingUser = null;
-
-// ── لو Firebase بعت المستخدم قبل ما _onLogin يتعرّف — طبّقه هنا ──
-function _applyPendingUser() {
-  if (window._pendingUser && typeof window._onLogin === 'function') {
-    window._onLogin(window._pendingUser);
-    window._pendingUser = null;
-  }
-}
-// ── helpers ──────────────────────────────────────────────────────────
-const $id = id => document.getElementById(id);
-const N   = id => parseFloat($id(id)?.value) || 0;
-
-function fmt(n, d=1) {
-  if (!isFinite(n)||isNaN(n)) return '—';
-  return Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
-}
-function fmtH(h) {
-  if (!isFinite(h)||isNaN(h)) return {s:'—',u:'ساعة'};
-  const tm=Math.round(h*60), hr=Math.floor(tm/60), mn=tm%60;
-  if (hr===0) return {s:String(mn),u:'دقيقة'};
-  if (mn===0) return {s:String(hr),u:'ساعة'};
-  return {s:`${hr}:${String(mn).padStart(2,'0')}`,u:'س:د'};
-}
-function fmtHR(h) {
-  if (!isFinite(h)||h<=0) return '0:00';
-  const tm=Math.round(h*60), hr=Math.floor(tm/60), mn=tm%60;
-  return `${hr}:${String(mn).padStart(2,'0')}`;
-}
-function setV(id,val,d=1) {
-  const el=$id(id); if(!el) return;
-  const t=fmt(val,d);
-  if (el.textContent===t) return;
-  el.textContent=t;
-  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
-}
-function nowTime() { return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}); }
-function todayDate() { return new Date().toLocaleDateString('ar-EG'); }
-
-// ── clock ─────────────────────────────────────────────────────────────
-(function clock(){
-  const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-  function tick(){
-    const n=new Date();
-    $id('dtDate').textContent=`${days[n.getDay()]}، ${n.toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}`;
-    $id('dtTime').textContent=n.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
-  }
-  tick(); setInterval(tick,1000);
-})();
-
-// ── tabs ──────────────────────────────────────────────────────────────
-const TABS=['dash','settings','log','notif'];
-let curTab = 'dash';
-
-function goTab(name, btnId) {
-  curTab=name;
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
-  $id('pg-'+name).classList.add('on');
-  $id(btnId||'bn-'+name).classList.add('on');
-  try { localStorage.setItem('tk_tab',name); } catch(e){}
-  if (name==='notif') markNotifsRead();
-}
-
-// ── Enter key = بدء / إيقاف الشيفت ──────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.activeElement.tagName !== 'INPUT'
-      && document.activeElement.tagName !== 'TEXTAREA'
-      && document.activeElement.tagName !== 'BUTTON') {
-    e.preventDefault();
-    toggleShift();
-  }
-});
-
-// ── CORE CALCULATOR ───────────────────────────────────────────────────
-let CR={};
-function calc() {
-  const goal=N('goalInp'), pkm=N('s-pkm')||1, pp=N('s-pp'),
-        kpl=N('s-kpl')||1, oil=N('s-oil'), mnt=N('s-mnt'),
-        iph=N('s-iph'), com=N('s-com')/100, pers=N('s-pers'), spd=N('s-spd')||1;
-
-  const km1=goal/pkm, p1=km1/kpl*pp, o1=km1*oil/1000, mn1=km1*mnt/1000, i1=(km1/spd)*iph, t1=p1+o1+mn1+i1;
-  const km2=(t1+pers)/pkm, p2=km2/kpl*pp, o2=km2*oil/1000, mn2=km2*mnt/1000, i2=(km2/spd)*iph, t2=p2+o2+mn2+i2;
-  const kmT=km1+km2, hrsT=kmT/spd, preCom=t1+t2+pers;
-  const rev=(goal+preCom)/(1-com), comA=rev*com, allC=rev-goal, kmD=rev/pkm;
-  CR={goal,pkm,kmD,hrsT,rev,allC,comA,petrol:p1+p2,oil:o1+o2,mnt:mn1+mn2,inet:i1+i2,pers,km1,km2,t1,t2,preCom,spd};
-
-  setV('r-km',kmD,1);
-  const hf=fmtH(hrsT); $id('r-hrs').textContent=hf.s; $id('r-hrs-u').textContent=hf.u;
-  setV('r-cost',allC,0); setV('r-earn',rev,0); setV('r-net',goal,0);
-  const pe=$id('r-pct'); if(pe&&rev>0) pe.textContent=(allC/rev*100).toFixed(1)+'%';
-  updRem(); updTracker(); saveSett();
-}
-
-function updRem() {
-  const col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
-  const monRem=Math.max(0,(CR.rev||0)-col);
-  const kmRem=monRem/(CR.pkm||1);
-  const hrsRem=kmRem/(CR.spd||1);
-  $id('hs-km').textContent=fmt(kmRem,1);
-  $id('hs-time').textContent=fmtHR(hrsRem);
-  $id('hs-money').textContent=fmt(monRem,0);
-}
-
-// ── SHIFT ─────────────────────────────────────────────────────────────
-let shiftOn=false, shiftStart=null, timerInt=null;
-
-function toggleShift() { shiftOn ? pauseShift() : startShift(); }
-
-function startShift() {
-  shiftOn=true; shiftStart=shiftStart||Date.now(); trips=[];
-  renderTrips();
-  $id('btnStart').className='sb start active';
-  $id('sIcon').textContent='⏸'; $id('sTxt').textContent='إيقاف مؤقت';
-  $id('btnEnd').classList.add('on'); $id('shiftTimer').style.display='block';
-  timerInt=setInterval(()=>{
-    const e=Date.now()-shiftStart;
-    const h=Math.floor(e/3600000),m=Math.floor((e%3600000)/60000),s=Math.floor((e%60000)/1000);
-    $id('timerDisp').textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  },1000);
-  try{localStorage.setItem('tk_ss',shiftStart);}catch(e){}
-}
-
-function pauseShift() {
-  shiftOn=false; clearInterval(timerInt);
-  $id('btnStart').className='sb start';
-  $id('sIcon').textContent='▶'; $id('sTxt').textContent='استئناف الشيفت';
-}
-
-function endShift() {
-  if (!shiftStart) return;
-  clearInterval(timerInt);
-  const dur=(Date.now()-shiftStart)/3600000;
-  const col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
-  const com=N('s-com')/100, pers=N('s-pers'), pkm=N('s-pkm')||1;
-  const net=col*(1-com)-pers, km=col/pkm;
-
-  // update motor km
-  const mk=N('s-mtkm');
-  if(mk>0){$id('s-mtkm').value=Math.round(mk+km);saveSett();chkMotor();}
-
-  addLog({date:todayDate(),time:nowTime(),goal:N('goalInp'),km:km.toFixed(1),hrs:dur.toFixed(1),total:col,net:net.toFixed(2)});
-  pushNotif('🛵 انتهى الشيفت!',`الحمد لله على السلامة يا كابتن!\nالمحصّل: ${fmt(col,0)} جنيه — الصافي: ${fmt(net,0)} جنيه\nأحسنت صنعاً اليوم 💪`,'shift_end');
-  playSound('end');
-
-  shiftOn=false; shiftStart=null;
-  $id('btnStart').className='sb start';
-  $id('sIcon').textContent='▶'; $id('sTxt').textContent='بدء الشيفت';
-  $id('btnEnd').classList.remove('on'); $id('shiftTimer').style.display='none';
-  $id('timerDisp').textContent='00:00:00';
-  trips=[]; renderTrips(); updTracker(); updRem();
-  try{localStorage.removeItem('tk_ss');localStorage.removeItem('tk_trips');}catch(e){}
-}
-
-// ── TRIPS ─────────────────────────────────────────────────────────────
-let trips=[];
-
-function addTrip() {
-  const a=parseFloat($id('tripInp').value); if(!a||a<=0){$id('tripInp').focus();return;}
-  trips.push({id:Date.now(),amount:a,type:'trip',time:nowTime()});
-  $id('tripInp').value='';
-  renderTrips(); updTracker(); updRem();
-  try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
-}
-
-function addExp() {
-  const a=parseFloat($id('expInp').value); if(!a||a<=0){$id('expInp').focus();return;}
-  const cur=N('s-pers'); $id('s-pers').value=(cur+a).toFixed(0);
-  $id('expInp').value='';
-  trips.push({id:Date.now(),amount:-a,type:'expense',time:nowTime()});
-  renderTrips(); updTracker(); updRem(); calc();
-  try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
-}
-
-function removeTrip(id) {
-  trips=trips.filter(t=>t.id!==id);
-  renderTrips(); updTracker(); updRem();
-  try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
-}
-
-function renderTrips() {
-  const l=$id('tripsList'); if(!l) return; l.innerHTML='';
-  trips.slice().reverse().forEach(t=>{
-    const d=document.createElement('div'); d.className='trip-item';
-    const isE=t.type==='expense';
-    d.innerHTML=`<span style="color:var(--muted);font-size:10px;direction:ltr">${t.time}</span>
-      <span style="font-family:'Tajawal';font-weight:700;color:${isE?'var(--red)':'var(--gold2)'};direction:ltr">
-        ${isE?'−':'+'} ${fmt(Math.abs(t.amount),2)} جنيه</span>
-      <button class="trip-del" onclick="removeTrip(${t.id})">✕</button>`;
-    l.appendChild(d);
-  });
-}
-
-function updTracker() {
-  const col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
-  const rem=Math.max(0,(CR.rev||0)-col), pkm=CR.pkm||1;
-  $id('t-col').textContent=fmt(col,2);
-  $id('t-rem').textContent=rem>0?fmt(rem,2):'✅ تحقق الهدف!';
-  $id('t-km').textContent=rem>0?fmt(rem/pkm,1):'0';
-  $id('t-cnt').textContent=trips.filter(t=>t.type==='trip').length;
-}
-
-// ── KPI BOTTOM SHEET ─────────────────────────────────────────────────
-function showBS(type) {
-  const R=CR, col=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0), pkm=R.pkm||1;
-  let title='',sub='',rows=[],hl='',prog=null;
-
-  if(type==='km'){
-    title='🏁 الكيلومترات المطلوبة'; sub='بناءً على هدفك والتكاليف';
-    const done=col/pkm, rem=Math.max(0,R.kmD-done);
-    rows=[['كيلومترات الهدف (م١)',fmt(R.km1,1)+' كم'],['كيلومترات التكاليف (م٢)',fmt(R.km2,1)+' كم'],
-          ['الإجمالي المطلوب',fmt(R.kmD,1)+' كم'],['المنجز حتى الآن',fmt(done,1)+' كم']];
-    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">المتبقي</span>
-       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:var(--blue2);direction:ltr">${fmt(rem,1)} كم</span></div>`;
-    if(R.kmD>0) prog={p:Math.min(done/R.kmD,1),c:'var(--blue2)'};
-  } else if(type==='hrs'){
-    title='⏱️ المدة التقديرية'; sub='بناءً على الكيلومترات والسرعة';
-    const hf=fmtH(R.hrsT), el=shiftStart?(Date.now()-shiftStart)/3600000:0;
-    rows=[['إجمالي الساعات',hf.s+' '+hf.u],['متوسط السرعة',fmt(N('s-spd'),0)+' كم/ساعة'],
-          ['منقضي من الشيفت',shiftStart?fmtH(el).s+' س':'—']];
-    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">الوقت المتبقي</span>
-       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:#c084fc;direction:ltr">${fmtHR(Math.max(0,R.hrsT-el))}</span></div>`;
-    if(R.hrsT>0&&shiftStart) prog={p:Math.min(el/R.hrsT,1),c:'#c084fc'};
-  } else if(type==='cost'){
-    title='💸 تفصيل التكاليف'; sub='كل التكاليف المخصومة من إيرادك';
-    rows=[['⛽ البنزين',fmt(R.petrol,2)+' جنيه'],['🔧 الزيت',fmt(R.oil,2)+' جنيه'],
-          ['🛠️ الصيانة',fmt(R.mnt,2)+' جنيه'],['📶 الإنترنت',fmt(R.inet,2)+' جنيه'],
-          ['🏢 عمولة الشركة',fmt(R.comA,2)+' جنيه'],['🛒 مصروف شخصي',fmt(R.pers,2)+' جنيه']];
-    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">الإجمالي</span>
-       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:var(--red);direction:ltr">${fmt(R.allC,0)} جنيه</span></div>`;
-    if(R.rev>0) prog={p:Math.min(R.allC/R.rev,1),c:'var(--red)'};
-  } else {
-    title='💰 المطلوب تحصيله'; sub='الإيراد الكلي قبل أي خصم';
-    const rem=Math.max(0,R.rev-col);
-    rows=[['الإيراد الكلي',fmt(R.rev,0)+' جنيه'],['منه تكاليف',fmt(R.allC,0)+' جنيه'],
-          ['منه صافي للبيت',fmt(R.goal,0)+' جنيه'],['المحصّل حتى الآن',fmt(col,0)+' جنيه']];
-    hl=`<div style="display:flex;justify-content:space-between"><span style="font-size:11px;color:var(--muted)">المتبقي للهدف</span>
-       <span style="font-family:'Tajawal';font-weight:900;font-size:17px;color:var(--gold2);direction:ltr">${fmt(rem,0)} جنيه</span></div>`;
-    if(R.rev>0) prog={p:Math.min(col/R.rev,1),c:'var(--gold2)'};
-  }
-
-  $id('bsTitle').textContent=title; $id('bsSub').textContent=sub;
-  $id('bsRows').innerHTML=rows.map(([l,v])=>`<div class="bs-row"><span class="bs-rl">${l}</span><span class="bs-rv">${v}</span></div>`).join('');
-  $id('bsHl').innerHTML=hl;
-  const pr=$id('bsProg');
-  if(prog){pr.style.display='block';$id('bsBar').style.width=(prog.p*100)+'%';$id('bsBar').style.background=prog.c;}
-  else pr.style.display='none';
-  $id('bsOv').classList.add('on');
-}
-function closeBS(){$id('bsOv').classList.remove('on');}
-function closeBSOv(e){if(e.target===$id('bsOv'))closeBS();}
-
-// ── NOTIFICATIONS ─────────────────────────────────────────────────────
-let notifs=[];
-
-function pushNotif(title, msg, type='general') {
-  const n={id:Date.now(),title,msg,type,time:nowTime(),date:todayDate(),read:false};
-  notifs.unshift(n);
-  if(notifs.length>50) notifs=notifs.slice(0,50);
-  saveNotifs(); renderNotifs(); updNotifDot();
-  // system notification
-  sendSysNotif(title, msg, type);
-}
-
-async function sendSysNotif(title, body, type='general') {
-  if (Notification.permission !== 'granted') return;
-  const opts = {
-    body, icon:'/icon-192.png', badge:'/icon-72.png',
-    vibrate: type==='shift_start' ? [300,100,300,100,300] : [200,100,200],
-    tag: type, renotify: true, lang:'ar',
-    requireInteraction: type==='shift_start',
-    data: { type }
-  };
-  try {
-    // استخدم Service Worker لإظهار الإشعار — يشتغل حتى لو التطبيق مقفول
-    if ('serviceWorker' in navigator) {
-      const sw = await navigator.serviceWorker.ready;
-      await sw.showNotification(title, opts);
-    } else {
-      new Notification(title, opts);
-    }
-  } catch(e) {
-    try { new Notification(title, opts); } catch(e2) {}
-  }
-}
-
-function renderNotifs() {
-  const l=$id('notifList'); if(!l) return;
-  const cb=$id('notifClearBtn');
-  if(notifs.length===0){
-    l.innerHTML='<div class="notif-empty">📭 لا توجد إشعارات بعد</div>';
-    if(cb) cb.style.display='none'; return;
-  }
-  if(cb) cb.style.display='block';
-  const icons={shift_start:'⏰',shift_end:'🏁',oil:'🔧',general:'🔔',alarm:'⏰'};
-  l.innerHTML=notifs.map(n=>`
-    <div class="notif-item ${n.read?'':'unread'}">
-      <span class="ni-icon">${icons[n.type]||'🔔'}</span>
-      <div class="ni-body">
-        <div class="ni-title">${n.title}</div>
-        <div class="ni-msg">${n.msg}</div>
-        <div class="ni-time">${n.date} — ${n.time}</div>
-      </div>
-    </div>`).join('');
-}
-
-function markNotifsRead() {
-  notifs=notifs.map(n=>({...n,read:true}));
-  saveNotifs(); updNotifDot();
-}
-
-function updNotifDot() {
-  const d=$id('notifDot'), un=notifs.filter(n=>!n.read).length;
-  if(d) d.classList.toggle('show',un>0);
-}
-
-function clearNotifs(){if(confirm('مسح كل الإشعارات؟')){notifs=[];saveNotifs();renderNotifs();updNotifDot();}}
-function saveNotifs(){try{localStorage.setItem('tk_notifs',JSON.stringify(notifs));}catch(e){}}
-function loadNotifs(){try{notifs=JSON.parse(localStorage.getItem('tk_notifs')||'[]');renderNotifs();updNotifDot();}catch(e){}}
-
-// ── SOUND ─────────────────────────────────────────────────────────────
-function playSound(type='notif') {
-  try {
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    const patterns={
-      notif:   [[440,.1,.05],[550,.1,.05],[660,.15,.1]],
-      alarm:   [[523,.15,.05],[523,.15,.05],[659,.15,.05],[784,.3,.15]],
-      end:     [[784,.15,.05],[659,.1,.05],[523,.2,.1]],
-    };
-    const seq=patterns[type]||patterns.notif;
-    let t=ctx.currentTime;
-    seq.forEach(([freq,dur,gap])=>{
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.type='sine'; o.frequency.value=freq;
-      g.gain.setValueAtTime(.3,t);
-      g.gain.exponentialRampToValueAtTime(.001,t+dur);
-      o.connect(g); g.connect(ctx.destination);
-      o.start(t); o.stop(t+dur);
-      t+=dur+gap;
-    });
-  } catch(e){}
-}
-
-// ── ALARM ─────────────────────────────────────────────────────────────
-let alTo=null, alToB=null;
-
-async function reqNotif() {
-  const p=await Notification.requestPermission();
-  updNotifBtn();
-  if(p==='granted'){
-    sendSysNotif('✅ الإشعارات مُفعَّلة','ستصلك إشعارات الشيفت والصيانة');
-    schedAlarm();
-    // Register periodic sync
-    if('serviceWorker' in navigator && 'periodicSync' in (await navigator.serviceWorker.ready).sync){
-      const sw=await navigator.serviceWorker.ready;
-      try{ await sw.periodicSync.register('alarm-check',{minInterval:60*1000}); }catch(e){}
-    }
-  }
-}
-
-function updNotifBtn() {
-  const b=$id('notifBtn'); if(!b) return;
-  if(Notification.permission==='granted'){
-    b.textContent='✅ مفعّلة'; b.style.color='var(--green2)';
-    b.style.background='rgba(0,200,150,.12)'; b.style.borderColor='rgba(0,200,150,.3)';
-  } else if(Notification.permission==='denied'){
-    b.textContent='❌ محجوبة — افتح الإعدادات'; b.style.color='var(--red)';
-  }
-}
-
-function schedAlarm() {
-  clearTimeout(alTo); clearTimeout(alToB);
-  const t=$id('s-alarm')?.value; if(!t) return;
-  const before=N('s-before')||15;
-  const [h,m]=t.split(':').map(Number);
-  const now=new Date(), al=new Date(now); al.setHours(h,m,0,0);
-  if(al<=now) al.setDate(al.getDate()+1);
-  const msAl=al-now, msBef=msAl-(before*60000);
-
-  if(msBef>0){
-    alToB=setTimeout(()=>{
-      const msg=`استعد يا كابتن! شيفتك بيبدأ بعد ${before} دقيقة`;
-      pushNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,msg,'alarm');
-      playSound('alarm');
-    },msBef);
-  }
-  alTo=setTimeout(()=>{
-    pushNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!','shift_start');
-    playSound('alarm');
-  },msAl);
-
-  // Tell SW to schedule too (for background)
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.ready.then(sw=>{
-      sw.active?.postMessage({type:'SCHEDULE_ALARM',time:t,before});
-    });
-  }
-  saveSett();
-}
-
-// ── MOTOR CHECK ───────────────────────────────────────────────────────
-function chkMotor() {
-  const cur=N('s-mtkm'), last=N('s-lastm'), diff=cur-last;
-  if(diff>=800&&diff<1000){
-    pushNotif('⚠️ تنبيه صيانة مقترب',`قطعت ${fmt(diff,0)} كم منذ آخر صيانة. موعد تغيير الزيت عند 1000 كم.`,'oil');
-    playSound('notif');
-  } else if(diff>=1000){
-    pushNotif('🔧 تغيير الزيت الآن!',`تجاوزت ${fmt(diff,0)} كم منذ آخر صيانة. غيّر الزيت وصيانة الموتور فوراً.`,'oil');
-    playSound('alarm');
-  }
-}
-
-// ── LOG ───────────────────────────────────────────────────────────────
-let logs=[];
-
-function addLog(e){
-  logs.unshift({id:Date.now(),...e});
-  // keep 90 days
-  const cut=Date.now()-90*24*60*60*1000;
-  logs=logs.filter(l=>l.id>cut);
-  renderLog(); saveLogDB(); fbSave();
-}
-function deleteLog(id){logs=logs.filter(l=>l.id!==id);renderLog();saveLogDB();fbSave();}
-function renderLog(){
-  const tb=$id('logBody'); if(!tb) return; tb.innerHTML='';
-  if(!logs.length){
-    tb.innerHTML='<tr><td colspan="8" style="color:var(--muted);padding:18px;text-align:center">لا توجد سجلات</td></tr>';
-    $id('logTots').innerHTML=''; return;
-  }
-  logs.forEach(e=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${e.date||'—'}</td><td>${e.time||'—'}</td><td>${fmt(e.goal,0)}</td>
-      <td>${fmt(e.km,1)}</td><td>${e.hrs||'—'}</td>
-      <td style="color:var(--gold2)">${fmt(e.total,0)}</td>
-      <td style="color:var(--green2)">${fmt(e.net,1)}</td>
-      <td><button class="del-btn" onclick="deleteLog(${e.id})">🗑</button></td>`;
-    tb.appendChild(tr);
-  });
-  const sg=logs.reduce((s,e)=>s+(+e.goal||0),0);
-  const sk=logs.reduce((s,e)=>s+(+e.km||0),0);
-  const st=logs.reduce((s,e)=>s+(+e.total||0),0);
-  const sn=logs.reduce((s,e)=>s+(+e.net||0),0);
-  $id('logTots').innerHTML=`<td>الإجمالي</td><td>—</td><td>${fmt(sg,0)}</td>
-    <td>${fmt(sk,1)}</td><td>—</td><td>${fmt(st,0)}</td><td>${fmt(sn,1)}</td><td>—</td>`;
-}
-function clearLog(){if(confirm('مسح كل سجلات الشيفتات؟')){logs=[];renderLog();saveLogDB();fbSave();}}
-function saveLogDB(){try{localStorage.setItem('tk_log',JSON.stringify(logs));}catch(e){}}
-function loadLogDB(){try{logs=JSON.parse(localStorage.getItem('tk_log')||'[]');renderLog();}catch(e){}}
-
-// ── FIREBASE SYNC ─────────────────────────────────────────────────────
-let syncTimer=null;
-function fbSave(){
-  clearTimeout(syncTimer);
-  syncTimer=setTimeout(async()=>{
-    if(!window._user||window._user.isAnonymous) return;
-    showSync('جاري الحفظ...');
-    try{
-      const {db,doc,setDoc,serverTimestamp}=window._fb;
-      const uid=window._user.uid;
-      const sett={}; SKEYS.forEach(k=>{if($id(k))sett[k]=$id(k).value;});
-      await setDoc(doc(db,'users',uid,'data','settings'),
-        {settings:sett,name:$id('dispName').textContent,updatedAt:serverTimestamp()},{merge:true});
-      await setDoc(doc(db,'users',uid,'data','log'),
-        {entries:logs,updatedAt:serverTimestamp()},{merge:true});
-      hideSync(true);
-    }catch(e){hideSync(false);}
-  },1500);
-}
-
-async function fbLoad(uid){
-  showSync('جاري تحميل بياناتك...');
-  try{
-    const {db,doc,getDoc}=window._fb;
-    const sd=await getDoc(doc(db,'users',uid,'data','settings'));
-    if(sd.exists()){
-      const d=sd.data();
-      if(d.settings) Object.entries(d.settings).forEach(([k,v])=>{if($id(k))$id(k).value=v;});
-      if(d.name){$id('dispName').textContent=d.name;localStorage.setItem('tk_name',d.name);}
-    }
-    const ld=await getDoc(doc(db,'users',uid,'data','log'));
-    if(ld.exists()&&ld.data().entries){logs=ld.data().entries;saveLogDB();renderLog();}
-    hideSync(true);
-    calc();
-  }catch(e){hideSync(false);}
-}
-
-function showSync(msg){const b=$id('syncBadge');$id('syncMsg').textContent=msg;b.classList.add('on');}
-function hideSync(ok){
-  setTimeout(()=>{
-    $id('syncMsg').textContent=ok?'✅ تم الحفظ':'⚠️ خطأ في الحفظ';
-    setTimeout(()=>$id('syncBadge').classList.remove('on'),1200);
-  },300);
-}
-
-// ── AUTH ──────────────────────────────────────────────────────────────
-window._onLogin = async function(user){
-  const localName = localStorage.getItem('tk_name');
-  if (localName) {
-    $id('dispName').textContent = localName;
-    $id('authScreen').classList.add('out');
-    fbLoad(user.uid).catch(()=>{});
-    return;
-  }
-  try {
-    await fbLoad(user.uid);
-    const n = localStorage.getItem('tk_name');
-    if (n) {
-      $id('dispName').textContent = n;
-      $id('authScreen').classList.add('out');
-      return;
-    }
-  } catch(e) {}
-  // مستخدم جديد — امل رقم الهاتف تلقائياً واطلب الاسم
-  const phone = user.phoneNumber || '';
-  if ($id('phoneDisplay')) $id('phoneDisplay').value = phone;
-  if ($id('phoneInp') && phone) {
-    $id('phoneInp').value = phone.replace(/^[+]\d{1,3}/,'');
-  }
-  goStep(3);
-  if ($id('firstNameInp')) $id('firstNameInp').focus();
-};
-window._onLogout=function(){
-  window._user=null;
-  $id('authScreen').classList.remove('out');
-  goStep(1);
-};
-
 // ══════════════════════════════════════════════════════════════
-// PHONE AUTH — تسجيل الدخول برقم الهاتف
+// CUSTOM AUTH — Firestore-based (no Firebase Authentication)
 // ══════════════════════════════════════════════════════════════
-let confirmResult = null;
-let resendTimer   = null;
 
-function goStep(n) {
+// ── Session Management ───────────────────────────────────────
+function getSession() {
+  try { return JSON.parse(localStorage.getItem('tk_session') || 'null'); } catch(e){ return null; }
+}
+function setSession(user) {
+  try { localStorage.setItem('tk_session', JSON.stringify(user)); } catch(e){}
+}
+function clearSession() {
+  try { localStorage.removeItem('tk_session'); } catch(e){}
+}
+
+// ── Switch between login / register ─────────────────────────
+function switchMode(mode) {
   document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('on'));
-  $id('step'+n)?.classList.add('on');
-  [1,2,3].forEach(i => {
-    const d = $id('dot'+i);
-    if (d) d.classList.toggle('on', i <= n);
-  });
-  ['err1','err2','err3'].forEach(id => { const e=$id(id); if(e) e.textContent=''; });
+  $id(mode === 'register' ? 'stepRegister' : 'stepLogin').classList.add('on');
+  $id('authSubTxt').textContent = mode === 'register' ? 'إنشاء حساب جديد' : 'سجّل دخولك للمتابعة';
+  [1,2].forEach(i => $id('dot'+i)?.classList.toggle('on', (mode==='register'?2:1) >= i));
+  ['errLogin','errRegister'].forEach(id => { const e=$id(id); if(e) e.textContent=''; });
 }
 
-async function sendOTP() {
-  const code  = ($id('countryCode').value || '+20').trim();
-  const phone = ($id('phoneInp').value || '').trim().replace(/^0/,'');
-  const full  = code + phone;
+// ── Toggle password visibility ───────────────────────────────
+function togglePass(inputId, btn) {
+  const inp = $id(inputId);
+  if (!inp) return;
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
 
-  if (!phone || phone.length < 8) {
-    $id('err1').textContent = '⚠️ أدخل رقم هاتف صحيح'; return;
-  }
+// ── Validate email format ────────────────────────────────────
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
-  const btn = $id('btnSendOtp');
-  btn.disabled = true; btn.textContent = '⏳ جاري الإرسال...';
-  $id('err1').textContent = '';
+// ── Show auth message ────────────────────────────────────────
+function authMsg(id, msg, isError=true) {
+  const el = $id(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? 'var(--red)' : 'var(--green2)';
+}
+
+// ── REGISTER ─────────────────────────────────────────────────
+async function doRegister() {
+  const first   = ($id('regFirst')?.value   || '').trim();
+  const last    = ($id('regLast')?.value    || '').trim();
+  const email   = ($id('regEmail')?.value   || '').trim().toLowerCase();
+  const pass    = ($id('regPass')?.value    || '');
+  const confirm = ($id('regConfirm')?.value || '');
+  const errEl   = 'errRegister';
+
+  // Validation
+  if (!first)                { authMsg(errEl,'⚠️ أدخل الاسم الأول'); return; }
+  if (!last)                 { authMsg(errEl,'⚠️ أدخل الاسم الأخير'); return; }
+  if (!email)                { authMsg(errEl,'⚠️ أدخل البريد الإلكتروني'); return; }
+  if (!isValidEmail(email))  { authMsg(errEl,'⚠️ البريد الإلكتروني غير صحيح'); return; }
+  if (pass.length < 6)       { authMsg(errEl,'⚠️ كلمة المرور 6 أحرف على الأقل'); return; }
+  if (pass !== confirm)      { authMsg(errEl,'⚠️ كلمة المرور غير متطابقة'); return; }
+
+  const btn = $id('btnRegister');
+  btn.disabled = true; btn.textContent = '⏳ جاري إنشاء الحساب...';
+  authMsg(errEl,'');
 
   try {
-    const { auth, RecaptchaVerifier, signInWithPhoneNumber } = window._fb;
+    const { db, collection, query, where, getDocs, addDoc, serverTimestamp } = window._fb;
 
-    // init invisible reCAPTCHA
-    if (!window._recaptcha) {
-      window._recaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        size: 'invisible', callback: () => {}
-      });
+    // Check email not already used
+    const q = query(collection(db,'users'), where('email','==',email));
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      authMsg(errEl,'❌ البريد الإلكتروني مستخدم بالفعل'); return;
     }
 
-    confirmResult = await signInWithPhoneNumber(auth, full, window._recaptcha);
-    if ($id('otpHint')) $id('otpHint').textContent = 'تم إرسال الكود إلى ' + full;
-    goStep(2);
-    $id('otp0').focus();
-    startResendTimer();
-
-  } catch(e) {
-    console.error('Phone OTP error:', e.code, e.message);
-    window._recaptcha = null; // reset on error
-    const msgs = {
-      'auth/invalid-phone-number':   '❌ رقم الهاتف غير صحيح',
-      'auth/too-many-requests':      '❌ طلبات كثيرة — انتظر قليلاً',
-      'auth/quota-exceeded':         '❌ تجاوزت الحد — حاول لاحقاً',
-      'auth/network-request-failed': '❌ تحقق من الإنترنت',
-      'auth/captcha-check-failed':   '❌ فشل التحقق — أعد تحميل الصفحة',
-      'auth/operation-not-allowed':  '❌ Phone Auth غير مفعّل في Firebase',
-    };
-    $id('err1').textContent = msgs[e.code] || `❌ خطأ (${e.code})`;
-  } finally {
-    btn.disabled = false; btn.textContent = '📱 إرسال كود التحقق';
-  }
-}
-
-function otpMove(el, idx) {
-  el.value = el.value.replace(/[^0-9]/g,'');
-  if (el.value && idx < 5) $id('otp'+(idx+1)).focus();
-  // auto-verify when 6 digits complete
-  const code = [0,1,2,3,4,5].map(i => $id('otp'+i).value).join('');
-  if (code.length === 6) verifyOTP();
-}
-
-async function verifyOTP() {
-  const code = [0,1,2,3,4,5].map(i => $id('otp'+i).value).join('');
-  if (code.length < 6) { $id('err2').textContent = '⚠️ أدخل الكود كاملاً'; return; }
-  if (!confirmResult)  { $id('err2').textContent = '⚠️ أعد إرسال الكود'; return; }
-
-  const btn = $id('btnVerify');
-  btn.disabled = true; btn.textContent = '⏳ جاري التحقق...';
-  $id('err2').textContent = '';
-
-  try {
-    await confirmResult.confirm(code);
-    // onAuthStateChanged will call _onLogin
-  } catch(e) {
-    const msgs = {
-      'auth/invalid-verification-code': '❌ الكود غير صحيح — تحقق وأعد المحاولة',
-      'auth/code-expired':              '❌ انتهت صلاحية الكود — أعد الإرسال',
-    };
-    $id('err2').textContent = msgs[e.code] || '❌ خطأ — حاول مرة أخرى';
-    [0,1,2,3,4,5].forEach(i => { $id('otp'+i).value = ''; });
-    $id('otp0').focus();
-  } finally {
-    btn.disabled = false; btn.textContent = '✅ تحقق';
-  }
-}
-
-async function resendOTP() {
-  window._recaptcha = null;
-  $id('btnResend').style.display = 'none';
-  await sendOTP();
-}
-
-function startResendTimer() {
-  clearInterval(resendTimer);
-  let secs = 60;
-  const btn = $id('btnResend');
-  btn.style.display = 'none';
-  btn.textContent = `إعادة الإرسال بعد ${secs}s`;
-  resendTimer = setInterval(() => {
-    secs--;
-    if (secs <= 0) {
-      clearInterval(resendTimer);
-      btn.style.display = 'inline';
-      btn.textContent = '🔄 إعادة الإرسال';
-    }
-  }, 1000);
-}
-
-function saveUserInfo() {
-  const first = ($id('firstNameInp')?.value || '').trim();
-  const last  = ($id('lastNameInp')?.value  || '').trim();
-  if (!first) { $id('err3').textContent = '⚠️ أدخل اسمك الأول'; return; }
-  const fullName = last ? `${first} ${last}` : first;
-  const phone    = ($id('countryCode')?.value||'+20') + ($id('phoneInp')?.value||'').replace(/^0/,'');
-
-  $id('dispName').textContent = fullName;
-  localStorage.setItem('tk_name',  fullName);
-  localStorage.setItem('tk_phone', phone);
-
-  if (window._user) {
-    // save to Firestore
-    const {db, doc, setDoc, serverTimestamp} = window._fb;
-    setDoc(doc(db,'users',window._user.uid,'profile'), {
-      firstName: first, lastName: last, phone, fullName,
+    // Create user document
+    const docRef = await addDoc(collection(db,'users'), {
+      firstName: first,
+      lastName:  last,
+      email,
+      password:  pass,
       createdAt: serverTimestamp()
-    }, {merge:true}).catch(()=>{});
-    fbSave();
-  }
-  $id('authScreen').classList.add('out');
-}
+    });
 
-function saveName(){
-  const n=($id('nameInp')?.value||'').trim();
-  if(!n){if($id('err3'))$id('err3').textContent='⚠️ أدخل اسمك';return;}
-  $id('dispName').textContent=n; localStorage.setItem('tk_name',n);
-  if(window._user) fbSave();
-  $id('authScreen').classList.add('out');
-}
+    // Auto login after register
+    const userObj = { uid: docRef.id, firstName: first, lastName: last, email, fullName: `${first} ${last}` };
+    setSession(userObj);
+    onAuthSuccess(userObj);
+    authMsg(errEl,'✅ تم إنشاء الحساب بنجاح!', false);
 
-function signOutUser(){
-  if(confirm('تسجيل خروج؟ بياناتك محفوظة.')){
-    window._fb?.signOut(window._fb.auth);
+  } catch(e) {
+    console.error('Register error:', e);
+    authMsg(errEl,'❌ خطأ في الاتصال — تحقق من الإنترنت');
+  } finally {
+    btn.disabled = false; btn.textContent = '✅ إنشاء الحساب';
   }
 }
+
+// ── LOGIN ─────────────────────────────────────────────────────
+async function doLogin() {
+  const email = ($id('loginEmail')?.value || '').trim().toLowerCase();
+  const pass  = ($id('loginPass')?.value  || '');
+  const errEl = 'errLogin';
+
+  if (!email)               { authMsg(errEl,'⚠️ أدخل البريد الإلكتروني'); return; }
+  if (!isValidEmail(email)) { authMsg(errEl,'⚠️ البريد الإلكتروني غير صحيح'); return; }
+  if (!pass)                { authMsg(errEl,'⚠️ أدخل كلمة المرور'); return; }
+
+  const btn = $id('btnLogin');
+  btn.disabled = true; btn.textContent = '⏳ جاري التحقق...';
+  authMsg(errEl,'');
+
+  try {
+    const { db, collection, query, where, getDocs } = window._fb;
+
+    const q = query(collection(db,'users'), where('email','==',email));
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      authMsg(errEl,'❌ البريد الإلكتروني غير مسجّل'); return;
+    }
+
+    const userDoc = snap.docs[0];
+    const data    = userDoc.data();
+
+    if (data.password !== pass) {
+      authMsg(errEl,'❌ كلمة المرور غير صحيحة'); return;
+    }
+
+    const userObj = {
+      uid:       userDoc.id,
+      firstName: data.firstName,
+      lastName:  data.lastName,
+      email:     data.email,
+      fullName:  `${data.firstName} ${data.lastName}`
+    };
+    setSession(userObj);
+    onAuthSuccess(userObj);
+
+  } catch(e) {
+    console.error('Login error:', e);
+    authMsg(errEl,'❌ خطأ في الاتصال — تحقق من الإنترنت');
+  } finally {
+    btn.disabled = false; btn.textContent = '🚀 تسجيل الدخول';
+  }
+}
+
+// ── On successful auth ────────────────────────────────────────
+function onAuthSuccess(user) {
+  window._user = user;
+  const name = user.fullName || user.firstName || 'مستخدم';
+  $id('dispName').textContent = name;
+  localStorage.setItem('tk_name', name);
+  $id('authScreen').classList.add('out');
+  fbLoad(user.uid).catch(()=>{});
+}
+
+// ── Sign out ──────────────────────────────────────────────────
+function signOutUser() {
+  if (confirm('تسجيل خروج؟ بياناتك محفوظة على السحابة.')) {
+    clearSession();
+    window._user = null;
+    $id('authScreen').classList.remove('out');
+    switchMode('login');
+    // clear inputs
+    ['loginEmail','loginPass','regFirst','regLast','regEmail','regPass','regConfirm']
+      .forEach(id => { const el=$id(id); if(el) el.value=''; });
+  }
+}
+
+// ── Check session on load ─────────────────────────────────────
+function checkSession() {
+  const session = getSession();
+  if (session?.uid) {
+    onAuthSuccess(session);
+    return true;
+  }
+  return false;
+}
+
+// Remove old unused functions stubs
+function goStep(){}
+function saveName(){}
+function saveUserInfo(){}
 
 // ── PROFILE MODAL ─────────────────────────────────────────────────────
 let photo=null;
@@ -1621,7 +1089,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') {
     // حفظ فوري بدون debounce لما المستخدم يخرج
     clearTimeout(syncTimer);
-    if (!window._user || window._user.isAnonymous) return;
+    if (!window._user?.uid) return;
     const sett = {};
     SKEYS.forEach(k => { if ($id(k)) sett[k] = $id(k).value; });
     const {db, doc, setDoc, serverTimestamp} = window._fb || {};
@@ -1650,11 +1118,8 @@ calc();
 updNotifBtn();
 schedAlarm();
 
-// ── لو Firebase كان سبق وبعت المستخدم قبل ما _onLogin يتعرّف ──
-if (window._pendingUser) {
-  window._onLogin(window._pendingUser);
-  window._pendingUser = null;
-}
+// ── تحقق من الجلسة المحفوظة ──
+checkSession();
 
 const savedTab = localStorage.getItem('tk_tab') || 'dash';
 goTab('dash', 'bn-dash'); // always open on dashboard
