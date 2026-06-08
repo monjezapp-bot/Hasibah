@@ -52,6 +52,12 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   color:var(--gold2);direction:ltr;line-height:1}
 .rstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
 
+/* datetime */
+.dt-bar{display:flex;justify-content:space-between;align-items:center;
+  padding:5px 16px;background:var(--s1);border-bottom:1px solid var(--border);
+  font-size:11px;color:var(--muted)}
+.dt-time{font-family:'Tajawal',sans-serif;font-weight:700;color:var(--gold2);
+  font-size:12px;direction:ltr}
 
 /* ── BOTTOM NAV ── */
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
@@ -65,6 +71,13 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .bnav-btn .bl{font-size:9px;font-weight:700;color:var(--muted)}
 .bnav-btn.active{border-top-color:var(--gold)}
 .bnav-btn.active .bl{color:var(--gold)}
+
+/* ── TIP TICKER ── */
+.tip-ticker{background:var(--s2);border-bottom:1px solid var(--border);
+  padding:6px 16px;font-size:11px;color:var(--muted2);overflow:hidden;
+  white-space:nowrap;position:relative}
+.tip-ticker-inner{display:inline-block;animation:ticker 18s linear infinite}
+@keyframes ticker{0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)}}
 
 /* ── PAGES ── */
 .page{display:none;padding:14px;
@@ -84,7 +97,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .goal-row{display:flex;align-items:center;gap:8px}
 .goal-input{flex:1;background:rgba(255,255,255,.05);
   border:1.5px solid rgba(0,200,150,.2);border-radius:10px;
-  padding:7px 12px;font-size:20px;font-weight:500;color:#fff;
+  padding:7px 12px;font-size:20px;font-weight:900;color:#fff;
   font-family:'Tajawal',sans-serif;text-align:right;outline:none;
   transition:.2s;-webkit-appearance:none}
 .goal-input:focus{border-color:var(--green);background:rgba(0,200,150,.06)}
@@ -97,13 +110,8 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:12px;
   padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
   display:flex;align-items:center;justify-content:center;gap:5px}
-.btn-start.active-shift{background:linear-gradient(135deg,#0a2a3d,#0d3a55);
-  border-color:rgba(96,168,255,.35);color:var(--blue2)}
-.btn-start.paused-shift{background:linear-gradient(135deg,#2e1f00,#4a3200);
-  border-color:rgba(255,200,64,.35);color:var(--gold2)}
-.pause-badge{display:flex;align-items:center;justify-content:center;gap:5px;
-  font-size:10px;color:var(--gold2);margin-top:5px;animation:pulse-text 1.4s infinite}
-@keyframes pulse-text{0%,100%{opacity:1}50%{opacity:.4}}
+.btn-start.active-shift{background:linear-gradient(135deg,#4a0f0f,#7a1a1a);
+  border-color:rgba(255,87,87,.3);color:var(--red)}
 .btn-end{flex:1;background:rgba(255,87,87,.08);border:1px solid rgba(255,87,87,.25);
   color:var(--red);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;
   font-size:12px;padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
@@ -318,171 +326,9 @@ input[type=number]{-moz-appearance:textfield}
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-
-/* ── AUTH SCREEN ── */
-#authScreen{position:fixed;inset:0;z-index:999;
-  background:var(--bg);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:32px 24px;
-  text-align:center}
-#authScreen.hidden{display:none}
-.auth-logo{font-size:64px;margin-bottom:16px}
-.auth-title{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;
-  color:var(--text);margin-bottom:6px}
-.auth-sub{font-size:13px;color:var(--muted);margin-bottom:36px;line-height:1.7}
-.auth-user-info{display:flex;flex-direction:column;align-items:center;gap:8px;
-  margin-bottom:28px;display:none}
-.auth-user-info.visible{display:flex}
-.auth-avatar{width:64px;height:64px;border-radius:50%;
-  border:2px solid rgba(240,165,0,.4);object-fit:cover}
-.auth-user-name{font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;color:var(--text)}
-.auth-user-email{font-size:12px;color:var(--muted)}
-.btn-google{width:100%;max-width:320px;padding:14px 20px;border-radius:14px;
-  background:#fff;color:#1f1f1f;font-family:'IBM Plex Sans Arabic',sans-serif;
-  font-size:14px;font-weight:700;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  margin-bottom:12px;transition:.2s;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-.btn-google:active{transform:scale(.97)}
-.btn-google img{width:20px;height:20px}
-.btn-anon{width:100%;max-width:320px;padding:12px 20px;border-radius:14px;
-  background:rgba(255,255,255,.06);color:var(--muted);
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:13px;font-weight:600;
-  border:1px solid var(--border2);cursor:pointer;transition:.2s}
-.btn-anon:active{opacity:.7}
-.btn-enter-app{width:100%;max-width:320px;padding:14px 20px;border-radius:14px;
-  background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:15px;font-weight:900;
-  border:none;cursor:pointer;margin-bottom:12px;transition:.2s}
-.btn-enter-app:active{transform:scale(.97)}
-.auth-divider{font-size:11px;color:var(--muted);margin:8px 0;width:100%;max-width:320px}
-.sync-badge{position:fixed;top:12px;left:50%;transform:translateX(-50%);
-  background:rgba(0,200,150,.15);border:1px solid rgba(0,200,150,.3);
-  color:var(--green2);font-size:11px;font-weight:700;
-  padding:5px 14px;border-radius:20px;z-index:90;
-  display:none;align-items:center;gap:5px;white-space:nowrap}
-.sync-badge.show{display:flex}
-@keyframes spin{to{transform:rotate(360deg)}}
-.sync-spin{display:inline-block;animation:spin .8s linear infinite}
 </style>
 </head>
 <body>
-
-<!-- Firebase SDKs -->
-<script type="module" id="firebaseModule">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, browserLocalPersistence, setPersistence, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, onAuthStateChanged, signOut }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBCpI5hcTXGJUxgd_1s8U_rN6ugOvvMpaU",
-  authDomain: "hasbt-elshift.firebaseapp.com",
-  projectId: "hasbt-elshift",
-  storageBucket: "hasbt-elshift.firebasestorage.app",
-  messagingSenderId: "95168484525",
-  appId: "1:95168484525:web:5b57d784b818078f9ba224",
-  measurementId: "G-1VB9NCWTR3"
-};
-
-const fbApp = initializeApp(firebaseConfig);
-const auth  = getAuth(fbApp);
-const db    = getFirestore(fbApp);
-
-// ── تثبيت الجلسة محلياً — لا تنتهي عند إغلاق التطبيق ──
-setPersistence(auth, browserLocalPersistence).catch(e => console.warn('Persistence error:', e));
-
-// ── expose to global scope ──
-window._fb = { auth, db, sendSignInLinkToEmail, isSignInWithEmailLink,
-  signInWithEmailLink, onAuthStateChanged, signOut,
-  doc, setDoc, getDoc, onSnapshot, serverTimestamp };
-
-// ── Handle email link on page load ──
-if (isSignInWithEmailLink(auth, window.location.href)) {
-  let email = localStorage.getItem('tk_emailForSignIn');
-  if (!email) {
-    email = window.prompt('أدخل بريدك الإلكتروني للتأكيد:');
-  }
-  if (email) {
-    signInWithEmailLink(auth, email, window.location.href)
-      .then(() => {
-        localStorage.removeItem('tk_emailForSignIn');
-        window.history.replaceState(null, '', window.location.pathname);
-      })
-      .catch(e => console.error('Email link sign-in error:', e));
-  }
-}
-
-// ── Auth state listener ──
-onAuthStateChanged(auth, user => {
-  if (user) {
-    window._fbUser = user;
-    window._onLogin && window._onLogin(user);
-  } else {
-    window._fbUser = null;
-    window._onLogout && window._onLogout();
-  }
-});
-</script>
-
-<!-- AUTH SCREEN -->
-<div id="authScreen">
-  <div class="auth-logo">🛵</div>
-  <div class="auth-title">حاسبة الشفت</div>
-  <div class="auth-sub" id="authSubText">أدخل بريدك الإلكتروني وهنبعتلك رابط دخول فوري</div>
-
-  <div class="auth-dots">
-    <div class="auth-dot active" id="dot1"></div>
-    <div class="auth-dot" id="dot2"></div>
-    <div class="auth-dot" id="dot3"></div>
-  </div>
-
-  <!-- STEP 1: Email -->
-  <div class="auth-step active" id="step1">
-    <div style="font-size:13px;color:var(--muted2);align-self:flex-start">البريد الإلكتروني</div>
-    <input class="email-input" id="emailInput" type="email"
-           placeholder="example@gmail.com" inputmode="email" autocomplete="email">
-    <div class="auth-error" id="err1"></div>
-    <button class="btn-auth-primary" id="btnSendLink" onclick="sendEmailLink()">
-      📧 إرسال رابط الدخول
-    </button>
-    <div class="auth-hint">🔒 لا تحتاج كلمة مرور — فقط اضغط الرابط في بريدك وادخل فوراً</div>
-  </div>
-
-  <!-- STEP 2: Waiting -->
-  <div class="auth-step" id="step2">
-    <div style="font-size:52px;margin-bottom:4px">📬</div>
-    <div style="font-family:'Tajawal';font-size:17px;font-weight:900;color:var(--text)">تم الإرسال!</div>
-    <div class="auth-hint" id="sentHint">تحقق من بريدك الإلكتروني</div>
-    <div style="background:var(--s2);border:1px solid var(--border2);border-radius:12px;
-                padding:14px 16px;width:100%;font-size:12px;color:var(--muted);line-height:1.8">
-      1️⃣ افتح بريدك الإلكتروني<br>
-      2️⃣ ابحث عن رسالة من <strong style="color:var(--gold2)">Firebase</strong><br>
-      3️⃣ اضغط الرابط — ستدخل التطبيق فوراً
-    </div>
-    <div class="auth-error" id="err2"></div>
-    <button class="btn-auth-primary"
-            style="background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border2);font-size:13px;padding:11px"
-            onclick="sendEmailLink()">🔄 إعادة الإرسال</button>
-    <button class="btn-auth-back" onclick="goStep(1)">← تغيير البريد</button>
-  </div>
-
-  <!-- STEP 3: Name -->
-  <div class="auth-step" id="step3">
-    <div style="font-size:36px;margin-bottom:4px">👋</div>
-    <div style="font-family:'Tajawal';font-size:17px;font-weight:900;color:var(--text)">أهلاً! ما اسمك؟</div>
-    <input class="name-auth-input" id="nameAuthInput" type="text"
-           placeholder="اكتب اسمك هنا" maxlength="40">
-    <div class="auth-error" id="err3"></div>
-    <button class="btn-auth-primary" onclick="saveName()">🚀 دخول التطبيق</button>
-    <div class="auth-hint">يمكنك تغيير الاسم لاحقاً من الملف الشخصي</div>
-  </div>
-</div>
-
-<!-- Sync badge -->
-<div class="sync-badge" id="syncBadge">
-  <span class="sync-spin">🔄</span> جاري المزامنة...
-</div>
-
 <div class="app">
 
 <!-- ═══ HEADER ═══ -->
@@ -520,6 +366,14 @@ onAuthStateChanged(auth, user => {
       </div>
     </div>
   </div>
+  <div class="dt-bar">
+    <span id="dtDate" style="direction:rtl">—</span>
+    <span class="dt-time" id="dtTime">—</span>
+  </div>
+  <!-- tip ticker -->
+  <div class="tip-ticker">
+    <span class="tip-ticker-inner" id="tipTickerText">💡 شغّل أوقات الذروة لزيادة أرباحك ⚡ افحص الإطارات أسبوعياً 🔧 غيّر الزيت كل 1000 كم 📱 استخدم باقة إنترنت شهرية</span>
+  </div>
 </div>
 
 <!-- ═══ PAGES ═══ -->
@@ -527,7 +381,7 @@ onAuthStateChanged(auth, user => {
 
 <!-- PAGE: DASHBOARD -->
 <div class="page active" id="page-dash">
-  <div style="height:6px"></div>
+  <div style="height:12px"></div>
 
   <!-- Goal -->
   <div class="goal-card">
@@ -547,7 +401,6 @@ onAuthStateChanged(auth, user => {
       </button>
       <button class="btn-end" id="btnEnd" onclick="endShift()">⏹ إنهاء</button>
     </div>
-    <div id="pauseBadge" style="display:none" class="pause-badge">⏸ الشيفت متوقف مؤقتاً — اضغط للمتابعة</div>
     <div id="shiftTimer">
       ⏱ وقت الشيفت:
       <span id="timerDisplay" style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">00:00:00</span>
@@ -575,6 +428,18 @@ onAuthStateChanged(auth, user => {
       <div class="kpi-lbl-top">💰 المطلوب تحصيله</div>
       <div class="kpi-val" id="r-earn">—</div>
       <div class="kpi-unit">جنيه</div>
+    </div>
+  </div>
+
+  <!-- Net -->
+  <div class="net-bar">
+    <div>
+      <div class="net-lbl">✅ صافي الربح للبيت</div>
+      <div class="net-sub">بعد خصم كل التكاليف والعمولة</div>
+    </div>
+    <div style="text-align:left">
+      <span class="net-val" id="r-net">—</span>
+      <span style="font-size:11px;color:var(--green2)"> جنيه</span>
     </div>
   </div>
 
@@ -714,20 +579,12 @@ onAuthStateChanged(auth, user => {
     </div>
   </div>
   <div class="sec-title">إدارة البيانات</div>
-  <div style="background:rgba(59,139,235,.07);border:1px solid rgba(59,139,235,.2);border-radius:10px;padding:10px 13px;margin-bottom:9px;font-size:11px;color:var(--blue2);line-height:1.6">
-    💾 <strong>بياناتك محفوظة تلقائياً</strong> في المتصفح. صدّر نسخة احتياطية بانتظام لضمان عدم فقدانها عند تحديث التطبيق أو تغيير الجهاز.
-  </div>
   <div class="data-btns">
     <button class="data-btn btn-export" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
     <button class="data-btn btn-import" onclick="$('importFile').click()">📥 استيراد بيانات</button>
   </div>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
   <button class="btn-clear-all" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
-  <div style="height:8px"></div>
-  <button class="btn-clear-all" onclick="signOutUser()"
-    style="background:rgba(59,139,235,.06);border-color:rgba(59,139,235,.2);color:var(--blue2)">
-    🚪 تسجيل الخروج
-  </button>
 </div>
 
 <!-- PAGE: LOG -->
@@ -846,7 +703,19 @@ function nowTimeStr() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// TABS + PAGE PERSISTENCE
+// CLOCK
+// ═══════════════════════════════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  $('dtDate').textContent = `${days[now.getDay()]}، ${now.toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}`;
+  $('dtTime').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ═══════════════════════════════════════════════════════════
+// TABS + SWIPE + PAGE PERSISTENCE
 // ═══════════════════════════════════════════════════════════
 const TABS = ['dash','settings','log'];
 let currentTab = localStorage.getItem('tk_tab') || 'dash';
@@ -859,6 +728,21 @@ function showTab(name, btnId) {
   $(btnId || 'bnav-'+name).classList.add('active');
   try { localStorage.setItem('tk_tab', name); } catch(e){}
 }
+
+// Swipe between pages
+let swipeStartX = 0, swipeStartY = 0;
+document.addEventListener('touchstart', e => {
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+  const dy = e.changedTouches[0].clientY - swipeStartY;
+  if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+  const idx = TABS.indexOf(currentTab);
+  if (dx < 0 && idx < TABS.length-1) showTab(TABS[idx+1], 'bnav-'+TABS[idx+1]);
+  if (dx > 0 && idx > 0)             showTab(TABS[idx-1], 'bnav-'+TABS[idx-1]);
+}, {passive:true});
 
 // ═══════════════════════════════════════════════════════════
 // CORE CALCULATOR
@@ -1009,67 +893,31 @@ function closeSheetIfBg(e) { if(e.target===$('kpiSheet')) closeSheet(); }
 // ═══════════════════════════════════════════════════════════
 // SHIFT
 // ═══════════════════════════════════════════════════════════
-let shiftActive=false, shiftPaused=false, shiftStartTS=null, shiftTimerInt=null;
-let shiftElapsedMs=0; // accumulated elapsed before pause
+let shiftActive=false, shiftStartTS=null, shiftTimerInt=null;
 
-function toggleShift() {
-  if(!shiftActive) { startShift(); return; }
-  if(shiftPaused) resumeShift(); else pauseShift();
-}
+function toggleShift() { if(!shiftActive) startShift(); }
 
 function startShift() {
-  shiftActive=true; shiftPaused=false; shiftElapsedMs=0;
-  shiftStartTS=Date.now();
+  shiftActive=true; shiftStartTS=Date.now();
   trips=[]; renderTrips();
-  $('btnStart').className='btn-start active-shift';
+  $('btnStart').classList.add('active-shift');
   $('shiftBtnIcon').textContent='⏸';
-  $('shiftBtnTxt').textContent='إيقاف مؤقت';
+  $('shiftBtnTxt').textContent='شيفت جارٍ...';
   $('btnEnd').classList.add('enabled');
   $('shiftTimer').style.display='block';
-  $('pauseBadge').style.display='none';
-  startTimerTick();
-  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftElapsed','0');localStorage.setItem('tk_shiftPaused','0');}catch(e){}
-}
-
-function pauseShift() {
-  shiftPaused=true;
-  shiftElapsedMs += Date.now()-shiftStartTS;
-  clearInterval(shiftTimerInt);
-  $('btnStart').className='btn-start paused-shift';
-  $('shiftBtnIcon').textContent='▶';
-  $('shiftBtnTxt').textContent='متابعة';
-  $('pauseBadge').style.display='flex';
-  try{localStorage.setItem('tk_shiftElapsed',shiftElapsedMs);localStorage.setItem('tk_shiftPaused','1');}catch(e){}
-  sendNotif('⏸ شيفت متوقف مؤقتاً','خد راحتك يا كابتن، الوقت واقف لما ترجع 💪');
-}
-
-function resumeShift() {
-  shiftPaused=false;
-  shiftStartTS=Date.now();
-  $('btnStart').className='btn-start active-shift';
-  $('shiftBtnIcon').textContent='⏸';
-  $('shiftBtnTxt').textContent='إيقاف مؤقت';
-  $('pauseBadge').style.display='none';
-  startTimerTick();
-  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftPaused','0');}catch(e){}
-  sendNotif('▶ الشيفت مستمر','يلا يا كابتن — بالتوفيق والرزق 🛵');
-}
-
-function startTimerTick() {
-  clearInterval(shiftTimerInt);
   shiftTimerInt=setInterval(()=>{
-    const el=shiftElapsedMs+(Date.now()-shiftStartTS);
+    const el=Date.now()-shiftStartTS;
     const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
     $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
   },1000);
+  try{localStorage.setItem('tk_shiftStart',shiftStartTS);}catch(e){}
 }
 
 function endShift() {
   if(!shiftActive) return;
   clearInterval(shiftTimerInt);
-  const totalMs = shiftPaused ? shiftElapsedMs : shiftElapsedMs+(Date.now()-shiftStartTS);
-  const durH=totalMs/3600000;
-  const totalColl=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
+  const endTS=Date.now(), durH=(endTS-shiftStartTS)/3600000;
+  const totalColl=trips.reduce((s,t)=>s+t.amount,0);
   const com=num('s-com')/100, pers=num('s-pers'), pkm=num('s-pkm')||1;
   const netActual=totalColl*(1-com)-pers, kmEst=totalColl/pkm;
 
@@ -1083,23 +931,23 @@ function endShift() {
   }
 
   addLogEntry({
-    date: new Date().toLocaleDateString('ar-EG'),
-    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
+    date: new Date(shiftStartTS).toLocaleDateString('ar-EG'),
+    time: new Date(shiftStartTS).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
     goal: num('goalInput'), km:kmEst.toFixed(1), hrs:durH.toFixed(1),
     total:totalColl, net:netActual.toFixed(2)
   });
 
+  // End notification
   sendNotif('🛵 انتهى الشيفت!', `الحمد لله على السلامة يا كابتن! المحصّل: ${fmt(totalColl,0)} جنيه — الصافي: ${fmt(netActual,0)} جنيه. أحسنت صنعاً اليوم 💪`);
 
-  shiftActive=false; shiftPaused=false; shiftElapsedMs=0;
-  $('btnStart').className='btn-start';
+  shiftActive=false;
+  $('btnStart').classList.remove('active-shift');
   $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='بدء الشيفت';
   $('btnEnd').classList.remove('enabled');
   $('shiftTimer').style.display='none';
-  $('pauseBadge').style.display='none';
   $('timerDisplay').textContent='00:00:00';
   trips=[]; renderTrips(); updateTripTracker(); updateRemBar();
-  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_shiftElapsed');localStorage.removeItem('tk_shiftPaused');localStorage.removeItem('tk_trips');}catch(e){}
+  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_trips');}catch(e){}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1219,26 +1067,7 @@ function loadLog(){
 // ═══════════════════════════════════════════════════════════
 function sendNotif(title, body) {
   if(Notification.permission!=='granted') return;
-  try{
-    const n = new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',lang:'ar',requireInteraction:true,vibrate:[300,100,300]});
-    // play beep sound when notification fires
-    playBeep();
-  }catch(e){}
-}
-
-function playBeep() {
-  try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.6, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 1.2);
-  } catch(e){}
+  try{ new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',lang:'ar'}); }catch(e){}
 }
 
 function requestNotifPerm() {
@@ -1260,66 +1089,20 @@ function updateNotifBtn() {
 }
 
 let alarmTimeout=null, alarmBeforeTimeout=null;
-let alarmCheckInterval=null;
-
 function scheduleAlarm() {
   clearTimeout(alarmTimeout); clearTimeout(alarmBeforeTimeout);
-  clearInterval(alarmCheckInterval);
   const alarmTime=$('s-alarm')?.value; if(!alarmTime) return;
-  const before=parseInt($('s-alarm-before')?.value)||15;
-
-  // Save alarm config to localStorage for visibility check
-  try{ localStorage.setItem('tk_alarm_time', alarmTime); localStorage.setItem('tk_alarm_before', before); }catch(e){}
-
-  function getNextAlarmDate(timeStr) {
-    const [h,m]=timeStr.split(':').map(Number);
-    const now=new Date();
-    let d=new Date(now); d.setHours(h,m,0,0);
-    if(d<=now) d.setDate(d.getDate()+1);
-    return d;
+  const before=num('s-alarm-before')||15;
+  const [h,m]=alarmTime.split(':').map(Number);
+  const now=new Date();
+  let alarmDate=new Date(now); alarmDate.setHours(h,m,0,0);
+  if(alarmDate<=now) alarmDate.setDate(alarmDate.getDate()+1);
+  const msToAlarm=alarmDate-now;
+  const msToBefore=msToAlarm-(before*60000);
+  if(msToBefore>0){
+    alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`),msToBefore);
   }
-
-  function scheduleTimeouts() {
-    const alarmDate=getNextAlarmDate(alarmTime);
-    const now=new Date();
-    const msToAlarm=alarmDate-now;
-    const msToBefore=msToAlarm-(before*60000);
-    if(msToBefore>0){
-      alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`),msToBefore);
-    } else if(msToAlarm>0 && msToBefore<=0 && msToBefore>-(before*60000)){
-      // We're in the "before" window right now
-      sendNotif(`⏰ تنبيه: الشيفت قريباً`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`);
-    }
-    alarmTimeout=setTimeout(()=>{
-      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
-      // Reschedule for next day
-      setTimeout(scheduleTimeouts, 5000);
-    },msToAlarm);
-  }
-
-  scheduleTimeouts();
-
-  // Fallback: check every minute in case page was in background and setTimeout drifted
-  alarmCheckInterval = setInterval(()=>{
-    const now=new Date();
-    const [h,m]=(localStorage.getItem('tk_alarm_time')||'').split(':').map(Number);
-    if(isNaN(h)) return;
-    const b=parseInt(localStorage.getItem('tk_alarm_before'))||15;
-    const nowMin=now.getHours()*60+now.getMinutes();
-    const alarmMin=h*60+m;
-    const beforeMin=alarmMin-b;
-    const lastFired=parseInt(localStorage.getItem('tk_alarm_last_fired')||'0');
-    const todayKey=now.toLocaleDateString('en-CA');
-    const lastFiredKey=localStorage.getItem('tk_alarm_last_fired_day')||'';
-    if(nowMin===alarmMin && lastFiredKey!==todayKey){
-      localStorage.setItem('tk_alarm_last_fired_day',todayKey);
-      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
-    }
-    if(nowMin===beforeMin && localStorage.getItem('tk_alarm_before_fired_day')!==todayKey){
-      localStorage.setItem('tk_alarm_before_fired_day',todayKey);
-      sendNotif(`⏰ تنبيه: الشيفت بعد ${b} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`);
-    }
-  }, 30000);
+  alarmTimeout=setTimeout(()=>sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!'),msToAlarm);
 }
 
 // Motor km check (alert at 800+ from last maintenance)
@@ -1360,38 +1143,6 @@ function saveProfile(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// DATA VERSION & MIGRATION — يحمي البيانات عند التحديث
-// ═══════════════════════════════════════════════════════════
-const APP_VERSION = '2.1';
-
-function migrateData() {
-  try {
-    const storedVersion = localStorage.getItem('tk_version');
-    if (storedVersion === APP_VERSION) return; // لا يحتاج ترحيل
-
-    // ── v1.x → v2.x ──
-    // الإصدارات القديمة لم يكن عندها tk_version، نتحقق من وجود البيانات فقط
-    // وننقلها بأمان دون حذف شيء
-
-    // تحقق من بيانات السجل القديمة
-    const oldLog = localStorage.getItem('tk_log');
-    if (oldLog && !localStorage.getItem('tk_log_migrated')) {
-      // السجل موجود ومحفوظ — لا نتغير عليه
-      localStorage.setItem('tk_log_migrated', '1');
-    }
-
-    // تحقق من الإعدادات القديمة — إذا كانت موجودة نحتفظ بها
-    const oldSettings = localStorage.getItem('tk_settings');
-    // لا نحذف شيء، فقط نحدث الإصدار
-
-    localStorage.setItem('tk_version', APP_VERSION);
-    console.log(`✅ البيانات محمية — تم التحديث إلى v${APP_VERSION}`);
-  } catch(e) {}
-}
-
-migrateData();
-
-// ═══════════════════════════════════════════════════════════
 // SETTINGS PERSISTENCE
 // ═══════════════════════════════════════════════════════════
 const SKEYS=['goalInput','s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd','s-alarm','s-alarm-before','s-motor-km','s-last-maint'];
@@ -1414,26 +1165,12 @@ function loadSettings(){
 // EXPORT / IMPORT
 // ═══════════════════════════════════════════════════════════
 function exportData(){
-  const data={
-    version: APP_VERSION,
-    exportDate: new Date().toISOString(),
-    name: $('displayName').textContent,
-    photo: localStorage.getItem('tk_photo') || null,
-    settings:{},
-    log: logEntries,
-    trips: trips,
-    shiftState: {
-      active: shiftActive,
-      paused: shiftPaused,
-      startTS: shiftStartTS,
-      elapsedMs: shiftElapsedMs
-    }
-  };
+  const data={name:$('displayName').textContent,settings:{},log:logEntries,exportDate:new Date().toISOString()};
   SKEYS.forEach(k=>{if($(k))data.settings[k]=$(k).value;});
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`tarek_shift_backup_${new Date().toLocaleDateString('en-CA')}.json`;
+  a.download=`tarek_shift_${new Date().toLocaleDateString('en-CA')}.json`;
   a.click();
 }
 function importData(e){
@@ -1443,12 +1180,9 @@ function importData(e){
     try{
       const data=JSON.parse(ev.target.result);
       if(data.name){$('displayName').textContent=data.name;$('nameInput').value=data.name;localStorage.setItem('tk_name',data.name);}
-      if(data.photo){currentPhoto=data.photo;showPhoto(data.photo);localStorage.setItem('tk_photo',data.photo);}
       if(data.settings)Object.entries(data.settings).forEach(([k,v])=>{if($(k))$(k).value=v;});
       if(data.log){logEntries=data.log;saveLog();renderLog();}
-      if(data.trips&&Array.isArray(data.trips)){trips=data.trips;renderTrips();updateTripTracker();updateRemBar();localStorage.setItem('tk_trips',JSON.stringify(trips));}
-      recalc();
-      alert(`✅ تم استيراد البيانات بنجاح!\n📅 النسخة: ${data.version||'قديمة'}\n📆 تاريخ النسخة: ${data.exportDate?new Date(data.exportDate).toLocaleDateString('ar-EG'):'غير معروف'}`);
+      recalc();alert('✅ تم استيراد البيانات بنجاح!');
     }catch(err){alert('❌ ملف غير صالح');}
   };
   reader.readAsText(file);e.target.value='';
@@ -1458,231 +1192,8 @@ function clearAllData(){
 }
 
 // ═══════════════════════════════════════════════════════════
-// EMAIL AUTH FUNCTIONS
+// INIT
 // ═══════════════════════════════════════════════════════════
-function goStep(n) {
-  document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
-  const el = $('step'+n); if(el) el.classList.add('active');
-  [1,2,3].forEach(i => {
-    const d=$('dot'+i); if(d) d.classList.toggle('active', i<=n);
-  });
-  ['err1','err2','err3'].forEach(id => { const e=$(id); if(e) e.textContent=''; });
-}
-
-async function sendEmailLink() {
-  const email = ($('emailInput')?.value || '').trim();
-  if (!email || !email.includes('@')) {
-    if($('err1')) $('err1').textContent = '⚠️ أدخل بريد إلكتروني صحيح'; return;
-  }
-  const btn = $('btnSendLink');
-  if(btn){ btn.textContent='⏳ جاري الإرسال...'; btn.disabled=true; }
-  if($('err1')) $('err1').textContent = '';
-  try {
-    const { auth, sendSignInLinkToEmail } = window._fb;
-    const actionCodeSettings = {
-      url: window.location.href,
-      handleCodeInApp: true,
-    };
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-    localStorage.setItem('tk_emailForSignIn', email);
-    if($('sentHint')) $('sentHint').textContent = 'تم الإرسال إلى ' + email;
-    goStep(2);
-  } catch(e) {
-    console.error('Email link error:', e.code, e.message);
-    const msgs = {
-      'auth/invalid-email':          '❌ بريد إلكتروني غير صحيح',
-      'auth/operation-not-allowed':  '❌ Email Link غير مفعّل في Firebase',
-      'auth/network-request-failed': '❌ مشكلة في الإنترنت',
-    };
-    if($('err1')) $('err1').textContent = msgs[e.code] || '❌ خطأ — حاول مرة أخرى';
-  } finally {
-    if(btn){ btn.textContent='📧 إرسال رابط الدخول'; btn.disabled=false; }
-  }
-}
-
-function saveName() {
-  const name = ($('nameAuthInput')?.value || '').trim();
-  if (!name) { if($('err3')) $('err3').textContent='⚠️ أدخل اسمك'; return; }
-  $('displayName').textContent = name;
-  localStorage.setItem('tk_name', name);
-  if(window._fbUser) saveToFirestore();
-  $('authScreen').classList.add('hidden');
-}
-
-// ═══════════════════════════════════════════════════════════
-// FIREBASE AUTH & SYNC
-// ═══════════════════════════════════════════════════════════
-let fbUser = null;
-let syncUnsubscribe = null;
-let syncTimeout = null;
-
-// ── Email Auth (replaces Google/Phone auth) ──
-
-async function loginAnon() {
-  const btn = $('btnAnon');
-  btn.textContent = '⏳ ...';
-  try {
-    const { auth, signInAnonymously } = window._fb;
-    await signInAnonymously(auth);
-  } catch(e) {
-    // If Firebase fails, just enter app with local storage only
-    enterAppLocal();
-  }
-}
-
-function enterApp() {
-  $('authScreen').classList.add('hidden');
-}
-
-function enterAppLocal() {
-  $('authScreen').classList.add('hidden');
-}
-
-// ── Called when user logs in ──
-window._onLogin = async function(user) {
-  fbUser = user;
-
-  // ── لو عنده اسم محفوظ محلياً — ادخله مباشرة بدون أي شاشة ──
-  const localName = localStorage.getItem('tk_name');
-  if (localName) {
-    $('displayName').textContent = localName;
-    $('authScreen').classList.add('hidden');
-    // حمّل بياناته من Firestore في الخلفية
-    loadFromFirestore(user.uid).catch(()=>{});
-    startFirestoreSync(user.uid);
-    return;
-  }
-
-  // ── مستخدم جديد — حاول تحمّل بياناته من Firestore ──
-  try {
-    await loadFromFirestore(user.uid);
-    const nameAfterLoad = localStorage.getItem('tk_name');
-    if (nameAfterLoad) {
-      $('displayName').textContent = nameAfterLoad;
-      $('authScreen').classList.add('hidden');
-      startFirestoreSync(user.uid);
-    } else {
-      // أول مرة تسجيل — اطلب الاسم
-      if (typeof goStep === 'function') {
-        goStep(3);
-        const ni = $('nameAuthInput'); if(ni) ni.focus();
-      } else {
-        $('authScreen').classList.add('hidden');
-      }
-    }
-  } catch(e) {
-    $('authScreen').classList.add('hidden');
-  }
-};
-
-window._onLogout = function() {
-  fbUser = null;
-  if (syncUnsubscribe) { syncUnsubscribe(); syncUnsubscribe = null; }
-  $('authScreen').classList.remove('hidden');
-};
-
-// ── Load data from Firestore ──
-async function loadFromFirestore(uid) {
-  showSyncBadge('جاري تحميل بياناتك...');
-  const { db, doc, getDoc } = window._fb;
-
-  try {
-    // Load settings
-    const settDoc = await getDoc(doc(db, 'users', uid, 'data', 'settings'));
-    if (settDoc.exists()) {
-      const d = settDoc.data();
-      if (d.settings) {
-        Object.entries(d.settings).forEach(([k,v]) => { if($(k)) $(k).value = v; });
-      }
-      if (d.name) { $('displayName').textContent = d.name; localStorage.setItem('tk_name', d.name); }
-    }
-
-    // Load log
-    const logDoc = await getDoc(doc(db, 'users', uid, 'data', 'log'));
-    if (logDoc.exists() && logDoc.data().entries) {
-      logEntries = logDoc.data().entries;
-      pruneLog();
-      renderLog();
-      saveLog();
-    }
-
-    hideSyncBadge();
-    recalc();
-  } catch(e) {
-    hideSyncBadge();
-  }
-}
-
-// ── Real-time sync to Firestore ──
-function startFirestoreSync(uid) {
-  if (syncUnsubscribe) syncUnsubscribe();
-  // We push changes — no need to listen (single user, no multi-device conflict needed)
-}
-
-// ── Save to Firestore (debounced) ──
-function saveToFirestore() {
-  if (!fbUser || fbUser.isAnonymous) return;
-  clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(async () => {
-    showSyncBadge('جاري الحفظ...');
-    try {
-      const { db, doc, setDoc, serverTimestamp } = window._fb;
-      const uid = fbUser.uid;
-      const settingsData = {};
-      SKEYS.forEach(k => { if($(k)) settingsData[k] = $(k).value; });
-
-      await setDoc(doc(db, 'users', uid, 'data', 'settings'), {
-        settings: settingsData,
-        name: $('displayName').textContent,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-
-      await setDoc(doc(db, 'users', uid, 'data', 'log'), {
-        entries: logEntries,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-
-      hideSyncBadge();
-    } catch(e) {
-      hideSyncBadge();
-    }
-  }, 1500);
-}
-
-function showSyncBadge(msg = 'جاري المزامنة...') {
-  const b = $('syncBadge');
-  b.innerHTML = `<span class="sync-spin">🔄</span> ${msg}`;
-  b.classList.add('show');
-}
-function hideSyncBadge() {
-  setTimeout(() => {
-    const b = $('syncBadge');
-    b.innerHTML = '✅ تم الحفظ';
-    b.style.background = 'rgba(0,200,150,.15)';
-    setTimeout(() => b.classList.remove('show'), 1500);
-  }, 300);
-}
-
-// ── Sign out ──
-function signOutUser() {
-  if (confirm('هتسجّل خروج؟ بياناتك محفوظة على السحابة.')) {
-    const { auth, signOut } = window._fb;
-    signOut(auth);
-  }
-}
-
-// ── Hook saveSettings & saveLog to also push to Firestore ──
-const _origSaveSettings = saveSettings;
-saveSettings = function() {
-  _origSaveSettings();
-  saveToFirestore();
-};
-const _origSaveLog = saveLog;
-saveLog = function() {
-  _origSaveLog();
-  saveToFirestore();
-};
-
 loadSettings();
 loadLog();
 recalc();
@@ -1701,28 +1212,16 @@ try{
 // restore shift timer
 try{
   const savedStart=localStorage.getItem('tk_shiftStart');
-  const savedElapsed=parseInt(localStorage.getItem('tk_shiftElapsed')||'0');
-  const savedPaused=localStorage.getItem('tk_shiftPaused')==='1';
   if(savedStart){
-    shiftActive=true;
-    shiftElapsedMs=savedElapsed||0;
-    $('btnEnd').classList.add('enabled');
-    $('shiftTimer').style.display='block';
-    if(savedPaused){
-      shiftPaused=true;
-      $('btnStart').className='btn-start paused-shift';
-      $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='متابعة';
-      $('pauseBadge').style.display='flex';
-      // show paused time
-      const el=shiftElapsedMs;
+    shiftActive=true; shiftStartTS=parseInt(savedStart);
+    $('btnStart').classList.add('active-shift');
+    $('shiftBtnIcon').textContent='⏸'; $('shiftBtnTxt').textContent='شيفت جارٍ...';
+    $('btnEnd').classList.add('enabled'); $('shiftTimer').style.display='block';
+    shiftTimerInt=setInterval(()=>{
+      const el=Date.now()-shiftStartTS;
       const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
       $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    } else {
-      shiftStartTS=parseInt(savedStart);
-      $('btnStart').className='btn-start active-shift';
-      $('shiftBtnIcon').textContent='⏸'; $('shiftBtnTxt').textContent='إيقاف مؤقت';
-      startTimerTick();
-    }
+    },1000);
   }
 }catch(e){}
 </script>
