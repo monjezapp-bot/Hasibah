@@ -52,12 +52,6 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   color:var(--gold2);direction:ltr;line-height:1}
 .rstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
 
-/* datetime */
-.dt-bar{display:flex;justify-content:space-between;align-items:center;
-  padding:5px 16px;background:var(--s1);border-bottom:1px solid var(--border);
-  font-size:11px;color:var(--muted)}
-.dt-time{font-family:'Tajawal',sans-serif;font-weight:700;color:var(--gold2);
-  font-size:12px;direction:ltr}
 
 /* ── BOTTOM NAV ── */
 .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
@@ -71,13 +65,6 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .bnav-btn .bl{font-size:9px;font-weight:700;color:var(--muted)}
 .bnav-btn.active{border-top-color:var(--gold)}
 .bnav-btn.active .bl{color:var(--gold)}
-
-/* ── TIP TICKER ── */
-.tip-ticker{background:var(--s2);border-bottom:1px solid var(--border);
-  padding:6px 16px;font-size:11px;color:var(--muted2);overflow:hidden;
-  white-space:nowrap;position:relative}
-.tip-ticker-inner{display:inline-block;animation:ticker 18s linear infinite}
-@keyframes ticker{0%{transform:translateX(100vw)} 100%{transform:translateX(-100%)}}
 
 /* ── PAGES ── */
 .page{display:none;padding:14px;
@@ -97,7 +84,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 .goal-row{display:flex;align-items:center;gap:8px}
 .goal-input{flex:1;background:rgba(255,255,255,.05);
   border:1.5px solid rgba(0,200,150,.2);border-radius:10px;
-  padding:7px 12px;font-size:20px;font-weight:900;color:#fff;
+  padding:7px 12px;font-size:20px;font-weight:500;color:#fff;
   font-family:'Tajawal',sans-serif;text-align:right;outline:none;
   transition:.2s;-webkit-appearance:none}
 .goal-input:focus{border-color:var(--green);background:rgba(0,200,150,.06)}
@@ -110,8 +97,13 @@ body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:12px;
   padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
   display:flex;align-items:center;justify-content:center;gap:5px}
-.btn-start.active-shift{background:linear-gradient(135deg,#4a0f0f,#7a1a1a);
-  border-color:rgba(255,87,87,.3);color:var(--red)}
+.btn-start.active-shift{background:linear-gradient(135deg,#0a2a3d,#0d3a55);
+  border-color:rgba(96,168,255,.35);color:var(--blue2)}
+.btn-start.paused-shift{background:linear-gradient(135deg,#2e1f00,#4a3200);
+  border-color:rgba(255,200,64,.35);color:var(--gold2)}
+.pause-badge{display:flex;align-items:center;justify-content:center;gap:5px;
+  font-size:10px;color:var(--gold2);margin-top:5px;animation:pulse-text 1.4s infinite}
+@keyframes pulse-text{0%,100%{opacity:1}50%{opacity:.4}}
 .btn-end{flex:1;background:rgba(255,87,87,.08);border:1px solid rgba(255,87,87,.25);
   color:var(--red);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;
   font-size:12px;padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
@@ -366,14 +358,6 @@ input[type=number]{-moz-appearance:textfield}
       </div>
     </div>
   </div>
-  <div class="dt-bar">
-    <span id="dtDate" style="direction:rtl">—</span>
-    <span class="dt-time" id="dtTime">—</span>
-  </div>
-  <!-- tip ticker -->
-  <div class="tip-ticker">
-    <span class="tip-ticker-inner" id="tipTickerText">💡 شغّل أوقات الذروة لزيادة أرباحك ⚡ افحص الإطارات أسبوعياً 🔧 غيّر الزيت كل 1000 كم 📱 استخدم باقة إنترنت شهرية</span>
-  </div>
 </div>
 
 <!-- ═══ PAGES ═══ -->
@@ -381,7 +365,7 @@ input[type=number]{-moz-appearance:textfield}
 
 <!-- PAGE: DASHBOARD -->
 <div class="page active" id="page-dash">
-  <div style="height:12px"></div>
+  <div style="height:6px"></div>
 
   <!-- Goal -->
   <div class="goal-card">
@@ -401,6 +385,7 @@ input[type=number]{-moz-appearance:textfield}
       </button>
       <button class="btn-end" id="btnEnd" onclick="endShift()">⏹ إنهاء</button>
     </div>
+    <div id="pauseBadge" style="display:none" class="pause-badge">⏸ الشيفت متوقف مؤقتاً — اضغط للمتابعة</div>
     <div id="shiftTimer">
       ⏱ وقت الشيفت:
       <span id="timerDisplay" style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">00:00:00</span>
@@ -428,18 +413,6 @@ input[type=number]{-moz-appearance:textfield}
       <div class="kpi-lbl-top">💰 المطلوب تحصيله</div>
       <div class="kpi-val" id="r-earn">—</div>
       <div class="kpi-unit">جنيه</div>
-    </div>
-  </div>
-
-  <!-- Net -->
-  <div class="net-bar">
-    <div>
-      <div class="net-lbl">✅ صافي الربح للبيت</div>
-      <div class="net-sub">بعد خصم كل التكاليف والعمولة</div>
-    </div>
-    <div style="text-align:left">
-      <span class="net-val" id="r-net">—</span>
-      <span style="font-size:11px;color:var(--green2)"> جنيه</span>
     </div>
   </div>
 
@@ -579,6 +552,9 @@ input[type=number]{-moz-appearance:textfield}
     </div>
   </div>
   <div class="sec-title">إدارة البيانات</div>
+  <div style="background:rgba(59,139,235,.07);border:1px solid rgba(59,139,235,.2);border-radius:10px;padding:10px 13px;margin-bottom:9px;font-size:11px;color:var(--blue2);line-height:1.6">
+    💾 <strong>بياناتك محفوظة تلقائياً</strong> في المتصفح. صدّر نسخة احتياطية بانتظام لضمان عدم فقدانها عند تحديث التطبيق أو تغيير الجهاز.
+  </div>
   <div class="data-btns">
     <button class="data-btn btn-export" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
     <button class="data-btn btn-import" onclick="$('importFile').click()">📥 استيراد بيانات</button>
@@ -703,22 +679,10 @@ function nowTimeStr() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// CLOCK
-// ═══════════════════════════════════════════════════════════
-function updateClock() {
-  const now = new Date();
-  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-  $('dtDate').textContent = `${days[now.getDay()]}، ${now.toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}`;
-  $('dtTime').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// ═══════════════════════════════════════════════════════════
-// TABS + SWIPE + PAGE PERSISTENCE
+// TABS + PAGE PERSISTENCE
 // ═══════════════════════════════════════════════════════════
 const TABS = ['dash','settings','log'];
-let currentTab = localStorage.getItem('tk_tab') || 'dash';
+let currentTab = 'dash'; // always start on dashboard
 
 function showTab(name, btnId) {
   currentTab = name;
@@ -728,21 +692,6 @@ function showTab(name, btnId) {
   $(btnId || 'bnav-'+name).classList.add('active');
   try { localStorage.setItem('tk_tab', name); } catch(e){}
 }
-
-// Swipe between pages
-let swipeStartX = 0, swipeStartY = 0;
-document.addEventListener('touchstart', e => {
-  swipeStartX = e.touches[0].clientX;
-  swipeStartY = e.touches[0].clientY;
-}, {passive:true});
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - swipeStartX;
-  const dy = e.changedTouches[0].clientY - swipeStartY;
-  if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
-  const idx = TABS.indexOf(currentTab);
-  if (dx < 0 && idx < TABS.length-1) showTab(TABS[idx+1], 'bnav-'+TABS[idx+1]);
-  if (dx > 0 && idx > 0)             showTab(TABS[idx-1], 'bnav-'+TABS[idx-1]);
-}, {passive:true});
 
 // ═══════════════════════════════════════════════════════════
 // CORE CALCULATOR
@@ -893,31 +842,67 @@ function closeSheetIfBg(e) { if(e.target===$('kpiSheet')) closeSheet(); }
 // ═══════════════════════════════════════════════════════════
 // SHIFT
 // ═══════════════════════════════════════════════════════════
-let shiftActive=false, shiftStartTS=null, shiftTimerInt=null;
+let shiftActive=false, shiftPaused=false, shiftStartTS=null, shiftTimerInt=null;
+let shiftElapsedMs=0; // accumulated elapsed before pause
 
-function toggleShift() { if(!shiftActive) startShift(); }
+function toggleShift() {
+  if(!shiftActive) { startShift(); return; }
+  if(shiftPaused) resumeShift(); else pauseShift();
+}
 
 function startShift() {
-  shiftActive=true; shiftStartTS=Date.now();
+  shiftActive=true; shiftPaused=false; shiftElapsedMs=0;
+  shiftStartTS=Date.now();
   trips=[]; renderTrips();
-  $('btnStart').classList.add('active-shift');
+  $('btnStart').className='btn-start active-shift';
   $('shiftBtnIcon').textContent='⏸';
-  $('shiftBtnTxt').textContent='شيفت جارٍ...';
+  $('shiftBtnTxt').textContent='إيقاف مؤقت';
   $('btnEnd').classList.add('enabled');
   $('shiftTimer').style.display='block';
+  $('pauseBadge').style.display='none';
+  startTimerTick();
+  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftElapsed','0');localStorage.setItem('tk_shiftPaused','0');}catch(e){}
+}
+
+function pauseShift() {
+  shiftPaused=true;
+  shiftElapsedMs += Date.now()-shiftStartTS;
+  clearInterval(shiftTimerInt);
+  $('btnStart').className='btn-start paused-shift';
+  $('shiftBtnIcon').textContent='▶';
+  $('shiftBtnTxt').textContent='متابعة';
+  $('pauseBadge').style.display='flex';
+  try{localStorage.setItem('tk_shiftElapsed',shiftElapsedMs);localStorage.setItem('tk_shiftPaused','1');}catch(e){}
+  sendNotif('⏸ شيفت متوقف مؤقتاً','خد راحتك يا كابتن، الوقت واقف لما ترجع 💪');
+}
+
+function resumeShift() {
+  shiftPaused=false;
+  shiftStartTS=Date.now();
+  $('btnStart').className='btn-start active-shift';
+  $('shiftBtnIcon').textContent='⏸';
+  $('shiftBtnTxt').textContent='إيقاف مؤقت';
+  $('pauseBadge').style.display='none';
+  startTimerTick();
+  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftPaused','0');}catch(e){}
+  sendNotif('▶ الشيفت مستمر','يلا يا كابتن — بالتوفيق والرزق 🛵');
+}
+
+function startTimerTick() {
+  clearInterval(shiftTimerInt);
   shiftTimerInt=setInterval(()=>{
-    const el=Date.now()-shiftStartTS;
+    const el=shiftElapsedMs+(Date.now()-shiftStartTS);
     const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
     $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
   },1000);
-  try{localStorage.setItem('tk_shiftStart',shiftStartTS);}catch(e){}
 }
 
 function endShift() {
   if(!shiftActive) return;
   clearInterval(shiftTimerInt);
-  const endTS=Date.now(), durH=(endTS-shiftStartTS)/3600000;
-  const totalColl=trips.reduce((s,t)=>s+t.amount,0);
+  const totalMs = shiftPaused ? shiftElapsedMs : shiftElapsedMs+(Date.now()-shiftStartTS);
+  const durH=totalMs/3600000;
+  const totalColl=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
   const com=num('s-com')/100, pers=num('s-pers'), pkm=num('s-pkm')||1;
   const netActual=totalColl*(1-com)-pers, kmEst=totalColl/pkm;
 
@@ -931,23 +916,23 @@ function endShift() {
   }
 
   addLogEntry({
-    date: new Date(shiftStartTS).toLocaleDateString('ar-EG'),
-    time: new Date(shiftStartTS).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
+    date: new Date().toLocaleDateString('ar-EG'),
+    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
     goal: num('goalInput'), km:kmEst.toFixed(1), hrs:durH.toFixed(1),
     total:totalColl, net:netActual.toFixed(2)
   });
 
-  // End notification
   sendNotif('🛵 انتهى الشيفت!', `الحمد لله على السلامة يا كابتن! المحصّل: ${fmt(totalColl,0)} جنيه — الصافي: ${fmt(netActual,0)} جنيه. أحسنت صنعاً اليوم 💪`);
 
-  shiftActive=false;
-  $('btnStart').classList.remove('active-shift');
+  shiftActive=false; shiftPaused=false; shiftElapsedMs=0;
+  $('btnStart').className='btn-start';
   $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='بدء الشيفت';
   $('btnEnd').classList.remove('enabled');
   $('shiftTimer').style.display='none';
+  $('pauseBadge').style.display='none';
   $('timerDisplay').textContent='00:00:00';
   trips=[]; renderTrips(); updateTripTracker(); updateRemBar();
-  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_trips');}catch(e){}
+  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_shiftElapsed');localStorage.removeItem('tk_shiftPaused');localStorage.removeItem('tk_trips');}catch(e){}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1067,7 +1052,26 @@ function loadLog(){
 // ═══════════════════════════════════════════════════════════
 function sendNotif(title, body) {
   if(Notification.permission!=='granted') return;
-  try{ new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',lang:'ar'}); }catch(e){}
+  try{
+    const n = new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',lang:'ar',requireInteraction:true,vibrate:[300,100,300]});
+    // play beep sound when notification fires
+    playBeep();
+  }catch(e){}
+}
+
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.6, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 1.2);
+  } catch(e){}
 }
 
 function requestNotifPerm() {
@@ -1089,20 +1093,66 @@ function updateNotifBtn() {
 }
 
 let alarmTimeout=null, alarmBeforeTimeout=null;
+let alarmCheckInterval=null;
+
 function scheduleAlarm() {
   clearTimeout(alarmTimeout); clearTimeout(alarmBeforeTimeout);
+  clearInterval(alarmCheckInterval);
   const alarmTime=$('s-alarm')?.value; if(!alarmTime) return;
-  const before=num('s-alarm-before')||15;
-  const [h,m]=alarmTime.split(':').map(Number);
-  const now=new Date();
-  let alarmDate=new Date(now); alarmDate.setHours(h,m,0,0);
-  if(alarmDate<=now) alarmDate.setDate(alarmDate.getDate()+1);
-  const msToAlarm=alarmDate-now;
-  const msToBefore=msToAlarm-(before*60000);
-  if(msToBefore>0){
-    alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`),msToBefore);
+  const before=parseInt($('s-alarm-before')?.value)||15;
+
+  // Save alarm config to localStorage for visibility check
+  try{ localStorage.setItem('tk_alarm_time', alarmTime); localStorage.setItem('tk_alarm_before', before); }catch(e){}
+
+  function getNextAlarmDate(timeStr) {
+    const [h,m]=timeStr.split(':').map(Number);
+    const now=new Date();
+    let d=new Date(now); d.setHours(h,m,0,0);
+    if(d<=now) d.setDate(d.getDate()+1);
+    return d;
   }
-  alarmTimeout=setTimeout(()=>sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!'),msToAlarm);
+
+  function scheduleTimeouts() {
+    const alarmDate=getNextAlarmDate(alarmTime);
+    const now=new Date();
+    const msToAlarm=alarmDate-now;
+    const msToBefore=msToAlarm-(before*60000);
+    if(msToBefore>0){
+      alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`),msToBefore);
+    } else if(msToAlarm>0 && msToBefore<=0 && msToBefore>-(before*60000)){
+      // We're in the "before" window right now
+      sendNotif(`⏰ تنبيه: الشيفت قريباً`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`);
+    }
+    alarmTimeout=setTimeout(()=>{
+      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
+      // Reschedule for next day
+      setTimeout(scheduleTimeouts, 5000);
+    },msToAlarm);
+  }
+
+  scheduleTimeouts();
+
+  // Fallback: check every minute in case page was in background and setTimeout drifted
+  alarmCheckInterval = setInterval(()=>{
+    const now=new Date();
+    const [h,m]=(localStorage.getItem('tk_alarm_time')||'').split(':').map(Number);
+    if(isNaN(h)) return;
+    const b=parseInt(localStorage.getItem('tk_alarm_before'))||15;
+    const nowMin=now.getHours()*60+now.getMinutes();
+    const alarmMin=h*60+m;
+    const beforeMin=alarmMin-b;
+    const lastFired=parseInt(localStorage.getItem('tk_alarm_last_fired')||'0');
+    const todayKey=now.toLocaleDateString('en-CA');
+    const lastFiredKey=localStorage.getItem('tk_alarm_last_fired_day')||'';
+    if(nowMin===alarmMin && lastFiredKey!==todayKey){
+      localStorage.setItem('tk_alarm_last_fired_day',todayKey);
+      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
+    }
+    if(nowMin===beforeMin && localStorage.getItem('tk_alarm_before_fired_day')!==todayKey){
+      localStorage.setItem('tk_alarm_before_fired_day',todayKey);
+      sendNotif(`⏰ تنبيه: الشيفت بعد ${b} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`);
+    }
+  }, 30000);
 }
 
 // Motor km check (alert at 800+ from last maintenance)
@@ -1143,6 +1193,38 @@ function saveProfile(){
 }
 
 // ═══════════════════════════════════════════════════════════
+// DATA VERSION & MIGRATION — يحمي البيانات عند التحديث
+// ═══════════════════════════════════════════════════════════
+const APP_VERSION = '2.1';
+
+function migrateData() {
+  try {
+    const storedVersion = localStorage.getItem('tk_version');
+    if (storedVersion === APP_VERSION) return; // لا يحتاج ترحيل
+
+    // ── v1.x → v2.x ──
+    // الإصدارات القديمة لم يكن عندها tk_version، نتحقق من وجود البيانات فقط
+    // وننقلها بأمان دون حذف شيء
+
+    // تحقق من بيانات السجل القديمة
+    const oldLog = localStorage.getItem('tk_log');
+    if (oldLog && !localStorage.getItem('tk_log_migrated')) {
+      // السجل موجود ومحفوظ — لا نتغير عليه
+      localStorage.setItem('tk_log_migrated', '1');
+    }
+
+    // تحقق من الإعدادات القديمة — إذا كانت موجودة نحتفظ بها
+    const oldSettings = localStorage.getItem('tk_settings');
+    // لا نحذف شيء، فقط نحدث الإصدار
+
+    localStorage.setItem('tk_version', APP_VERSION);
+    console.log(`✅ البيانات محمية — تم التحديث إلى v${APP_VERSION}`);
+  } catch(e) {}
+}
+
+migrateData();
+
+// ═══════════════════════════════════════════════════════════
 // SETTINGS PERSISTENCE
 // ═══════════════════════════════════════════════════════════
 const SKEYS=['goalInput','s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd','s-alarm','s-alarm-before','s-motor-km','s-last-maint'];
@@ -1165,12 +1247,26 @@ function loadSettings(){
 // EXPORT / IMPORT
 // ═══════════════════════════════════════════════════════════
 function exportData(){
-  const data={name:$('displayName').textContent,settings:{},log:logEntries,exportDate:new Date().toISOString()};
+  const data={
+    version: APP_VERSION,
+    exportDate: new Date().toISOString(),
+    name: $('displayName').textContent,
+    photo: localStorage.getItem('tk_photo') || null,
+    settings:{},
+    log: logEntries,
+    trips: trips,
+    shiftState: {
+      active: shiftActive,
+      paused: shiftPaused,
+      startTS: shiftStartTS,
+      elapsedMs: shiftElapsedMs
+    }
+  };
   SKEYS.forEach(k=>{if($(k))data.settings[k]=$(k).value;});
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`tarek_shift_${new Date().toLocaleDateString('en-CA')}.json`;
+  a.download=`tarek_shift_backup_${new Date().toLocaleDateString('en-CA')}.json`;
   a.click();
 }
 function importData(e){
@@ -1180,9 +1276,12 @@ function importData(e){
     try{
       const data=JSON.parse(ev.target.result);
       if(data.name){$('displayName').textContent=data.name;$('nameInput').value=data.name;localStorage.setItem('tk_name',data.name);}
+      if(data.photo){currentPhoto=data.photo;showPhoto(data.photo);localStorage.setItem('tk_photo',data.photo);}
       if(data.settings)Object.entries(data.settings).forEach(([k,v])=>{if($(k))$(k).value=v;});
       if(data.log){logEntries=data.log;saveLog();renderLog();}
-      recalc();alert('✅ تم استيراد البيانات بنجاح!');
+      if(data.trips&&Array.isArray(data.trips)){trips=data.trips;renderTrips();updateTripTracker();updateRemBar();localStorage.setItem('tk_trips',JSON.stringify(trips));}
+      recalc();
+      alert(`✅ تم استيراد البيانات بنجاح!\n📅 النسخة: ${data.version||'قديمة'}\n📆 تاريخ النسخة: ${data.exportDate?new Date(data.exportDate).toLocaleDateString('ar-EG'):'غير معروف'}`);
     }catch(err){alert('❌ ملف غير صالح');}
   };
   reader.readAsText(file);e.target.value='';
@@ -1212,16 +1311,28 @@ try{
 // restore shift timer
 try{
   const savedStart=localStorage.getItem('tk_shiftStart');
+  const savedElapsed=parseInt(localStorage.getItem('tk_shiftElapsed')||'0');
+  const savedPaused=localStorage.getItem('tk_shiftPaused')==='1';
   if(savedStart){
-    shiftActive=true; shiftStartTS=parseInt(savedStart);
-    $('btnStart').classList.add('active-shift');
-    $('shiftBtnIcon').textContent='⏸'; $('shiftBtnTxt').textContent='شيفت جارٍ...';
-    $('btnEnd').classList.add('enabled'); $('shiftTimer').style.display='block';
-    shiftTimerInt=setInterval(()=>{
-      const el=Date.now()-shiftStartTS;
+    shiftActive=true;
+    shiftElapsedMs=savedElapsed||0;
+    $('btnEnd').classList.add('enabled');
+    $('shiftTimer').style.display='block';
+    if(savedPaused){
+      shiftPaused=true;
+      $('btnStart').className='btn-start paused-shift';
+      $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='متابعة';
+      $('pauseBadge').style.display='flex';
+      // show paused time
+      const el=shiftElapsedMs;
       const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
       $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    },1000);
+    } else {
+      shiftStartTS=parseInt(savedStart);
+      $('btnStart').className='btn-start active-shift';
+      $('shiftBtnIcon').textContent='⏸'; $('shiftBtnTxt').textContent='إيقاف مؤقت';
+      startTimerTick();
+    }
   }
 }catch(e){}
 </script>
