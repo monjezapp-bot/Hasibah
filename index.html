@@ -3,438 +3,996 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>طارق | حاسبة الشفت</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<title>طارق | حاسبة الشيفت</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#080c14;--s1:#0d1520;--s2:#111d2e;--s3:#172238;
-  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
-  --gold:#f0a500;--gold2:#ffc840;--blue:#3b8beb;--blue2:#60a8ff;
-  --green:#00c896;--green2:#30e8b0;--red:#ff5757;--purple:#a855f7;
-  --text:#eef2f8;--muted:#5a6a82;--muted2:#8898aa;--r:16px;--r2:10px;
+/* ══════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body, .app {
+  -webkit-user-select: none; -moz-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
-  -webkit-touch-callout:none;user-select:none;-webkit-user-select:none}
-input,textarea{user-select:text;-webkit-user-select:text}
-body{font-family:'IBM Plex Sans Arabic',sans-serif;background:var(--bg);color:var(--text);
-  min-height:100dvh;overflow-x:hidden}
-body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(ellipse 60% 35% at 15% 0%,rgba(240,165,0,.04) 0%,transparent 55%),
-             radial-gradient(ellipse 45% 30% at 85% 100%,rgba(59,139,235,.04) 0%,transparent 55%)}
-
-/* ── LAYOUT ── */
-.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding-bottom:72px}
-
-/* ── HEADER ── */
-.header{background:rgba(8,12,20,.97);border-bottom:1px solid var(--border2);
-  backdrop-filter:blur(24px);position:sticky;top:0;z-index:80}
-.header-inner{padding:12px 16px 0}
-.profile-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.avatar-wrap{position:relative;flex-shrink:0;cursor:pointer}
-.avatar{width:42px;height:42px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),#c47d00);
-  display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden;
-  box-shadow:0 0 0 2px rgba(240,165,0,.3);transition:.2s}
-.avatar:active{transform:scale(.9)}
-.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.avatar-dot{position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;
-  border:2px solid var(--bg);background:var(--green)}
-.profile-info{flex:1;min-width:0}
-.profile-name{font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;
-  display:flex;align-items:center;gap:5px}
-.profile-name .pen{font-size:11px;color:var(--muted)}
-
-/* remaining bar */
-.rem-bar{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border)}
-.rstat{padding:7px 4px;text-align:center;border-left:1px solid var(--border)}
-.rstat:last-child{border-left:none}
-.rstat-val{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:900;
-  color:var(--gold2);direction:ltr;line-height:1}
-.rstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
-
-
-/* ── BOTTOM NAV ── */
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:480px;z-index:80;
-  background:rgba(8,12,20,.97);border-top:1px solid var(--border2);
-  backdrop-filter:blur(24px);display:flex}
-.bnav-btn{flex:1;padding:10px 4px 12px;text-align:center;cursor:pointer;
-  border:none;background:none;font-family:'IBM Plex Sans Arabic',sans-serif;
-  transition:.15s;border-top:2px solid transparent}
-.bnav-btn .bi{font-size:20px;display:block;line-height:1;margin-bottom:3px}
-.bnav-btn .bl{font-size:9px;font-weight:700;color:var(--muted)}
-.bnav-btn.active{border-top-color:var(--gold)}
-.bnav-btn.active .bl{color:var(--gold)}
-
-/* ── PAGES ── */
-.page{display:none;padding:14px;
-  transition:transform .25s ease,opacity .25s ease}
-.page.active{display:block;animation:fadeUp .2s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-
-/* ── GOAL CARD ── */
-.goal-card{background:linear-gradient(135deg,#0a1e0e,#062014);
-  border:1px solid rgba(0,200,150,.18);border-radius:var(--r);
-  padding:13px 15px;margin-bottom:11px}
-.goal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.goal-badge{font-size:10px;font-weight:700;color:var(--green2);
-  background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.2);
-  padding:2px 8px;border-radius:20px}
-.goal-label{font-size:11px;color:var(--green2);font-weight:600}
-.goal-row{display:flex;align-items:center;gap:8px}
-.goal-input{flex:1;background:rgba(255,255,255,.05);
-  border:1.5px solid rgba(0,200,150,.2);border-radius:10px;
-  padding:7px 12px;font-size:20px;font-weight:500;color:#fff;
-  font-family:'Tajawal',sans-serif;text-align:right;outline:none;
-  transition:.2s;-webkit-appearance:none}
-.goal-input:focus{border-color:var(--green);background:rgba(0,200,150,.06)}
-.goal-curr{font-size:12px;color:var(--green2);font-weight:700;flex-shrink:0}
-
-/* ── SHIFT BUTTONS ── */
-.shift-btns{display:flex;gap:8px;margin-top:10px}
-.btn-start{flex:1;background:linear-gradient(135deg,#0f4a1f,#1a7a35);
-  border:1px solid rgba(0,200,150,.3);color:var(--green2);
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:12px;
-  padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
-  display:flex;align-items:center;justify-content:center;gap:5px}
-.btn-start.active-shift{background:linear-gradient(135deg,#0a2a3d,#0d3a55);
-  border-color:rgba(96,168,255,.35);color:var(--blue2)}
-.btn-start.paused-shift{background:linear-gradient(135deg,#2e1f00,#4a3200);
-  border-color:rgba(255,200,64,.35);color:var(--gold2)}
-.pause-badge{display:flex;align-items:center;justify-content:center;gap:5px;
-  font-size:10px;color:var(--gold2);margin-top:5px;animation:pulse-text 1.4s infinite}
-@keyframes pulse-text{0%,100%{opacity:1}50%{opacity:.4}}
-.btn-end{flex:1;background:rgba(255,87,87,.08);border:1px solid rgba(255,87,87,.25);
-  color:var(--red);font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;
-  font-size:12px;padding:10px;border-radius:10px;cursor:pointer;transition:.2s;
-  display:flex;align-items:center;justify-content:center;gap:5px;
-  opacity:.35;pointer-events:none}
-.btn-end.enabled{opacity:1;pointer-events:all}
-#shiftTimer{display:none;text-align:center;margin-top:7px;font-size:11px;color:var(--muted)}
-
-/* ── KPI GRID ── */
-.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
-.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
-  padding:13px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
-.kpi:active{transform:scale(.96);opacity:.85}
-.kpi::after{content:'ⓘ';position:absolute;top:8px;left:10px;
-  font-size:12px;color:var(--border2);font-style:normal}
-.kpi-lbl-top{font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;padding-left:16px}
-.kpi-val{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;line-height:1;direction:ltr}
-.kpi-unit{font-size:10px;font-weight:700;color:var(--muted);margin-top:3px}
-.kpi.km{border-color:rgba(59,139,235,.3)} .kpi.km .kpi-val{color:var(--blue2)}
-.kpi.hrs{border-color:rgba(168,85,247,.3)} .kpi.hrs .kpi-val{color:#c084fc}
-.kpi.cost{border-color:rgba(255,87,87,.3)} .kpi.cost .kpi-val{color:var(--red)}
-.kpi.earn{border-color:rgba(240,165,0,.3);background:linear-gradient(135deg,#120f00,#100c00)}
-.kpi.earn .kpi-val{color:var(--gold2)}
-
-/* ── NET BAR ── */
-.net-bar{background:linear-gradient(135deg,#041a0e,#031410);
-  border:1px solid rgba(0,200,150,.25);border-radius:var(--r);
-  padding:12px 15px;display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:11px}
-.net-lbl{font-size:11px;color:var(--green2);font-weight:700}
-.net-sub{font-size:10px;color:var(--muted);margin-top:1px}
-.net-val{font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;
-  color:var(--green2);direction:ltr}
-
-/* ── TRACKER ── */
-.tracker-card{background:var(--s2);border:1px solid rgba(240,165,0,.15);
-  border-radius:var(--r);padding:13px;margin-bottom:11px;overflow:hidden}
-.tracker-title{font-size:11px;font-weight:700;color:var(--gold2);
-  margin-bottom:9px;display:flex;align-items:center;gap:5px}
-.tracker-inputs{display:flex;gap:7px;margin-bottom:9px}
-.tracker-inputs .trip-input{flex:1;min-width:0;background:rgba(255,255,255,.06);
-  border:1.5px solid var(--border2);border-radius:9px;padding:8px 11px;
-  font-size:14px;font-weight:700;color:#fff;font-family:'Tajawal',sans-serif;
-  text-align:right;outline:none;-webkit-appearance:none;transition:.2s}
-.tracker-inputs .trip-input:focus{border-color:var(--gold);background:rgba(240,165,0,.06)}
-.btn-add-trip{flex-shrink:0;background:linear-gradient(135deg,#c47d00,var(--gold));
-  color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:900;
-  font-size:11px;padding:0 14px;border-radius:9px;border:none;cursor:pointer;
-  white-space:nowrap;transition:.2s}
-.btn-add-trip:active{transform:scale(.96)}
-.tracker-status{background:rgba(0,0,0,.2);border-radius:9px;padding:9px 11px}
-.ts-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.ts-row:last-child{margin-bottom:0}
-.ts-lbl{font-size:11px;color:var(--muted)}
-.ts-val{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;direction:ltr}
-.ts-val.green{color:var(--green2)} .ts-val.gold{color:var(--gold2)}
-.ts-val.red{color:var(--red)} .ts-val.neu{color:var(--blue2)}
-.trips-list{margin-top:8px;max-height:100px;overflow-y:auto}
-.trip-item{display:flex;justify-content:space-between;align-items:center;
-  padding:5px 9px;background:rgba(255,255,255,.03);border-radius:7px;
-  margin-bottom:3px;font-size:11px}
-.trip-del{background:none;border:none;color:var(--muted);cursor:pointer;
-  font-size:12px;padding:2px 5px}
-
-/* ── BREAKDOWN ── */
-.sec-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;
-  letter-spacing:.07em;margin-bottom:7px;padding-right:2px}
-.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
-  overflow:hidden;margin-bottom:11px}
-.card-row{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 13px;border-bottom:1px solid var(--border);transition:.12s}
-.card-row:last-child{border-bottom:none}
-.cr-left{display:flex;align-items:center;gap:9px}
-.cr-icon{font-size:15px;width:22px;text-align:center}
-.cr-name{font-size:12px;font-weight:600}
-.cr-desc{font-size:10px;color:var(--muted);margin-top:1px}
-.cr-val{font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;direction:ltr}
-.cr-val.neg{color:var(--red)} .cr-val.warn{color:var(--gold)}
-.cr-val.pos{color:var(--green2)} .cr-val.neu{color:var(--blue2)}
-
-/* ── SETTINGS ── */
-.setting-card{background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;margin-bottom:11px}
-.setting-hdr{padding:9px 13px;background:var(--s2);border-bottom:1px solid var(--border);
-  font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.setting-row{display:flex;align-items:center;justify-content:space-between;
-  padding:10px 13px;border-bottom:1px solid var(--border);gap:10px}
-.setting-row:last-child{border-bottom:none}
-.sr-label{font-size:12px;font-weight:600;flex:1}
-.sr-desc{font-size:10px;color:var(--muted);margin-top:1px}
-.sr-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
-.setting-input{width:80px;background:rgba(255,255,255,.05);
-  border:1px solid var(--border2);border-radius:8px;padding:6px 9px;
-  font-size:14px;font-weight:700;color:var(--gold);font-family:'Tajawal',sans-serif;
-  text-align:center;outline:none;transition:.2s;-webkit-appearance:none;direction:ltr}
-.setting-input:focus{border-color:var(--gold);background:rgba(240,165,0,.07)}
-.sr-unit{font-size:10px;color:var(--muted);font-weight:600;white-space:nowrap}
-
-/* ── LOG TABLE ── */
-.log-table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);
-  margin-bottom:11px}
-.log-table{width:100%;border-collapse:collapse;min-width:480px}
-.log-table th{padding:9px 10px;font-size:10px;font-weight:700;color:var(--muted);
-  text-align:center;background:var(--s2);border-bottom:1px solid var(--border2);
-  white-space:nowrap;letter-spacing:.04em;text-transform:uppercase}
-.log-table td{padding:8px 10px;font-size:12px;text-align:center;
-  border-bottom:1px solid var(--border);color:var(--text);
-  direction:ltr;font-family:'Tajawal',sans-serif}
-.log-table tr:nth-child(even) td{background:rgba(255,255,255,.015)}
-.log-table .totals td{background:var(--s3);font-weight:700;color:var(--gold2);
-  border-top:1px solid var(--border2)}
-.log-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;
-  font-size:12px;padding:2px 5px}
-
-/* ── DATA BUTTONS ── */
-.data-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
-.data-btn{padding:11px;border-radius:var(--r2);font-family:'IBM Plex Sans Arabic',sans-serif;
-  font-size:12px;font-weight:700;cursor:pointer;transition:.2s;
-  display:flex;align-items:center;justify-content:center;gap:5px;border:none}
-.data-btn:active{transform:scale(.97)}
-.btn-export{background:rgba(59,139,235,.1);border:1px solid rgba(59,139,235,.25);color:var(--blue2)}
-.btn-import{background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.2);color:var(--green2)}
-.btn-clear-all{width:100%;padding:10px;background:rgba(255,87,87,.06);
-  border:1px solid rgba(255,87,87,.2);border-radius:var(--r2);color:var(--red);
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-size:12px;font-weight:700;
-  cursor:pointer;transition:.2s;margin-top:4px}
-.btn-clear-all:active{background:rgba(255,87,87,.12)}
-
-/* ── RATIO STRIP ── */
-.ratio-strip{display:flex;justify-content:space-between;align-items:center;
-  padding:7px 13px;background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r2);margin-bottom:11px}
-
-/* ── KPI BOTTOM SHEET ── */
-.sheet-overlay{position:fixed;inset:0;z-index:150;
-  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
-  opacity:0;pointer-events:none;transition:.22s;
-  display:flex;align-items:flex-end;justify-content:center}
-.sheet-overlay.open{opacity:1;pointer-events:all}
-.bottom-sheet{background:var(--s1);border:1px solid var(--border2);
-  border-radius:22px 22px 0 0;padding:20px 18px 36px;
-  width:100%;max-width:480px;
-  transform:translateY(100%);transition:.28s cubic-bezier(.34,1.3,.64,1)}
-.sheet-overlay.open .bottom-sheet{transform:translateY(0)}
-.sheet-drag{width:36px;height:4px;border-radius:2px;background:var(--border2);
-  margin:0 auto 16px}
-.sheet-title{font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;
-  margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.sheet-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
-.sheet-rows{background:var(--s2);border-radius:var(--r2);overflow:hidden;margin-bottom:14px}
-.sheet-row{display:flex;justify-content:space-between;align-items:center;
-  padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
-.sheet-row:last-child{border-bottom:none}
-.sheet-row-lbl{color:var(--muted2)}
-.sheet-row-val{font-family:'Tajawal',sans-serif;font-weight:700;direction:ltr}
-.sheet-highlight{background:rgba(255,255,255,.04);margin:0 -14px;padding:12px 14px;
-  border-radius:0 0 var(--r2) var(--r2)}
-.sheet-progress{height:5px;border-radius:3px;background:var(--border2);
-  overflow:hidden;margin-top:10px}
-.sheet-progress-bar{height:100%;border-radius:3px;transition:.4s}
-.sheet-ok-btn{width:100%;padding:13px;
-  background:linear-gradient(135deg,#c47d00,var(--gold));
-  color:#000;font-family:'IBM Plex Sans Arabic',sans-serif;
-  font-weight:700;font-size:14px;border-radius:13px;border:none;cursor:pointer}
-
-/* ── PROFILE MODAL ── */
-.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);
-  backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;
-  opacity:0;pointer-events:none;transition:.25s}
-.overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--s1);border:1px solid var(--border2);
-  border-radius:22px 22px 0 0;padding:20px 18px 36px;
-  width:100%;max-width:480px;
-  transform:translateY(100%);transition:.3s cubic-bezier(.34,1.56,.64,1)}
-.overlay.open .modal{transform:translateY(0)}
-.modal-drag{width:36px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 16px}
-.modal-title{font-size:16px;font-weight:900;margin-bottom:4px;font-family:'Tajawal',sans-serif}
-.modal-sub{font-size:11px;color:var(--muted);margin-bottom:18px}
-.modal-avatar-wrap{display:flex;justify-content:center;margin-bottom:16px}
-.modal-avatar{width:84px;height:84px;border-radius:50%;cursor:pointer;
-  background:linear-gradient(135deg,var(--gold),#c47d00);
-  display:flex;align-items:center;justify-content:center;font-size:36px;
-  overflow:hidden;position:relative;box-shadow:0 0 0 3px rgba(240,165,0,.3);transition:.2s}
-.modal-avatar:active{transform:scale(.95)}
-.modal-avatar img{width:100%;height:100%;object-fit:cover}
-.modal-av-ov{position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.55);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.modal-av-ov span{font-size:18px}
-.modal-av-ov small{font-size:9px;color:#fff;font-weight:700}
-.name-input{width:100%;background:var(--s2);border:1.5px solid var(--border2);
-  border-radius:12px;padding:11px 13px;font-size:15px;font-weight:700;
-  color:var(--text);font-family:'IBM Plex Sans Arabic',sans-serif;
-  text-align:right;outline:none;transition:.2s;margin-bottom:13px}
-.name-input:focus{border-color:var(--gold)}
-.modal-btns{display:flex;gap:9px}
-.btn-save{flex:1;background:linear-gradient(135deg,#c47d00,var(--gold));color:#000;
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
-  padding:12px;border-radius:12px;border:none;cursor:pointer}
-.btn-cancel{flex:1;background:var(--s2);color:var(--muted);
-  font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:13px;
-  padding:12px;border-radius:12px;border:1px solid var(--border);cursor:pointer}
-
-/* ── MISC ── */
-@keyframes numFlash{0%{opacity:.2;transform:translateY(3px)}100%{opacity:1;transform:none}}
-.flash{animation:numFlash .22s ease}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.pulse{display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:var(--green);animation:pulse 1.8s infinite;margin-left:4px}
+input, textarea { -webkit-user-select: text; user-select: text; }
 input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
-input[type=number]{-moz-appearance:textfield}
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type=number] { -moz-appearance: textfield; }
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ══════════════════════════════════════
+   THEME TOKENS
+══════════════════════════════════════ */
+:root {
+  --bg:        #f5f7fa;
+  --surface:   #ffffff;
+  --card:      #ffffff;
+  --border:    #e4e8ef;
+  --border2:   #d0d6e0;
+  --blue:      #2196f3;
+  --blue-lt:   rgba(33,150,243,.10);
+  --blue-md:   rgba(33,150,243,.18);
+  --green:     #22c55e;
+  --green-lt:  rgba(34,197,94,.12);
+  --red:       #ef4444;
+  --red-lt:    rgba(239,68,68,.10);
+  --amber:     #f59e0b;
+  --purple:    #8b5cf6;
+  --text:      #1a202c;
+  --muted:     #718096;
+  --muted2:    #a0aec0;
+  --r:         16px;
+  --r2:        11px;
+  --shadow:    0 2px 12px rgba(0,0,0,.06);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.10);
+}
+html.dark {
+  --bg:        #0d1117;
+  --surface:   #161b22;
+  --card:      #1c2230;
+  --border:    #2d3748;
+  --border2:   #3d4f66;
+  --blue:      #3b8beb;
+  --blue-lt:   rgba(59,139,235,.12);
+  --blue-md:   rgba(59,139,235,.20);
+  --green:     #22c55e;
+  --green-lt:  rgba(34,197,94,.12);
+  --red:       #ef4444;
+  --red-lt:    rgba(239,68,68,.10);
+  --amber:     #f59e0b;
+  --purple:    #8b5cf6;
+  --text:      #e6edf3;
+  --muted:     #8b949e;
+  --muted2:    #556075;
+  --shadow:    0 2px 12px rgba(0,0,0,.25);
+  --shadow-md: 0 4px 20px rgba(0,0,0,.40);
+}
+
+/* ══════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════ */
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  transition: background .3s;
+}
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 74px;
+}
+
+/* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 80;
+  box-shadow: var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+/* left cluster: toggle stacked above clock */
+.header-left {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 5px;
+}
+/* theme toggle */
+.theme-toggle {
+  width: 38px; height: 22px;
+  border-radius: 11px;
+  background: var(--blue-lt);
+  border: 1px solid var(--border);
+  position: relative; cursor: pointer; flex-shrink: 0;
+  transition: background .3s, border-color .3s;
+  display: flex; align-items: center; padding: 2px;
+}
+.toggle-thumb {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--blue);
+  transition: transform .3s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; line-height: 1;
+}
+html.dark .toggle-thumb { transform: translateX(-16px); }
+/* clock under toggle */
+.header-clock {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--blue-lt); border: 1px solid var(--blue);
+  border-radius: 16px; padding: 3px 9px;
+}
+.header-clock svg { flex-shrink: 0; }
+.time-text { color: var(--blue); font-size: 11px; font-weight: 700; direction: ltr; }
+/* right cluster: avatar + name/role */
+.user-block {
+  display: flex; align-items: center; gap: 10px;
+}
+.user-text { text-align: right; }
+.user-name { color: var(--text); font-size: 14px; font-weight: 900; line-height: 1.2; cursor: pointer; }
+.user-name:hover { color: var(--blue); }
+.user-role { color: var(--green); font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 3px; justify-content: flex-end; margin-top: 2px; }
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--green);
+  background: var(--card);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; overflow: hidden;
+  box-shadow: 0 0 0 3px var(--green-lt);
+  cursor: pointer; transition: transform .2s;
+}
+.avatar:active { transform: scale(.92); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+/* ══════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════ */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px; z-index: 80;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  display: flex;
+  padding: 8px 0 18px;
+  transition: background .3s, border-color .3s;
+}
+.bnav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  cursor: pointer; background: none; border: none;
+  font-family: 'Cairo', sans-serif;
+}
+.bnav-btn .bi { font-size: 21px; display: block; line-height: 1; }
+.bnav-btn .bl { font-size: 9px; font-weight: 700; color: var(--muted); transition: color .2s; }
+.bnav-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--blue); opacity: 0; transition: opacity .2s;
+  margin-top: 1px;
+}
+.bnav-btn.active .bl { color: var(--blue); }
+.bnav-btn.active .bnav-dot { opacity: 1; }
+
+/* ══════════════════════════════════════
+   PAGES
+══════════════════════════════════════ */
+.page { display: none; padding: 12px 14px; }
+.page.active { display: block; animation: fadeUp .2s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* ══════════════════════════════════════
+   NOTIFICATION CARD
+══════════════════════════════════════ */
+.notif-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  transition: background .3s, border-color .3s, opacity .3s, max-height .35s ease, margin .3s, padding .3s;
+  overflow: hidden; max-height: 200px;
+}
+.notif-card.hidden {
+  opacity: 0; max-height: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; pointer-events: none;
+}
+.notif-body { flex: 1; }
+.notif-title { color: var(--blue); font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.notif-sub { color: var(--muted); font-size: 10px; line-height: 1.6; }
+.notif-icon { font-size: 32px; flex-shrink: 0; }
+
+/* ══════════════════════════════════════
+   SHIFT CARD
+══════════════════════════════════════ */
+.shift-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+.goal-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px; border-bottom: 1px solid var(--border);
+  transition: border-color .3s;
+}
+.goal-info { display: flex; flex-direction: column; gap: 2px; }
+.goal-eyebrow { font-size: 9px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
+.goal-label { font-size: 14px; color: var(--blue); font-weight: 900; }
+
+.goal-value-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+.goal-num {
+  font-size: 34px; font-weight: 900; color: var(--text); line-height: 1;
+  transition: color .3s;
+}
+.goal-curr-lbl { font-size: 10px; color: var(--green); font-weight: 700; margin-top: 2px; }
+.goal-edit-hint { font-size: 9px; color: var(--muted2); }
+
+.goal-input-edit {
+  font-family: 'Cairo', sans-serif;
+  font-size: 32px; font-weight: 900; color: var(--blue);
+  background: var(--bg); border: 2px solid var(--blue);
+  border-radius: 10px; width: 130px; text-align: center;
+  outline: none; padding: 2px 6px; display: none;
+}
+
+/* shift buttons — 3 cols */
+.shift-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.btn-start {
+  font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
+  padding: 13px 4px; border: none; cursor: pointer;
+  background: var(--green); color: #fff;
+  border-left: 1px solid rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  transition: opacity .15s, background .2s;
+}
+.btn-start.active-shift { background: #16a34a; }
+.btn-start:active { opacity: .8; }
+.btn-break {
+  font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
+  padding: 13px 4px; border: none; cursor: pointer;
+  background: var(--amber); color: #fff;
+  border-left: 1px solid rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  opacity: .35; pointer-events: none; transition: opacity .2s, background .2s;
+}
+.btn-break.enabled { opacity: 1; pointer-events: all; }
+.btn-break.on-break { background: var(--blue); }
+.btn-break:active { opacity: .8; }
+.btn-end {
+  font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
+  padding: 13px 4px; border: none; cursor: pointer;
+  background: transparent; color: var(--muted);
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  opacity: .35; pointer-events: none; transition: opacity .2s, color .2s;
+}
+.btn-end.enabled { opacity: 1; pointer-events: all; color: var(--red); }
+.btn-end:active { opacity: .75; }
+/* keyboard hint row */
+.kbd-hints {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.kbd-hint {
+  text-align: center; padding: 4px 2px;
+  font-size: 9px; color: var(--muted2);
+  border-left: 1px solid var(--border);
+}
+.kbd-hint:last-child { border-left: none; }
+.kbd-key {
+  display: inline-block; background: var(--card);
+  border: 1px solid var(--border2); border-radius: 4px;
+  padding: 1px 5px; font-size: 9px; font-weight: 700;
+  color: var(--text); margin-left: 3px; direction: ltr;
+}
+
+#shiftTimer {
+  display: none; text-align: center; padding: 7px;
+  font-size: 11px; color: var(--muted);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+#timerDisplay { font-weight: 900; color: var(--blue); direction: ltr; }
+
+/* ══════════════════════════════════════
+   STATS GRID (4 KPI cards)
+══════════════════════════════════════ */
+.stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 12px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 12px 13px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: background .3s, border-color .3s, transform .15s;
+  box-shadow: var(--shadow);
+  position: relative; overflow: hidden;
+}
+.stat-card:active { transform: scale(.96); }
+.stat-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--blue-lt); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+  transition: background .3s;
+}
+.stat-icon.green  { background: var(--green-lt); border-color: rgba(34,197,94,.25); }
+.stat-icon.red    { background: var(--red-lt);   border-color: rgba(239,68,68,.25); }
+.stat-icon.purple { background: rgba(139,92,246,.1); border-color: rgba(139,92,246,.25); }
+
+.stat-text { text-align: right; flex: 1; min-width: 0; }
+.stat-name  { font-size: 10px; color: var(--muted); font-weight: 600; line-height: 1.3; margin-bottom: 2px; }
+.stat-value { font-size: 22px; font-weight: 900; color: var(--blue); line-height: 1.1; direction: ltr; }
+.stat-value.green  { color: var(--green); }
+.stat-value.red    { color: var(--red); }
+.stat-value.purple { color: var(--purple); }
+.stat-unit  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+/* ══════════════════════════════════════
+   NET BAR
+══════════════════════════════════════ */
+.net-bar {
+  background: var(--card);
+  border: 1px solid rgba(34,197,94,.3);
+  border-radius: var(--r2);
+  padding: 12px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px; box-shadow: var(--shadow);
+  transition: background .3s;
+}
+.net-lbl { font-size: 12px; color: var(--green); font-weight: 700; }
+.net-sub  { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.net-val  { font-size: 26px; font-weight: 900; color: var(--green); direction: ltr; }
+
+/* ══════════════════════════════════════
+   INPUT PANEL (trip tracker)
+══════════════════════════════════════ */
+.input-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px; margin-bottom: 12px;
+  display: flex; flex-direction: column; gap: 9px;
+  box-shadow: var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+.input-panel-title {
+  font-size: 11px; font-weight: 700; color: var(--blue);
+  display: flex; align-items: center; gap: 6px; margin-bottom: 2px;
+}
+.input-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.field {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 13px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px; font-weight: 700; color: var(--text);
+  text-align: right; outline: none; width: 100%;
+  transition: border-color .15s, background .3s, color .3s;
+  -webkit-appearance: none;
+}
+.field:focus { border-color: var(--blue); }
+.field::placeholder { color: var(--muted2); font-weight: 400; font-size: 12px; }
+
+.btn-ride, .btn-expense {
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px; font-weight: 900;
+  border: none; border-radius: 10px;
+  padding: 10px 16px; cursor: pointer;
+  white-space: nowrap; min-width: 80px;
+  transition: opacity .15s;
+}
+.btn-ride    { background: var(--blue); color: #fff; }
+.btn-expense { background: var(--red);  color: #fff; }
+.btn-ride:active, .btn-expense:active { opacity: .8; }
+
+/* trip list */
+.tracker-status {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 9px 12px;
+  margin-top: 4px;
+}
+.ts-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.ts-row:last-child { margin-bottom: 0; }
+.ts-lbl  { font-size: 11px; color: var(--muted); }
+.ts-val  { font-size: 13px; font-weight: 700; direction: ltr; }
+.ts-val.green  { color: var(--green); }
+.ts-val.blue   { color: var(--blue); }
+.ts-val.red    { color: var(--red); }
+
+.trips-list { margin-top: 8px; max-height: 110px; overflow-y: auto; }
+.trip-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 9px; background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: 4px; font-size: 11px;
+}
+.trip-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 2px 5px; }
+
+/* ratio strip */
+.ratio-strip {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 13px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--r2);
+  margin-bottom: 12px; box-shadow: var(--shadow);
+}
+
+/* ══════════════════════════════════════
+   SETTINGS — modern card style
+══════════════════════════════════════ */
+.setting-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden; margin-bottom: 12px;
+  box-shadow: var(--shadow); transition: background .3s, border-color .3s;
+}
+.setting-hdr {
+  padding: 10px 14px; background: var(--blue-lt);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px; font-weight: 900; color: var(--blue);
+  display: flex; align-items: center; gap: 6px;
+}
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px; border-bottom: 1px solid var(--border); gap: 10px;
+  transition: background .15s;
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-row:active { background: var(--blue-lt); }
+.sr-label { font-size: 12px; font-weight: 700; color: var(--text); }
+.sr-desc  { font-size: 10px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+.sr-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.setting-input {
+  width: 82px; background: var(--bg);
+  border: 1.5px solid var(--border); border-radius: 9px;
+  padding: 6px 9px; font-size: 14px; font-weight: 700;
+  color: var(--blue); font-family: 'Cairo', sans-serif;
+  text-align: center; outline: none; transition: .2s;
+  -webkit-appearance: none; direction: ltr;
+}
+.setting-input:focus { border-color: var(--blue); background: var(--blue-lt); }
+.sr-unit { font-size: 10px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+
+/* motor km display card */
+.motor-status-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 14px; margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.motor-status-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.motor-status-title { font-size: 12px; font-weight: 900; color: var(--text); }
+.motor-status-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; background: var(--green-lt);
+  color: var(--green); border: 1px solid rgba(34,197,94,.3);
+}
+.motor-status-badge.warn { background: rgba(245,158,11,.1); color: var(--amber); border-color: rgba(245,158,11,.3); }
+.motor-status-badge.bad  { background: var(--red-lt); color: var(--red); border-color: rgba(239,68,68,.3); }
+.motor-bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; margin-bottom: 8px; }
+.motor-bar-fill { height: 100%; border-radius: 3px; background: var(--green); transition: width .5s; }
+.motor-bar-fill.warn { background: var(--amber); }
+.motor-bar-fill.bad  { background: var(--red); }
+.motor-stats { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+.motor-stat-val { font-weight: 900; color: var(--text); font-size: 12px; direction: ltr; }
+
+/* developer footer */
+.dev-footer {
+  text-align: center; padding: 14px 10px 6px;
+  border-top: 1px solid var(--border); margin-top: 4px;
+}
+.dev-footer p { font-size: 10px; color: var(--muted2); margin-bottom: 5px; }
+.dev-footer a {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #1877f2; color: #fff;
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  text-decoration: none; transition: opacity .15s;
+}
+.dev-footer a:active { opacity: .8; }
+
+/* ══════════════════════════════════════
+   NOTIFICATIONS PAGE
+══════════════════════════════════════ */
+.notif-page-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden; margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+.notif-page-hdr {
+  padding: 10px 14px; background: var(--blue-lt);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px; font-weight: 900; color: var(--blue);
+  display: flex; align-items: center; gap: 6px;
+}
+.notif-toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+}
+.notif-toggle-row:last-child { border-bottom: none; }
+.ntl { flex: 1; }
+.ntl-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.ntl-desc  { font-size: 10px; color: var(--muted); margin-top: 2px; }
+/* iOS-style toggle */
+.ios-toggle {
+  width: 44px; height: 26px; border-radius: 13px;
+  background: var(--border); position: relative;
+  cursor: pointer; flex-shrink: 0;
+  transition: background .25s;
+  border: none; outline: none;
+}
+.ios-toggle.on { background: var(--green); }
+.ios-toggle::after {
+  content: ''; position: absolute;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; top: 3px; right: 21px;
+  transition: right .25s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+}
+.ios-toggle.on::after { right: 3px; }
+/* notif history list */
+.notif-history-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  animation: fadeUp .2s ease;
+}
+.notif-history-item:last-child { border-bottom: none; }
+.nh-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.nh-body { flex: 1; }
+.nh-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.nh-sub   { font-size: 10px; color: var(--muted); line-height: 1.5; }
+.nh-time  { font-size: 9px; color: var(--muted2); margin-top: 3px; }
+.notif-empty-state {
+  text-align: center; padding: 30px 16px;
+  color: var(--muted); font-size: 12px;
+}
+.notif-empty-state .ne-icon { font-size: 36px; margin-bottom: 8px; opacity: .35; }
+
+/* ══════════════════════════════════════
+   WALLET CARD
+══════════════════════════════════════ */
+.wallet-card {
+  border-radius: 22px;
+  padding: 22px 20px 20px;
+  margin-bottom: 14px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 45%, #42a5f5 100%);
+  box-shadow: 0 8px 32px rgba(21,101,192,.35);
+  color: #fff;
+}
+html.dark .wallet-card {
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 45%, #1e88e5 100%);
+  box-shadow: 0 8px 32px rgba(13,71,161,.5);
+}
+/* decorative circles */
+.wallet-card::before {
+  content: ''; position: absolute;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  top: -60px; left: -50px; pointer-events: none;
+}
+.wallet-card::after {
+  content: ''; position: absolute;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: rgba(255,255,255,.05);
+  bottom: -40px; right: -30px; pointer-events: none;
+}
+/* sim-card chip */
+.wallet-chip {
+  position: absolute; top: 20px; left: 20px;
+  width: 30px; height: 22px; border-radius: 4px;
+  background: rgba(255,255,255,.20);
+  border: 1px solid rgba(255,255,255,.30);
+  z-index: 1;
+}
+.wallet-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 18px; padding-right: 0; padding-left: 46px;
+}
+.wallet-brand { font-size: 12px; font-weight: 900; opacity: .9; letter-spacing: .5px; }
+.wallet-period { font-size: 9px; opacity: .55; margin-top: 2px; }
+.wallet-badge {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 10px; font-weight: 700;
+}
+.wallet-main-lbl { font-size: 11px; opacity: .75; margin-bottom: 4px; }
+.wallet-main-val { font-size: 40px; font-weight: 900; line-height: 1; direction: ltr; letter-spacing: -1px; }
+.wallet-main-cur { font-size: 16px; opacity: .8; margin-right: 4px; }
+.wallet-divider {
+  border: none; border-top: 1px solid rgba(255,255,255,.15);
+  margin: 16px 0;
+}
+.wallet-stats {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 4px;
+}
+.wallet-stat { text-align: center; }
+.wallet-stat-val { font-size: 15px; font-weight: 900; line-height: 1; direction: ltr; }
+.wallet-stat-lbl { font-size: 9px; opacity: .65; margin-top: 3px; font-weight: 600; }
+.wallet-stat + .wallet-stat { border-right: 1px solid rgba(255,255,255,.15); }
+.wallet-footer {
+  display: flex; justify-content: space-between; align-items: center; margin-top: 14px;
+}
+.wallet-avg  { font-size: 10px; opacity: .7; }
+.wallet-avg span, .wallet-best span { font-weight: 900; font-size: 12px; opacity: 1; direction: ltr; }
+.wallet-best { font-size: 10px; opacity: .7; }
+
+/* ══════════════════════════════════════
+   LOG SUMMARY STRIP
+══════════════════════════════════════ */
+.log-summary {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 8px; margin-bottom: 14px;
+}
+.log-sum-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r2); padding: 10px 12px;
+  text-align: center; box-shadow: var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+.log-sum-val { font-size: 18px; font-weight: 900; color: var(--blue); direction: ltr; line-height: 1; }
+.log-sum-val.green { color: var(--green); }
+.log-sum-val.red   { color: var(--red); }
+.log-sum-lbl { font-size: 9px; color: var(--muted); font-weight: 600; margin-top: 4px; }
+
+/* ══════════════════════════════════════
+   SHIFT ENTRY CARDS
+══════════════════════════════════════ */
+.log-section-title {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: 9px; padding-right: 2px;
+}
+.shift-entry-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 13px 14px;
+  margin-bottom: 9px; box-shadow: var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+.sec-head {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+}
+.sec-date { font-size: 11px; color: var(--muted); font-weight: 600; }
+.sec-time { font-size: 10px; color: var(--muted2); }
+.sec-net {
+  font-size: 20px; font-weight: 900; color: var(--green); direction: ltr; line-height: 1;
+}
+.sec-net-lbl { font-size: 9px; color: var(--muted); text-align: left; margin-top: 1px; }
+.sec-chips {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;
+}
+.sec-chip {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 11px; font-weight: 700; color: var(--text);
+  direction: ltr;
+}
+.sec-chip.chip-ok   { background: var(--green-lt); border-color: rgba(34,197,94,.3); color: var(--green); }
+.sec-chip.chip-miss { background: var(--red-lt);   border-color: rgba(239,68,68,.25); color: var(--red); }
+.sec-chip .ch-icon { font-size: 12px; }
+.sec-bar {
+  height: 4px; border-radius: 2px; background: var(--border);
+  overflow: hidden; margin-bottom: 8px;
+}
+.sec-bar-fill { height: 100%; border-radius: 2px; background: var(--green); transition: width .4s; }
+.sec-bar-fill.warn { background: var(--amber); }
+.sec-bar-fill.bad  { background: var(--red); }
+.sec-footer {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.sec-goal-txt { font-size: 10px; color: var(--muted); }
+.sec-del-btn {
+  background: none; border: none; color: var(--muted2);
+  cursor: pointer; font-size: 12px; padding: 3px 7px;
+  border-radius: 6px; transition: .15s;
+}
+.sec-del-btn:hover { background: var(--red-lt); color: var(--red); }
+
+/* empty log state */
+.log-empty {
+  text-align: center; padding: 40px 20px;
+  color: var(--muted); font-size: 13px;
+}
+.log-empty .le-icon { font-size: 48px; margin-bottom: 12px; opacity: .4; }
+.log-del-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 2px 5px; }
+
+/* data buttons */
+.data-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 10px; }
+.data-btn {
+  padding: 11px; border-radius: var(--r2);
+  font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: .2s;
+  display: flex; align-items: center; justify-content: center; gap: 5px; border: none;
+}
+.data-btn:active { transform: scale(.97); }
+.btn-export { background: var(--blue-lt); border: 1px solid rgba(33,150,243,.3); color: var(--blue); }
+.btn-import { background: var(--green-lt); border: 1px solid rgba(34,197,94,.3); color: var(--green); }
+.btn-clear-all {
+  width: 100%; padding: 11px; background: var(--red-lt);
+  border: 1px solid rgba(239,68,68,.25); border-radius: var(--r2);
+  color: var(--red); font-family: 'Cairo', sans-serif;
+  font-size: 12px; font-weight: 700; cursor: pointer; transition: .2s;
+}
+.btn-clear-all:active { background: rgba(239,68,68,.2); }
+
+/* sec title */
+.sec-title {
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .07em;
+  margin-bottom: 7px; padding-right: 2px;
+}
+
+/* ══════════════════════════════════════
+   KPI BOTTOM SHEET
+══════════════════════════════════════ */
+.sheet-overlay {
+  position: fixed; inset: 0; z-index: 150;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(6px);
+  opacity: 0; pointer-events: none; transition: .22s;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.sheet-overlay.open { opacity: 1; pointer-events: all; }
+.bottom-sheet {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 22px 22px 0 0; padding: 20px 18px 36px;
+  width: 100%; max-width: 480px;
+  transform: translateY(100%); transition: .28s cubic-bezier(.34,1.3,.64,1);
+}
+.sheet-overlay.open .bottom-sheet { transform: translateY(0); }
+.sheet-drag { width: 36px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 16px; }
+.sheet-title { font-size: 17px; font-weight: 900; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; color: var(--text); }
+.sheet-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+.sheet-rows { background: var(--bg); border-radius: var(--r2); overflow: hidden; margin-bottom: 14px; }
+.sheet-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.sheet-row:last-child { border-bottom: none; }
+.sheet-row-lbl { color: var(--muted); }
+.sheet-row-val { font-weight: 700; direction: ltr; color: var(--text); }
+.sheet-highlight {
+  background: var(--blue-lt); margin: 0 -14px; padding: 12px 14px;
+  border-radius: 0 0 var(--r2) var(--r2);
+}
+.sheet-progress { height: 5px; border-radius: 3px; background: var(--border); overflow: hidden; margin-top: 10px; }
+.sheet-progress-bar { height: 100%; border-radius: 3px; transition: .4s; }
+.sheet-ok-btn {
+  width: 100%; padding: 13px;
+  background: var(--blue); color: #fff;
+  font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 14px;
+  border-radius: 13px; border: none; cursor: pointer; transition: opacity .15s;
+}
+.sheet-ok-btn:active { opacity: .85; }
+
+/* ══════════════════════════════════════
+   PROFILE MODAL
+══════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.75);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: .25s;
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 22px 22px 0 0; padding: 20px 18px 36px;
+  width: 100%; max-width: 480px;
+  transform: translateY(100%); transition: .3s cubic-bezier(.34,1.56,.64,1);
+}
+.overlay.open .modal { transform: translateY(0); }
+.modal-drag { width: 36px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 16px; }
+.modal-title { font-size: 16px; font-weight: 900; margin-bottom: 4px; color: var(--text); }
+.modal-sub   { font-size: 11px; color: var(--muted); margin-bottom: 18px; }
+.modal-avatar-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+.modal-avatar {
+  width: 84px; height: 84px; border-radius: 50%; cursor: pointer;
+  background: var(--blue-lt); border: 3px solid var(--blue);
+  display: flex; align-items: center; justify-content: center; font-size: 36px;
+  overflow: hidden; position: relative; transition: .2s;
+}
+.modal-avatar:active { transform: scale(.95); }
+.modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.modal-av-ov {
+  position: absolute; inset: 0; border-radius: 50%; background: rgba(0,0,0,.5);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+}
+.modal-av-ov span { font-size: 18px; }
+.modal-av-ov small { font-size: 9px; color: #fff; font-weight: 700; }
+.name-input {
+  width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 11px 13px; font-size: 15px; font-weight: 700;
+  color: var(--text); font-family: 'Cairo', sans-serif;
+  text-align: right; outline: none; transition: .2s; margin-bottom: 13px;
+}
+.name-input:focus { border-color: var(--blue); }
+.modal-btns { display: flex; gap: 9px; }
+.btn-save {
+  flex: 1; background: var(--blue); color: #fff;
+  font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 13px;
+  padding: 12px; border-radius: 12px; border: none; cursor: pointer;
+}
+.btn-cancel {
+  flex: 1; background: var(--bg); color: var(--muted);
+  font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 13px;
+  padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer;
+}
+
+/* ══════════════════════════════════════
+   MISC ANIMATIONS
+══════════════════════════════════════ */
+@keyframes numFlash { 0% { opacity: .2; transform: translateY(3px); } 100% { opacity: 1; transform: none; } }
+.flash { animation: numFlash .22s ease; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+.pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 1.8s infinite; margin-right: 3px; }
 </style>
 </head>
 <body>
 <div class="app">
 
-<!-- ═══ HEADER ═══ -->
+<!-- ══════════ HEADER ══════════ -->
 <div class="header">
-  <div class="header-inner">
-    <div class="profile-row">
-      <div class="avatar-wrap" onclick="openModal()">
-        <div class="avatar" id="headerAvatar">
-          <span id="avatarEmoji">🛵</span>
-          <img id="avatarImg" src="" style="display:none">
-        </div>
-        <div class="avatar-dot"></div>
-      </div>
-      <div class="profile-info">
-        <div class="profile-name" onclick="openModal()">
-          <span id="displayName">طارق عبد الجليل</span>
-          <span class="pen">✏️</span>
-        </div>
-        <div style="font-size:10px;color:var(--muted)">كابتن دليفري <span class="pulse"></span></div>
-      </div>
+  <!-- Left: toggle + clock (stacked) -->
+  <div class="header-left">
+    <div class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع">
+      <div class="toggle-thumb"><span id="toggle-icon">☀️</span></div>
     </div>
-    <!-- remaining bar -->
-    <div class="rem-bar">
-      <div class="rstat">
-        <div class="rstat-val" id="hs-km-rem">—</div>
-        <div class="rstat-lbl">كم متبقي</div>
-      </div>
-      <div class="rstat">
-        <div class="rstat-val" id="hs-hrs-rem">—</div>
-        <div class="rstat-lbl">وقت متبقي</div>
-      </div>
-      <div class="rstat">
-        <div class="rstat-val" id="hs-money-rem">—</div>
-        <div class="rstat-lbl">جنيه متبقي</div>
-      </div>
+    <div class="header-clock">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span class="time-text" id="dtTime">—</span>
+    </div>
+  </div>
+  <!-- Right: name + role + avatar -->
+  <div class="user-block">
+    <div class="user-text">
+      <div class="user-name" onclick="openModal()" id="displayName">طارق عبد الجليل</div>
+      <div class="user-role"><span class="pulse"></span>كابتن ديليفري</div>
+    </div>
+    <div class="avatar" onclick="openModal()" id="headerAvatar">
+      <span id="avatarEmoji">🛵</span>
+      <img id="avatarImg" src="" style="display:none">
     </div>
   </div>
 </div>
 
-<!-- ═══ PAGES ═══ -->
-<div id="pages-wrap">
+<!-- ══════════ PAGES ══════════ -->
 
 <!-- PAGE: DASHBOARD -->
 <div class="page active" id="page-dash">
-  <div style="height:6px"></div>
 
-  <!-- Goal -->
-  <div class="goal-card">
-    <div class="goal-top">
-      <div class="goal-label">الصافي المطلوب للبيت</div>
-      <div class="goal-badge">🎯 هدف الشيفت</div>
+  <!-- Notification card — hidden by default, shown only when a real notification arrives -->
+  <div class="notif-card hidden" id="notifCard">
+    <div class="notif-body">
+      <div class="notif-title" id="notifTitle"></div>
+      <div class="notif-sub" id="notifSub"></div>
     </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0">
+      <div class="notif-icon" id="notifIcon">🔔</div>
+      <button onclick="hideNotifCard()" style="background:none;border:none;color:var(--muted2);font-size:16px;cursor:pointer;line-height:1">✕</button>
+    </div>
+  </div>
+
+  <!-- Shift Card -->
+  <div class="shift-card">
     <div class="goal-row">
-      <input class="goal-input" id="goalInput" type="number" value="500"
-             inputmode="numeric" min="0" step="50" oninput="recalc()">
-      <span class="goal-curr">جنيه</span>
+      <div class="goal-info">
+        <span class="goal-eyebrow">الهدف اليومي</span>
+        <span class="goal-label">الصافي المطلوب</span>
+      </div>
+      <div class="goal-value-wrap" onclick="editGoal()" title="اضغط للتعديل">
+        <div class="goal-num" id="goal-display">500</div>
+        <input class="goal-input-edit" id="goalInput" type="number" value="500"
+               inputmode="numeric" min="0" step="50" oninput="recalc()">
+        <div class="goal-curr-lbl">جنيه <span class="goal-edit-hint">✏️ اضغط للتعديل</span></div>
+      </div>
     </div>
     <div class="shift-btns">
       <button class="btn-start" id="btnStart" onclick="toggleShift()">
         <span id="shiftBtnIcon">▶</span>
         <span id="shiftBtnTxt">بدء الشيفت</span>
       </button>
+      <button class="btn-break" id="btnBreak" onclick="toggleBreak()">
+        <span id="breakBtnIcon">☕</span>
+        <span id="breakBtnTxt">استراحة</span>
+      </button>
       <button class="btn-end" id="btnEnd" onclick="endShift()">⏹ إنهاء</button>
     </div>
-    <div id="pauseBadge" style="display:none" class="pause-badge">⏸ الشيفت متوقف مؤقتاً — اضغط للمتابعة</div>
+    <div class="kbd-hints">
+      <div class="kbd-hint"><span class="kbd-key">S</span>بدء / إنهاء</div>
+      <div class="kbd-hint"><span class="kbd-key">B</span>استراحة</div>
+      <div class="kbd-hint"><span class="kbd-key">T</span>مشوار +</div>
+    </div>
     <div id="shiftTimer">
       ⏱ وقت الشيفت:
-      <span id="timerDisplay" style="font-family:'Tajawal';font-weight:700;color:var(--gold2);direction:ltr">00:00:00</span>
+      <span id="timerDisplay">00:00:00</span>
+      <span id="breakLabel" style="color:var(--amber);display:none"> — ☕ استراحة</span>
     </div>
   </div>
 
-  <!-- KPI 2×2 — clickable -->
-  <div class="kpi-grid">
-    <div class="kpi km" onclick="showKpiSheet('km')">
-      <div class="kpi-lbl-top">🏁 الكيلومترات المطلوبة</div>
-      <div class="kpi-val" id="r-km">—</div>
-      <div class="kpi-unit">كيلومتر</div>
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card" onclick="showKpiSheet('km')">
+      <div class="stat-icon">📍</div>
+      <div class="stat-text">
+        <div class="stat-name">الكيلومترات المطلوبة</div>
+        <div class="stat-value" id="r-km">—</div>
+        <div class="stat-unit">كيلومتر</div>
+      </div>
     </div>
-    <div class="kpi hrs" onclick="showKpiSheet('hrs')">
-      <div class="kpi-lbl-top">⏱️ المدة التقديرية</div>
-      <div class="kpi-val" id="r-hrs">—</div>
-      <div class="kpi-unit" id="r-hrs-fmt">ساعة</div>
+    <div class="stat-card" onclick="showKpiSheet('hrs')">
+      <div class="stat-icon purple">⏱</div>
+      <div class="stat-text">
+        <div class="stat-name">المدة التقديرية</div>
+        <div class="stat-value purple" id="r-hrs">—</div>
+        <div class="stat-unit" id="r-hrs-fmt">ساعة</div>
+      </div>
     </div>
-    <div class="kpi cost" onclick="showKpiSheet('cost')">
-      <div class="kpi-lbl-top">💸 إجمالي التكاليف</div>
-      <div class="kpi-val" id="r-cost">—</div>
-      <div class="kpi-unit">جنيه</div>
+    <div class="stat-card" onclick="showKpiSheet('earn')">
+      <div class="stat-icon green">💰</div>
+      <div class="stat-text">
+        <div class="stat-name">المطلوب تحصيله</div>
+        <div class="stat-value green" id="r-earn">—</div>
+        <div class="stat-unit">جنيه</div>
+      </div>
     </div>
-    <div class="kpi earn" onclick="showKpiSheet('earn')">
-      <div class="kpi-lbl-top">💰 المطلوب تحصيله</div>
-      <div class="kpi-val" id="r-earn">—</div>
-      <div class="kpi-unit">جنيه</div>
+    <div class="stat-card" onclick="showKpiSheet('cost')">
+      <div class="stat-icon red">🧾</div>
+      <div class="stat-text">
+        <div class="stat-name">إجمالي التكاليف</div>
+        <div class="stat-value red" id="r-cost">—</div>
+        <div class="stat-unit">جنيه</div>
+      </div>
     </div>
   </div>
 
-  <!-- Trip Tracker -->
-  <div class="tracker-card">
-    <div class="tracker-title">📍 متتبع المشاوير</div>
-    <div class="tracker-inputs">
-      <input class="trip-input" id="tripAmt" type="number"
-             placeholder="ثمن المشوار (جنيه)" inputmode="numeric" min="0">
-      <button class="btn-add-trip" onclick="addTrip()">+ مشوار</button>
+  <!-- Net Bar -->
+  <div class="net-bar">
+    <div>
+      <div class="net-lbl">✅ صافي الربح للبيت</div>
+      <div class="net-sub">بعد خصم كل التكاليف والعمولة</div>
     </div>
-    <div class="tracker-inputs" style="margin-bottom:9px">
-      <input class="trip-input" id="expAmt" type="number"
-             placeholder="مصروف إضافي (جنيه)" inputmode="numeric" min="0"
-             style="border-color:rgba(255,87,87,.3)">
-      <button class="btn-add-trip" onclick="addExpense()"
-              style="background:linear-gradient(135deg,#922,var(--red));color:#fff">+ مصروف</button>
+    <div style="text-align:left">
+      <span class="net-val" id="r-net">—</span>
+      <span style="font-size:11px;color:var(--green)"> جنيه</span>
+    </div>
+  </div>
+
+  <!-- Input Panel (Trip Tracker) -->
+  <div class="input-panel">
+    <div class="input-panel-title">📍 متتبع المشاوير</div>
+    <div class="input-row">
+      <input class="field" id="tripAmt" type="number"
+             placeholder="ثمن المشوار بالجنيه" inputmode="numeric" min="0">
+      <button class="btn-ride" onclick="addTrip()">مشوار +</button>
+    </div>
+    <div class="input-row">
+      <input class="field" id="expAmt" type="number"
+             placeholder="مصروف إضافي بالجنيه" inputmode="numeric" min="0">
+      <button class="btn-expense" onclick="addExpense()">مصروف +</button>
     </div>
     <div class="tracker-status">
       <div class="ts-row">
         <span class="ts-lbl">💰 إجمالي المحصّل</span>
-        <span class="ts-val gold" id="t-collected">0</span>
+        <span class="ts-val green" id="t-collected">0</span>
       </div>
       <div class="ts-row">
         <span class="ts-lbl">🎯 المتبقي للهدف</span>
@@ -442,56 +1000,27 @@ input[type=number]{-moz-appearance:textfield}
       </div>
       <div class="ts-row">
         <span class="ts-lbl">🏁 كيلومترات متبقية</span>
-        <span class="ts-val neu" id="t-km-rem">—</span>
+        <span class="ts-val blue" id="t-km-rem">—</span>
       </div>
       <div class="ts-row">
         <span class="ts-lbl">🔢 عدد المشاوير</span>
-        <span class="ts-val" id="t-count">0</span>
+        <span class="ts-val" style="color:var(--text)" id="t-count">0</span>
       </div>
     </div>
     <div class="trips-list" id="tripsList"></div>
   </div>
 
-  <!-- ratio -->
+  <!-- Ratio -->
   <div class="ratio-strip">
     <span style="font-size:11px;color:var(--muted)">نسبة المصاريف</span>
-    <span style="font-family:'Tajawal';font-size:15px;font-weight:900;color:var(--red);direction:ltr" id="r-pct">—</span>
+    <span style="font-size:15px;font-weight:900;color:var(--red);direction:ltr" id="r-pct">—</span>
     <span style="font-size:10px;color:var(--muted)">الهدف: أقل من 50%</span>
   </div>
 </div>
 
 <!-- PAGE: SETTINGS -->
 <div class="page" id="page-settings">
-  <div style="height:12px"></div>
-  <!-- shift alarm -->
-  <div class="setting-card">
-    <div class="setting-hdr">🔔 منبّه الشيفت</div>
-    <div class="setting-row">
-      <div><div class="sr-label">وقت بدء الشيفت</div><div class="sr-desc">سيُنبّهك عند هذا الوقت يومياً</div></div>
-      <div class="sr-right">
-        <input type="time" id="s-alarm" class="setting-input" style="width:100px;font-size:13px"
-               oninput="saveSettings();scheduleAlarm()">
-        <span class="sr-unit"></span>
-      </div>
-    </div>
-    <div class="setting-row">
-      <div><div class="sr-label">تنبيه قبل الشيفت</div><div class="sr-desc">كم دقيقة قبل الوقت المحدد</div></div>
-      <div class="sr-right">
-        <input class="setting-input" id="s-alarm-before" type="number" value="15" min="0" max="60"
-               oninput="saveSettings();scheduleAlarm()">
-        <span class="sr-unit">دقيقة</span>
-      </div>
-    </div>
-    <div class="setting-row" id="notif-status-row">
-      <div><div class="sr-label">حالة الإشعارات</div></div>
-      <button onclick="requestNotifPerm()" id="notif-btn"
-        style="background:rgba(59,139,235,.15);border:1px solid rgba(59,139,235,.3);
-               color:var(--blue2);font-family:'IBM Plex Sans Arabic',sans-serif;
-               font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer">
-        تفعيل الإشعارات
-      </button>
-    </div>
-  </div>
+  <div style="height:4px"></div>
 
   <div class="setting-card">
     <div class="setting-hdr">💵 الكسب والإيرادات</div>
@@ -508,6 +1037,7 @@ input[type=number]{-moz-appearance:textfield}
       <div class="sr-right"><input class="setting-input" id="s-pers" type="number" value="50" step="10" min="0" oninput="recalc()"><span class="sr-unit">جنيه/يوم</span></div>
     </div>
   </div>
+
   <div class="setting-card">
     <div class="setting-hdr">⛽ الوقود</div>
     <div class="setting-row">
@@ -519,6 +1049,7 @@ input[type=number]{-moz-appearance:textfield}
       <div class="sr-right"><input class="setting-input" id="s-kpl" type="number" value="30" step="1" min="1" oninput="recalc()"><span class="sr-unit">كم/لتر</span></div>
     </div>
   </div>
+
   <div class="setting-card">
     <div class="setting-hdr">🔧 صيانة وتشغيل</div>
     <div class="setting-row">
@@ -538,66 +1069,230 @@ input[type=number]{-moz-appearance:textfield}
       <div class="sr-right"><input class="setting-input" id="s-spd" type="number" value="20" step="5" min="5" oninput="recalc()"><span class="sr-unit">كم/ساعة</span></div>
     </div>
   </div>
-  <!-- كيلومترات المحرك -->
+
+  <!-- Motor KM - auto tracker -->
+  <div class="motor-status-card">
+    <div class="motor-status-top">
+      <div class="motor-status-title">🛵 عداد المحرك — تلقائي</div>
+      <div class="motor-status-badge" id="motorBadge">جيد ✓</div>
+    </div>
+    <div class="motor-bar"><div class="motor-bar-fill" id="motorBarFill" style="width:0%"></div></div>
+    <div class="motor-stats">
+      <div><div class="motor-stat-val" id="motorSince">0 كم</div><div>منذ آخر صيانة</div></div>
+      <div style="text-align:center"><div class="motor-stat-val" id="motorTotal">0 كم</div><div>إجمالي المسافة</div></div>
+      <div style="text-align:left"><div class="motor-stat-val" id="motorRemaining">1000 كم</div><div>للصيانة القادمة</div></div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button onclick="resetMotorMaint()" style="flex:1;padding:8px;background:var(--green-lt);border:1px solid rgba(34,197,94,.3);color:var(--green);font-family:'Cairo',sans-serif;font-size:11px;font-weight:700;border-radius:9px;cursor:pointer">✅ تم تغيير الزيت</button>
+      <div style="flex:1;display:flex;align-items:center;gap:5px">
+        <input class="setting-input" id="s-motor-km" type="number" value="0" step="10" min="0" style="width:100%;font-size:12px" oninput="saveSettings();updateMotorStatus()" placeholder="0">
+        <span style="font-size:10px;color:var(--muted);white-space:nowrap">كم كلي</span>
+      </div>
+    </div>
+    <input type="hidden" id="s-last-maint" value="0">
+  </div>
+
+  <!-- Shift Alarm — last in settings as requested -->
   <div class="setting-card">
-    <div class="setting-hdr">🛵 عداد المحرك</div>
+    <div class="setting-hdr">🔔 منبّه الشيفت</div>
     <div class="setting-row">
-      <div><div class="sr-label">الكيلومترات الحالية للموتور</div>
-        <div class="sr-desc">لحساب موعد الصيانة</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-motor-km" type="number" value="0" step="10" min="0" oninput="saveSettings();checkMotorKm()"><span class="sr-unit">كم</span></div>
+      <div><div class="sr-label">وقت بدء الشيفت</div><div class="sr-desc">سيُنبّهك عند هذا الوقت يومياً</div></div>
+      <div class="sr-right">
+        <input type="time" id="s-alarm" class="setting-input" style="width:100px;font-size:12px"
+               oninput="saveSettings();scheduleAlarm()">
+      </div>
     </div>
     <div class="setting-row">
-      <div><div class="sr-label">آخر صيانة عند</div></div>
-      <div class="sr-right"><input class="setting-input" id="s-last-maint" type="number" value="0" step="10" min="0" oninput="saveSettings()"><span class="sr-unit">كم</span></div>
+      <div><div class="sr-label">تنبيه قبل الشيفت</div><div class="sr-desc">كم دقيقة قبل الوقت المحدد</div></div>
+      <div class="sr-right">
+        <input class="setting-input" id="s-alarm-before" type="number" value="15" min="0" max="60"
+               oninput="saveSettings();scheduleAlarm()">
+        <span class="sr-unit">دقيقة</span>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div><div class="sr-label">حالة الإشعارات</div></div>
+      <button onclick="requestNotifPerm()" id="notif-btn"
+        style="background:var(--blue-lt);border:1px solid rgba(33,150,243,.3);
+               color:var(--blue);font-family:'Cairo',sans-serif;
+               font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer">
+        تفعيل الإشعارات
+      </button>
     </div>
   </div>
+
+  <!-- Data Management -->
   <div class="sec-title">إدارة البيانات</div>
-  <div style="background:rgba(59,139,235,.07);border:1px solid rgba(59,139,235,.2);border-radius:10px;padding:10px 13px;margin-bottom:9px;font-size:11px;color:var(--blue2);line-height:1.6">
-    💾 <strong>بياناتك محفوظة تلقائياً</strong> في المتصفح. صدّر نسخة احتياطية بانتظام لضمان عدم فقدانها عند تحديث التطبيق أو تغيير الجهاز.
-  </div>
   <div class="data-btns">
     <button class="data-btn btn-export" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
     <button class="data-btn btn-import" onclick="$('importFile').click()">📥 استيراد بيانات</button>
   </div>
+  <button class="data-btn" style="width:100%;margin-bottom:9px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3);color:var(--purple)" onclick="shareApp()">🔗 مشاركة التطبيق مع صديق</button>
   <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
   <button class="btn-clear-all" onclick="clearAllData()">🗑️ مسح كل البيانات</button>
-</div>
 
-<!-- PAGE: LOG -->
-<div class="page" id="page-log">
-  <div style="height:12px"></div>
-  <div class="log-table-wrap">
-    <table class="log-table">
-      <thead>
-        <tr>
-          <th>التاريخ</th><th>الوقت</th><th>الهدف</th>
-          <th>الكم</th><th>الساعات</th>
-          <th>المحصّل</th><th>الصافي</th><th>حذف</th>
-        </tr>
-      </thead>
-      <tbody id="logBody"></tbody>
-      <tfoot><tr class="totals" id="logTotals"></tr></tfoot>
-    </table>
+  <!-- Developer footer -->
+  <div class="dev-footer">
+    <p>تطوير وتصميم</p>
+    <a href="https://www.facebook.com/share/1CfEWkNmwH/" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      طارق عبد الجليل
+    </a>
   </div>
-  <button class="btn-clear-all" onclick="clearLog()">🗑️ مسح كل السجلات</button>
+  <div style="height:8px"></div>
 </div>
 
-</div><!-- /pages-wrap -->
+<!-- PAGE: NOTIFICATIONS -->
+<div class="page" id="page-notifs">
+  <div style="height:4px"></div>
 
-<!-- ═══ BOTTOM NAV ═══ -->
-<div class="bottom-nav">
-  <button class="bnav-btn active" id="bnav-dash" onclick="showTab('dash','bnav-dash')">
-    <span class="bi">🏠</span><span class="bl">الرئيسية</span>
-  </button>
-  <button class="bnav-btn" id="bnav-settings" onclick="showTab('settings','bnav-settings')">
-    <span class="bi">⚙️</span><span class="bl">الإعدادات</span>
-  </button>
-  <button class="bnav-btn" id="bnav-log" onclick="showTab('log','bnav-log')">
-    <span class="bi">📅</span><span class="bl">السجل</span>
-  </button>
+  <!-- Permission banner -->
+  <div class="notif-page-card" id="notifPermBanner">
+    <div class="notif-page-hdr">🔔 الإشعارات</div>
+    <div style="padding:14px;display:flex;align-items:center;gap:12px">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px">تفعيل الإشعارات</div>
+        <div style="font-size:10px;color:var(--muted)">للحصول على تنبيهات الشيفت والصيانة على شاشتك</div>
+      </div>
+      <button id="notif-btn2" onclick="requestNotifPerm()"
+        style="background:var(--blue);color:#fff;font-family:'Cairo',sans-serif;font-weight:700;font-size:12px;padding:8px 14px;border-radius:10px;border:none;cursor:pointer;white-space:nowrap">
+        تفعيل
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification toggles -->
+  <div class="notif-page-card">
+    <div class="notif-page-hdr">⚙️ إعدادات الإشعارات</div>
+    <div class="notif-toggle-row">
+      <div class="ntl"><div class="ntl-title">🛵 تنبيه بدء الشيفت</div><div class="ntl-desc">تذكير عند حلول وقت الشيفت</div></div>
+      <button class="ios-toggle on" id="tog-shift" onclick="toggleNotifPref('shift',this)"></button>
+    </div>
+    <div class="notif-toggle-row">
+      <div class="ntl"><div class="ntl-title">🏁 إشعار إتمام الشيفت</div><div class="ntl-desc">ملخص تلقائي عند إنهاء الشيفت</div></div>
+      <button class="ios-toggle on" id="tog-end" onclick="toggleNotifPref('end',this)"></button>
+    </div>
+    <div class="notif-toggle-row">
+      <div class="ntl"><div class="ntl-title">🔧 تحذير الصيانة</div><div class="ntl-desc">تنبيه عند اقتراب موعد تغيير الزيت</div></div>
+      <button class="ios-toggle on" id="tog-maint" onclick="toggleNotifPref('maint',this)"></button>
+    </div>
+    <div class="notif-toggle-row">
+      <div class="ntl"><div class="ntl-title">⚡ أوقات الذروة</div><div class="ntl-desc">تذكير بأوقات الطلب العالي (12–2م و7–10م)</div></div>
+      <button class="ios-toggle on" id="tog-peak" onclick="toggleNotifPref('peak',this)"></button>
+    </div>
+    <div class="notif-toggle-row">
+      <div class="ntl"><div class="ntl-title">💡 نصائح يومية</div><div class="ntl-desc">توصيات لزيادة الأرباح وتوفير الوقود</div></div>
+      <button class="ios-toggle" id="tog-tips" onclick="toggleNotifPref('tips',this)"></button>
+    </div>
+  </div>
+
+  <!-- Notification history -->
+  <div class="notif-page-card">
+    <div class="notif-page-hdr" style="justify-content:space-between">
+      <span>📋 سجل الإشعارات</span>
+      <button onclick="clearNotifHistory()" style="background:none;border:none;color:var(--muted);font-family:'Cairo',sans-serif;font-size:10px;cursor:pointer">مسح الكل</button>
+    </div>
+    <div id="notifHistoryList">
+      <div class="notif-empty-state">
+        <div class="ne-icon">🔕</div>
+        لا توجد إشعارات بعد
+      </div>
+    </div>
+  </div>
+  <div style="height:8px"></div>
+</div>
+
+<!-- PAGE: LOG (المحفظة) -->
+<div class="page" id="page-log">
+
+  <!-- ① Wallet Card -->
+  <div class="wallet-card">
+    <div class="wallet-chip"></div>
+    <div class="wallet-top">
+      <div>
+        <div class="wallet-brand">محفظتي</div>
+        <div class="wallet-period">آخر 30 يوم</div>
+      </div>
+      <div class="wallet-badge" id="walletBadge">0 شيفت</div>
+    </div>
+    <div class="wallet-main-lbl">إجمالي الأرباح المحصّلة</div>
+    <div class="wallet-main-val">
+      <span class="wallet-main-cur">ج</span><span id="w-total">0.00</span>
+    </div>
+    <hr class="wallet-divider">
+    <div class="wallet-stats">
+      <div class="wallet-stat">
+        <div class="wallet-stat-val" id="w-net">—</div>
+        <div class="wallet-stat-lbl">صافي للبيت</div>
+      </div>
+      <div class="wallet-stat">
+        <div class="wallet-stat-val" id="w-shifts">0</div>
+        <div class="wallet-stat-lbl">شيفتات</div>
+      </div>
+      <div class="wallet-stat">
+        <div class="wallet-stat-val" id="w-km">—</div>
+        <div class="wallet-stat-lbl">كم مجموع</div>
+      </div>
+      <div class="wallet-stat">
+        <div class="wallet-stat-val" id="w-hrs">—</div>
+        <div class="wallet-stat-lbl">ساعات</div>
+      </div>
+    </div>
+    <div class="wallet-footer">
+      <div class="wallet-avg">متوسط الشيفت <span id="w-avg">—</span> ج</div>
+      <div class="wallet-best">أفضل يوم <span id="w-best">—</span> ج</div>
+    </div>
+  </div>
+
+  <!-- ② Summary Strip -->
+  <div class="log-summary" id="logSummary" style="display:none">
+    <div class="log-sum-card">
+      <div class="log-sum-val green" id="ls-best">—</div>
+      <div class="log-sum-lbl">🏆 أفضل شيفت</div>
+    </div>
+    <div class="log-sum-card">
+      <div class="log-sum-val" id="ls-avg-km">—</div>
+      <div class="log-sum-lbl">📍 متوسط الكم</div>
+    </div>
+    <div class="log-sum-card">
+      <div class="log-sum-val red" id="ls-goal-hit">—%</div>
+      <div class="log-sum-lbl">🎯 تحقق الهدف</div>
+    </div>
+  </div>
+
+  <!-- ③ Shift Cards list -->
+  <div class="log-section-title" id="logSectionTitle" style="display:none">الشيفتات الأخيرة</div>
+  <div id="logCards"></div>
+
+  <button class="btn-clear-all" onclick="clearLog()" style="margin-top:4px">🗑️ مسح كل السجلات</button>
+  <div style="height:8px"></div>
 </div>
 
 </div><!-- /app -->
+
+<!-- ══════════ BOTTOM NAV ══════════ -->
+<div class="bottom-nav">
+  <button class="bnav-btn active" id="bnav-dash" onclick="showTab('dash','bnav-dash')">
+    <span class="bi">🏠</span>
+    <div class="bnav-dot"></div>
+    <span class="bl">الرئيسية</span>
+  </button>
+  <button class="bnav-btn" id="bnav-notifs" onclick="showTab('notifs','bnav-notifs')">
+    <span class="bi">🔔</span>
+    <div class="bnav-dot"></div>
+    <span class="bl">الإشعارات</span>
+  </button>
+  <button class="bnav-btn" id="bnav-log" onclick="showTab('log','bnav-log')">
+    <span class="bi">👛</span>
+    <div class="bnav-dot"></div>
+    <span class="bl">المحفظة</span>
+  </button>
+  <button class="bnav-btn" id="bnav-settings" onclick="showTab('settings','bnav-settings')">
+    <span class="bi">⚙️</span>
+    <div class="bnav-dot"></div>
+    <span class="bl">الإعدادات</span>
+  </button>
+</div>
 
 <!-- KPI BOTTOM SHEET -->
 <div class="sheet-overlay" id="kpiSheet" onclick="closeSheetIfBg(event)">
@@ -639,9 +1334,30 @@ input[type=number]{-moz-appearance:textfield}
 <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(event)">
 
 <script>
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════
+const toggleIcon = document.getElementById('toggle-icon');
+
+function applyTheme(dark) {
+  if (dark) { document.documentElement.classList.add('dark'); toggleIcon.textContent = '🌙'; }
+  else       { document.documentElement.classList.remove('dark'); toggleIcon.textContent = '☀️'; }
+}
+
+// Load saved or system preference
+const savedTheme = localStorage.getItem('tk_theme');
+if (savedTheme) { applyTheme(savedTheme === 'dark'); }
+else { applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches); }
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  toggleIcon.textContent = isDark ? '🌙' : '☀️';
+  try { localStorage.setItem('tk_theme', isDark ? 'dark' : 'light'); } catch(e){}
+}
+
+// ═══════════════════════════════════════
 // UTILS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 const $ = id => document.getElementById(id);
 const num = id => parseFloat($(id)?.value) || 0;
 
@@ -678,11 +1394,26 @@ function nowTimeStr() {
   return new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', hour12:true});
 }
 
-// ═══════════════════════════════════════════════════════════
-// TABS + PAGE PERSISTENCE
-// ═══════════════════════════════════════════════════════════
-const TABS = ['dash','settings','log'];
-let currentTab = 'dash'; // always start on dashboard
+// ═══════════════════════════════════════
+// CLOCK + NOTIF CARD
+// ═══════════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  $('dtTime').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+
+  // update notif card with day/date
+  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const dateStr = now.toLocaleDateString('ar-EG',{month:'long',day:'numeric'});
+  $('notifTitle').textContent = `${days[now.getDay()]}، ${dateStr}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ═══════════════════════════════════════
+// TABS (no swipe)
+// ═══════════════════════════════════════
+const TABS = ['dash','settings','notifs','log'];
+let currentTab = localStorage.getItem('tk_tab') || 'dash';
 
 function showTab(name, btnId) {
   currentTab = name;
@@ -693,9 +1424,36 @@ function showTab(name, btnId) {
   try { localStorage.setItem('tk_tab', name); } catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════
+// GOAL EDIT (inline)
+// ═══════════════════════════════════════
+function editGoal() {
+  const display = $('goal-display');
+  const input   = $('goalInput');
+  if (input.style.display === 'none' || input.style.display === '') {
+    input.value = display.textContent;
+    display.style.display = 'none';
+    input.style.display = 'block';
+    input.focus(); input.select();
+    input.onblur = saveGoalDisplay;
+    input.onkeydown = (e) => { if (e.key === 'Enter') input.blur(); };
+  }
+}
+function saveGoalDisplay() {
+  const display = $('goal-display');
+  const input   = $('goalInput');
+  const val = parseInt(input.value) || 500;
+  display.textContent = val;
+  input.value = val;
+  input.style.display = 'none';
+  display.style.display = 'block';
+  recalc();
+}
+
+// ═══════════════════════════════════════
 // CORE CALCULATOR
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 let calcResult = {};
 
 function recalc() {
@@ -720,7 +1478,6 @@ function recalc() {
     petrol:p1+p2,oil:o1+o2,mnt:mn1+mn2,inet:i1+i2,pers,
     km1,km2,p1,p2,o1,o2,mn1,mn2,i1,i2,t1,t2,preCom};
 
-  // KPIs
   setEl('r-km', kmDisplay, 1);
   const hFmt = fmtHours(hrsT);
   $('r-hrs').textContent = hFmt.str;
@@ -731,6 +1488,9 @@ function recalc() {
   const pctEl = $('r-pct');
   if (pctEl && revenue > 0) pctEl.textContent = (allCosts/revenue*100).toFixed(1)+'%';
 
+  // also update goal display num
+  $('goal-display').textContent = goal;
+
   updateRemBar();
   updateTripTracker();
   saveSettings();
@@ -738,19 +1498,26 @@ function recalc() {
 
 function updateRemBar() {
   const collected = trips.reduce((s,t)=>s+t.amount,0);
-  const {revenue=0, kmDisplay=0, hrsT=0, pkm=1} = calcResult;
+  const {revenue=0, kmDisplay=0, pkm=1} = calcResult;
   const moneyRem = Math.max(0, revenue - collected);
   const kmRem    = Math.max(0, moneyRem / pkm);
-  // hours remaining estimate
   const hrsRem   = Math.max(0, kmRem / (num('s-spd')||1));
-  $('hs-km-rem').textContent   = fmt(kmRem, 1);
-  $('hs-hrs-rem').textContent  = fmtHrsRemaining(hrsRem);
-  $('hs-money-rem').textContent= fmt(moneyRem, 0);
 }
 
-// ═══════════════════════════════════════════════════════════
+// ─── In-app notification card ───
+function showNotifCard(title, sub, icon) {
+  $('notifTitle').textContent = title;
+  $('notifSub').textContent   = sub;
+  $('notifIcon').textContent  = icon || '🔔';
+  $('notifCard').classList.remove('hidden');
+}
+function hideNotifCard() {
+  $('notifCard').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════
 // KPI BOTTOM SHEET
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 function showKpiSheet(type) {
   const R = calcResult;
   const collected = trips.reduce((s,t)=>s+t.amount,0);
@@ -758,7 +1525,7 @@ function showKpiSheet(type) {
   let title='', sub='', rows=[], highlight='', prog=null;
 
   if (type==='km') {
-    title='🏁 الكيلومترات المطلوبة'; sub='بناءً على هدفك والتكاليف المحسوبة';
+    title='📍 الكيلومترات المطلوبة'; sub='بناءً على هدفك والتكاليف المحسوبة';
     const done = collected/pkm;
     const rem  = Math.max(0, R.kmDisplay - done);
     rows=[
@@ -769,11 +1536,11 @@ function showKpiSheet(type) {
     ];
     highlight=`<div style="display:flex;justify-content:space-between">
       <span style="font-size:12px;color:var(--muted)">المتبقي</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--blue2);direction:ltr">${fmt(rem,1)} كم</span></div>`;
-    if(R.kmDisplay>0) prog={pct:Math.min(done/R.kmDisplay,1),color:'var(--blue2)'};
+      <span style="font-weight:900;font-size:18px;color:var(--blue);direction:ltr">${fmt(rem,1)} كم</span></div>`;
+    if(R.kmDisplay>0) prog={pct:Math.min(done/R.kmDisplay,1),color:'var(--blue)'};
   }
   else if (type==='hrs') {
-    title='⏱️ المدة التقديرية'; sub='بناءً على الكيلومترات ومتوسط السرعة';
+    title='⏱ المدة التقديرية'; sub='بناءً على الكيلومترات ومتوسط السرعة';
     const hFmt=fmtHours(R.hrsT);
     const spd=num('s-spd')||1;
     const hrsElapsed = shiftActive ? (Date.now()-shiftStartTS)/3600000 : 0;
@@ -785,11 +1552,11 @@ function showKpiSheet(type) {
     ];
     highlight=`<div style="display:flex;justify-content:space-between">
       <span style="font-size:12px;color:var(--muted)">الوقت المتبقي (تقريبي)</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:#c084fc;direction:ltr">${fmtHrsRemaining(hrsRem)}</span></div>`;
-    if(R.hrsT>0&&shiftActive) prog={pct:Math.min(hrsElapsed/R.hrsT,1),color:'#c084fc'};
+      <span style="font-weight:900;font-size:18px;color:var(--purple);direction:ltr">${fmtHrsRemaining(hrsRem)}</span></div>`;
+    if(R.hrsT>0&&shiftActive) prog={pct:Math.min(hrsElapsed/R.hrsT,1),color:'var(--purple)'};
   }
   else if (type==='cost') {
-    title='💸 تفصيل التكاليف'; sub='كل التكاليف المخصومة من إيرادك';
+    title='🧾 تفصيل التكاليف'; sub='كل التكاليف المخصومة من إيرادك';
     rows=[
       ['⛽ البنزين',        fmt(R.petrol,2)+' جنيه'],
       ['🔧 الزيت',          fmt(R.oil,2)+' جنيه'],
@@ -800,7 +1567,7 @@ function showKpiSheet(type) {
     ];
     highlight=`<div style="display:flex;justify-content:space-between">
       <span style="font-size:12px;color:var(--muted)">الإجمالي</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--red);direction:ltr">${fmt(R.allCosts,0)} جنيه</span></div>`;
+      <span style="font-weight:900;font-size:18px;color:var(--red);direction:ltr">${fmt(R.allCosts,0)} جنيه</span></div>`;
     if(R.revenue>0) prog={pct:Math.min(R.allCosts/R.revenue,1),color:'var(--red)'};
   }
   else if (type==='earn') {
@@ -814,8 +1581,8 @@ function showKpiSheet(type) {
     ];
     highlight=`<div style="display:flex;justify-content:space-between">
       <span style="font-size:12px;color:var(--muted)">المتبقي للهدف</span>
-      <span style="font-family:'Tajawal';font-weight:900;font-size:18px;color:var(--gold2);direction:ltr">${fmt(rem,0)} جنيه</span></div>`;
-    if(R.revenue>0) prog={pct:Math.min(collected/R.revenue,1),color:'var(--gold2)'};
+      <span style="font-weight:900;font-size:18px;color:var(--green);direction:ltr">${fmt(rem,0)} جنيه</span></div>`;
+    if(R.revenue>0) prog={pct:Math.min(collected/R.revenue,1),color:'var(--green)'};
   }
 
   $('sheetTitle').innerHTML = title;
@@ -839,105 +1606,100 @@ function showKpiSheet(type) {
 function closeSheet() { $('kpiSheet').classList.remove('open'); }
 function closeSheetIfBg(e) { if(e.target===$('kpiSheet')) closeSheet(); }
 
-// ═══════════════════════════════════════════════════════════
-// SHIFT
-// ═══════════════════════════════════════════════════════════
-let shiftActive=false, shiftPaused=false, shiftStartTS=null, shiftTimerInt=null;
-let shiftElapsedMs=0; // accumulated elapsed before pause
+// ═══════════════════════════════════════
+// SHIFT (with break)
+// ═══════════════════════════════════════
+let shiftActive=false, shiftStartTS=null, shiftTimerInt=null;
+let onBreak=false, breakStartTS=null, totalBreakMs=0;
 
-function toggleShift() {
-  if(!shiftActive) { startShift(); return; }
-  if(shiftPaused) resumeShift(); else pauseShift();
-}
+function toggleShift() { if(!shiftActive) startShift(); }
 
 function startShift() {
-  shiftActive=true; shiftPaused=false; shiftElapsedMs=0;
-  shiftStartTS=Date.now();
+  shiftActive=true; shiftStartTS=Date.now(); onBreak=false; totalBreakMs=0;
   trips=[]; renderTrips();
-  $('btnStart').className='btn-start active-shift';
-  $('shiftBtnIcon').textContent='⏸';
-  $('shiftBtnTxt').textContent='إيقاف مؤقت';
+  $('btnStart').classList.add('active-shift');
+  $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='جارٍ...';
+  $('btnBreak').classList.add('enabled');
   $('btnEnd').classList.add('enabled');
   $('shiftTimer').style.display='block';
-  $('pauseBadge').style.display='none';
-  startTimerTick();
-  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftElapsed','0');localStorage.setItem('tk_shiftPaused','0');}catch(e){}
+  shiftTimerInt=setInterval(tickTimer,1000);
+  try{localStorage.setItem('tk_shiftStart',shiftStartTS);}catch(e){}
+  scheduleShiftEndReminder();
 }
 
-function pauseShift() {
-  shiftPaused=true;
-  shiftElapsedMs += Date.now()-shiftStartTS;
-  clearInterval(shiftTimerInt);
-  $('btnStart').className='btn-start paused-shift';
-  $('shiftBtnIcon').textContent='▶';
-  $('shiftBtnTxt').textContent='متابعة';
-  $('pauseBadge').style.display='flex';
-  try{localStorage.setItem('tk_shiftElapsed',shiftElapsedMs);localStorage.setItem('tk_shiftPaused','1');}catch(e){}
-  sendNotif('⏸ شيفت متوقف مؤقتاً','خد راحتك يا كابتن، الوقت واقف لما ترجع 💪');
+function tickTimer() {
+  if(onBreak) return;
+  const el=Date.now()-shiftStartTS-totalBreakMs;
+  const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
+  $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 
-function resumeShift() {
-  shiftPaused=false;
-  shiftStartTS=Date.now();
-  $('btnStart').className='btn-start active-shift';
-  $('shiftBtnIcon').textContent='⏸';
-  $('shiftBtnTxt').textContent='إيقاف مؤقت';
-  $('pauseBadge').style.display='none';
-  startTimerTick();
-  try{localStorage.setItem('tk_shiftStart',shiftStartTS);localStorage.setItem('tk_shiftPaused','0');}catch(e){}
-  sendNotif('▶ الشيفت مستمر','يلا يا كابتن — بالتوفيق والرزق 🛵');
-}
-
-function startTimerTick() {
-  clearInterval(shiftTimerInt);
-  shiftTimerInt=setInterval(()=>{
-    const el=shiftElapsedMs+(Date.now()-shiftStartTS);
-    const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
-    $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-  },1000);
+function toggleBreak() {
+  if(!shiftActive) return;
+  if(!onBreak) {
+    onBreak=true; breakStartTS=Date.now();
+    $('btnBreak').classList.add('on-break');
+    $('breakBtnIcon').textContent='▶'; $('breakBtnTxt').textContent='استئناف';
+    $('breakLabel').style.display='inline';
+  } else {
+    totalBreakMs += Date.now()-breakStartTS;
+    onBreak=false; breakStartTS=null;
+    $('btnBreak').classList.remove('on-break');
+    $('breakBtnIcon').textContent='☕'; $('breakBtnTxt').textContent='استراحة';
+    $('breakLabel').style.display='none';
+  }
 }
 
 function endShift() {
   if(!shiftActive) return;
+  if(onBreak) toggleBreak(); // close break first
   clearInterval(shiftTimerInt);
-  const totalMs = shiftPaused ? shiftElapsedMs : shiftElapsedMs+(Date.now()-shiftStartTS);
-  const durH=totalMs/3600000;
+  const endTS=Date.now(), durH=(endTS-shiftStartTS-totalBreakMs)/3600000;
   const totalColl=trips.filter(t=>t.type==='trip').reduce((s,t)=>s+t.amount,0);
   const com=num('s-com')/100, pers=num('s-pers'), pkm=num('s-pkm')||1;
   const netActual=totalColl*(1-com)-pers, kmEst=totalColl/pkm;
 
-  // Update motor km
+  // auto-update motor km
   const curMotor=num('s-motor-km');
-  if(curMotor>0){
-    const newKm=curMotor+kmEst;
-    $('s-motor-km').value=Math.round(newKm);
-    saveSettings();
-    checkMotorKm();
-  }
+  const newMotorKm = curMotor + kmEst;
+  $('s-motor-km').value=Math.round(newMotorKm);
+  saveSettings(); updateMotorStatus();
 
   addLogEntry({
-    date: new Date().toLocaleDateString('ar-EG'),
-    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
+    date: new Date(shiftStartTS).toLocaleDateString('ar-EG'),
+    time: new Date(shiftStartTS).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true}),
     goal: num('goalInput'), km:kmEst.toFixed(1), hrs:durH.toFixed(1),
     total:totalColl, net:netActual.toFixed(2)
   });
 
-  sendNotif('🛵 انتهى الشيفت!', `الحمد لله على السلامة يا كابتن! المحصّل: ${fmt(totalColl,0)} جنيه — الصافي: ${fmt(netActual,0)} جنيه. أحسنت صنعاً اليوم 💪`);
+  if(notifPrefs.end)
+    sendNotif('🏁 انتهى الشيفت!',`الحمد لله! المحصّل: ${fmt(totalColl,0)} ج — الصافي: ${fmt(netActual,0)} ج 💪`,'🏁');
 
-  shiftActive=false; shiftPaused=false; shiftElapsedMs=0;
-  $('btnStart').className='btn-start';
+  shiftActive=false; onBreak=false; breakStartTS=null; totalBreakMs=0;
+  $('btnStart').classList.remove('active-shift');
   $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='بدء الشيفت';
+  $('btnBreak').classList.remove('enabled','on-break');
+  $('breakBtnIcon').textContent='☕'; $('breakBtnTxt').textContent='استراحة';
   $('btnEnd').classList.remove('enabled');
-  $('shiftTimer').style.display='none';
-  $('pauseBadge').style.display='none';
+  $('shiftTimer').style.display='none'; $('breakLabel').style.display='none';
   $('timerDisplay').textContent='00:00:00';
   trips=[]; renderTrips(); updateTripTracker(); updateRemBar();
-  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_shiftElapsed');localStorage.removeItem('tk_shiftPaused');localStorage.removeItem('tk_trips');}catch(e){}
+  try{localStorage.removeItem('tk_shiftStart');localStorage.removeItem('tk_trips');}catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
+// shift end reminder (~6hrs into shift)
+let shiftEndReminderTimeout=null;
+function scheduleShiftEndReminder(){
+  clearTimeout(shiftEndReminderTimeout);
+  if(!notifPrefs.end) return;
+  shiftEndReminderTimeout=setTimeout(()=>{
+    if(shiftActive) sendNotif('⏰ لقد مضى 6 ساعات!','هل تريد إنهاء الشيفت الآن؟ راجع مشاويرك وأرباحك.','⏰');
+  }, 6*3600000);
+}
+
+// ═══════════════════════════════════════
 // TRIP TRACKER + EXPENSE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 let trips=[];
 
 function addTrip() {
@@ -952,12 +1714,10 @@ function addTrip() {
 function addExpense() {
   const amt=parseFloat($('expAmt').value);
   if(!amt||amt<=0){$('expAmt').focus();return;}
-  // add to s-pers
   const curPers=num('s-pers');
   $('s-pers').value=(curPers+amt).toFixed(0);
   $('expAmt').value='';
-  recalc(); // re-calc with new pers
-  // also log as trip item for reference
+  recalc();
   trips.push({id:Date.now(),amount:-amt,type:'expense',time:nowTimeStr()});
   renderTrips(); updateTripTracker(); updateRemBar();
   try{localStorage.setItem('tk_trips',JSON.stringify(trips));}catch(e){}
@@ -978,7 +1738,7 @@ function renderTrips() {
     const isExp=t.type==='expense';
     div.innerHTML=`
       <span style="color:var(--muted);font-size:10px;direction:ltr">${t.time}</span>
-      <span style="font-family:'Tajawal';font-weight:700;color:${isExp?'var(--red)':'var(--gold2)'};direction:ltr">
+      <span style="font-weight:700;color:${isExp?'var(--red)':'var(--green)'};direction:ltr">
         ${isExp?'−':'+'} ${fmt(Math.abs(t.amount),2)} جنيه ${isExp?'(مصروف)':''}
       </span>
       <button class="trip-del" onclick="removeTrip(${t.id})">✕</button>`;
@@ -996,15 +1756,14 @@ function updateTripTracker() {
   $('t-count').textContent=trips.filter(t=>t.type==='trip').length;
 }
 
-// ═══════════════════════════════════════════════════════════
-// LOG — kept 30 days
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// LOG
+// ═══════════════════════════════════════
 let logEntries=[];
 
 function addLogEntry(entry) {
   logEntries.unshift({id:Date.now(),...entry});
-  pruneLog();
-  renderLog(); saveLog();
+  pruneLog(); renderLog(); saveLog();
 }
 function pruneLog() {
   const cutoff=Date.now()-30*24*60*60*1000;
@@ -1015,28 +1774,89 @@ function deleteLogEntry(id) {
   renderLog(); saveLog();
 }
 function renderLog() {
-  const tbody=$('logBody'); if(!tbody) return;
-  tbody.innerHTML='';
-  if(logEntries.length===0){
-    tbody.innerHTML=`<tr><td colspan="8" style="color:var(--muted);padding:20px;text-align:center">لا توجد سجلات بعد</td></tr>`;
-    $('logTotals').innerHTML=''; return;
+  const cards = $('logCards');
+  if (!cards) return;
+
+  // ── wallet totals ──────────────────────────────────
+  const n = logEntries.length;
+  const st  = logEntries.reduce((s,e)=>s+(parseFloat(e.total)||0),0);
+  const sn  = logEntries.reduce((s,e)=>s+(parseFloat(e.net)||0),0);
+  const sk  = logEntries.reduce((s,e)=>s+(parseFloat(e.km)||0),0);
+  const sh  = logEntries.reduce((s,e)=>s+(parseFloat(e.hrs)||0),0);
+  const bestNet = n ? Math.max(...logEntries.map(e=>parseFloat(e.net)||0)) : 0;
+  const avgNet  = n ? sn/n : 0;
+  const goalHitPct = n ? Math.round(logEntries.filter(e=>(parseFloat(e.net)||0)>=(parseFloat(e.goal)||0)).length/n*100) : 0;
+  const avgKm   = n ? sk/n : 0;
+
+  $('walletBadge').textContent = n + ' شيفت';
+  $('w-total').textContent = fmt(st, 2);
+  $('w-net').textContent   = fmt(sn, 0);
+  $('w-shifts').textContent= n;
+  $('w-km').textContent    = fmt(sk, 0);
+  $('w-hrs').textContent   = fmt(sh, 1);
+  $('w-avg').textContent   = n ? fmt(avgNet,0) : '—';
+  $('w-best').textContent  = n ? fmt(bestNet,0) : '—';
+
+  // ── empty state ────────────────────────────────────
+  if (n === 0) {
+    cards.innerHTML = `
+      <div class="log-empty">
+        <div class="le-icon">📋</div>
+        لا توجد شيفتات مسجّلة بعد<br>
+        <span style="font-size:11px;opacity:.6">أنهِ شيفتك الأول لتظهر هنا</span>
+      </div>`;
+    $('logSummary').style.display = 'none';
+    $('logSectionTitle').style.display = 'none';
+    return;
   }
-  logEntries.forEach(e=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${e.date||'—'}</td><td>${e.time||'—'}</td>
-      <td>${fmt(e.goal,0)}</td><td>${fmt(e.km,1)}</td><td>${e.hrs||'—'}</td>
-      <td style="color:var(--gold2)">${fmt(e.total,0)}</td>
-      <td style="color:var(--green2)">${fmt(e.net,1)}</td>
-      <td><button class="log-del-btn" onclick="deleteLogEntry(${e.id})">🗑</button></td>`;
-    tbody.appendChild(tr);
+
+  // ── summary strip ──────────────────────────────────
+  $('logSummary').style.display = 'grid';
+  $('logSectionTitle').style.display = 'block';
+  $('ls-best').textContent     = fmt(bestNet, 0) + ' ج';
+  $('ls-avg-km').textContent   = fmt(avgKm, 1) + ' كم';
+  $('ls-goal-hit').textContent = goalHitPct + '%';
+
+  // ── shift entry cards ──────────────────────────────
+  cards.innerHTML = '';
+  logEntries.forEach(e => {
+    const net   = parseFloat(e.net)   || 0;
+    const total = parseFloat(e.total) || 0;
+    const goal  = parseFloat(e.goal)  || 0;
+    const km    = parseFloat(e.km)    || 0;
+    const hrs   = parseFloat(e.hrs)   || 0;
+    const goalReached = net >= goal;
+    const pct   = goal > 0 ? Math.min(net / goal, 1) : 0;
+    const barClass = pct >= 1 ? '' : pct >= .7 ? 'warn' : 'bad';
+
+    const card = document.createElement('div');
+    card.className = 'shift-entry-card';
+    card.innerHTML = `
+      <div class="sec-head">
+        <div>
+          <div class="sec-date">${e.date || '—'}</div>
+          <div class="sec-time">${e.time || '—'}</div>
+        </div>
+        <div style="text-align:left">
+          <div class="sec-net">${fmt(net, 0)}</div>
+          <div class="sec-net-lbl">جنيه صافي</div>
+        </div>
+      </div>
+      <div class="sec-chips">
+        <div class="sec-chip"><span class="ch-icon">💰</span>${fmt(total,0)} ج محصّل</div>
+        <div class="sec-chip"><span class="ch-icon">📍</span>${fmt(km,1)} كم</div>
+        <div class="sec-chip"><span class="ch-icon">⏱</span>${fmt(hrs,1)} س</div>
+        <div class="sec-chip ${goalReached?'chip-ok':'chip-miss'}">
+          <span class="ch-icon">${goalReached?'✅':'🎯'}</span>${goalReached?'تحقق الهدف':'هدف '+fmt(goal,0)+' ج'}
+        </div>
+      </div>
+      <div class="sec-bar"><div class="sec-bar-fill ${barClass}" style="width:${(pct*100).toFixed(1)}%"></div></div>
+      <div class="sec-footer">
+        <div class="sec-goal-txt">${(pct*100).toFixed(0)}% من الهدف (${fmt(goal,0)} ج)</div>
+        <button class="sec-del-btn" onclick="deleteLogEntry(${e.id})">🗑 حذف</button>
+      </div>`;
+    cards.appendChild(card);
   });
-  const tfoot=$('logTotals');
-  const sg=logEntries.reduce((s,e)=>s+(parseFloat(e.goal)||0),0);
-  const sk=logEntries.reduce((s,e)=>s+(parseFloat(e.km)||0),0);
-  const st=logEntries.reduce((s,e)=>s+(parseFloat(e.total)||0),0);
-  const sn=logEntries.reduce((s,e)=>s+(parseFloat(e.net)||0),0);
-  tfoot.innerHTML=`<td>الإجمالي</td><td>—</td><td>${fmt(sg,0)}</td><td>${fmt(sk,1)}</td><td>—</td><td>${fmt(st,0)}</td><td>${fmt(sn,1)}</td><td>—</td>`;
 }
 function clearLog(){if(confirm('مسح كل سجلات الشيفتات؟')){logEntries=[];renderLog();saveLog();}}
 function saveLog(){try{localStorage.setItem('tk_log',JSON.stringify(logEntries));}catch(e){}}
@@ -1047,129 +1867,175 @@ function loadLog(){
   }catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
-// NOTIFICATIONS + ALARM
-// ═══════════════════════════════════════════════════════════
-function sendNotif(title, body) {
-  if(Notification.permission!=='granted') return;
+// ═══════════════════════════════════════
+// KEYBOARD SHORTCUTS (7: S=start/end, B=break, T=trip)
+// ═══════════════════════════════════════
+document.addEventListener('keydown', e => {
+  if(['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+  if(e.key==='s'||e.key==='S') { if(shiftActive) endShift(); else startShift(); }
+  if((e.key==='b'||e.key==='B') && shiftActive) toggleBreak();
+  if(e.key==='t'||e.key==='T') { showTab('dash','bnav-dash'); setTimeout(()=>$('tripAmt')?.focus(),100); }
+});
+
+// ═══════════════════════════════════════
+// NOTIFICATIONS + PREFS + HISTORY
+// ═══════════════════════════════════════
+let notifPrefs = {shift:true, end:true, maint:true, peak:true, tips:false};
+let notifHistory = [];
+
+function loadNotifPrefs(){
   try{
-    const n = new Notification(title,{body,icon:'icon-192.png',badge:'icon-192.png',lang:'ar',requireInteraction:true,vibrate:[300,100,300]});
-    // play beep sound when notification fires
-    playBeep();
+    const p=JSON.parse(localStorage.getItem('tk_nprefs')||'{}');
+    Object.assign(notifPrefs,p);
+    Object.keys(notifPrefs).forEach(k=>{
+      const el=$('tog-'+k); if(el){ if(notifPrefs[k]) el.classList.add('on'); else el.classList.remove('on'); }
+    });
+    const h=JSON.parse(localStorage.getItem('tk_nhist')||'[]');
+    notifHistory=h; renderNotifHistory();
   }catch(e){}
 }
-
-function playBeep() {
-  try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    osc.frequency.value = 880;
-    osc.type = 'sine';
-    gain.gain.setValueAtTime(0.6, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 1.2);
-  } catch(e){}
+function toggleNotifPref(key, btn){
+  notifPrefs[key]=!notifPrefs[key];
+  btn.classList.toggle('on', notifPrefs[key]);
+  try{localStorage.setItem('tk_nprefs',JSON.stringify(notifPrefs));}catch(e){}
+}
+function clearNotifHistory(){
+  notifHistory=[]; renderNotifHistory();
+  try{localStorage.removeItem('tk_nhist');}catch(e){}
+}
+function renderNotifHistory(){
+  const el=$('notifHistoryList'); if(!el) return;
+  if(notifHistory.length===0){
+    el.innerHTML='<div class="notif-empty-state"><div class="ne-icon">🔕</div>لا توجد إشعارات بعد</div>';
+    return;
+  }
+  el.innerHTML=notifHistory.slice().reverse().map(n=>`
+    <div class="notif-history-item">
+      <div class="nh-icon">${n.icon||'🔔'}</div>
+      <div class="nh-body">
+        <div class="nh-title">${n.title}</div>
+        <div class="nh-sub">${n.body}</div>
+        <div class="nh-time">${n.time||''}</div>
+      </div>
+    </div>`).join('');
+}
+function addToNotifHistory(title,body,icon){
+  notifHistory.push({title,body,icon,time:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})});
+  if(notifHistory.length>50) notifHistory.shift();
+  renderNotifHistory();
+  try{localStorage.setItem('tk_nhist',JSON.stringify(notifHistory));}catch(e){}
+  // show bell badge on nav button
+  const btn=$('bnav-notifs'); if(btn) btn.querySelector('.bnav-dot').style.opacity='1';
 }
 
+function sendNotif(title, body, icon) {
+  addToNotifHistory(title, body, icon||'🔔');
+  showNotifCard(title, body, icon||'🔔');
+  if(Notification.permission!=='granted') return;
+  try{ new Notification(title,{body,icon:'icon-192.png',lang:'ar'}); }catch(e){}
+}
 function requestNotifPerm() {
   Notification.requestPermission().then(p=>{
     updateNotifBtn();
-    if(p==='granted'){ sendNotif('✅ الإشعارات مُفعَّلة','سيصلك منبّه قبل بدء الشيفت وعند بلوغ 800 كم'); scheduleAlarm(); }
+    if(p==='granted'){ sendNotif('✅ الإشعارات مُفعَّلة','سيصلك منبّه قبل بدء الشيفت وعند اقتراب الصيانة 🛵'); scheduleAlarm(); schedulePeakNotifs(); }
+  });
+}
+function updateNotifBtn() {
+  ['notif-btn','notif-btn2'].forEach(id=>{
+    const btn=$(id); if(!btn) return;
+    if(Notification.permission==='granted'){
+      btn.textContent='✅ مفعّلة'; btn.style.background='var(--green)';
+    } else if(Notification.permission==='denied'){
+      btn.textContent='❌ محجوب'; btn.style.background='var(--red)';
+    }
   });
 }
 
-function updateNotifBtn() {
-  const btn=$('notif-btn');
-  if(!btn) return;
-  if(Notification.permission==='granted'){
-    btn.textContent='✅ إشعارات مفعّلة'; btn.style.color='var(--green2)';
-    btn.style.borderColor='rgba(0,200,150,.3)'; btn.style.background='rgba(0,200,150,.1)';
-  } else if(Notification.permission==='denied'){
-    btn.textContent='❌ محجوب — افتح إعدادات الهاتف'; btn.style.color='var(--red)';
-  }
-}
-
 let alarmTimeout=null, alarmBeforeTimeout=null;
-let alarmCheckInterval=null;
-
 function scheduleAlarm() {
   clearTimeout(alarmTimeout); clearTimeout(alarmBeforeTimeout);
-  clearInterval(alarmCheckInterval);
+  if(!notifPrefs.shift) return;
   const alarmTime=$('s-alarm')?.value; if(!alarmTime) return;
-  const before=parseInt($('s-alarm-before')?.value)||15;
+  const before=num('s-alarm-before')||15;
+  const [h,m]=alarmTime.split(':').map(Number);
+  const now=new Date();
+  let alarmDate=new Date(now); alarmDate.setHours(h,m,0,0);
+  if(alarmDate<=now) alarmDate.setDate(alarmDate.getDate()+1);
+  const msToAlarm=alarmDate-now;
+  const msToBefore=msToAlarm-(before*60000);
+  if(msToBefore>0){
+    alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! الشيفت الساعة ${alarmTime} 🛵`,'⏰'),msToBefore);
+  }
+  alarmTimeout=setTimeout(()=>sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل — بالتوفيق والرزق الوفير!','🛵'),msToAlarm);
+}
 
-  // Save alarm config to localStorage for visibility check
-  try{ localStorage.setItem('tk_alarm_time', alarmTime); localStorage.setItem('tk_alarm_before', before); }catch(e){}
-
-  function getNextAlarmDate(timeStr) {
-    const [h,m]=timeStr.split(':').map(Number);
+// Peak hours: 12–2pm and 7–10pm
+let peakTimeouts=[];
+function schedulePeakNotifs(){
+  peakTimeouts.forEach(clearTimeout); peakTimeouts=[];
+  if(!notifPrefs.peak) return;
+  const peaks=[{h:12,m:0,msg:'وقت الذروة بدأ (12–2م) ⚡ فرصة لزيادة المشاوير!'},{h:19,m:0,msg:'وقت الذروة المسائي (7–10م) 🌙 الطلب عالي الآن!'}];
+  peaks.forEach(p=>{
     const now=new Date();
-    let d=new Date(now); d.setHours(h,m,0,0);
+    let d=new Date(now); d.setHours(p.h,p.m,0,0);
     if(d<=now) d.setDate(d.getDate()+1);
-    return d;
-  }
-
-  function scheduleTimeouts() {
-    const alarmDate=getNextAlarmDate(alarmTime);
-    const now=new Date();
-    const msToAlarm=alarmDate-now;
-    const msToBefore=msToAlarm-(before*60000);
-    if(msToBefore>0){
-      alarmBeforeTimeout=setTimeout(()=>sendNotif(`⏰ تنبيه: الشيفت بعد ${before} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`),msToBefore);
-    } else if(msToAlarm>0 && msToBefore<=0 && msToBefore>-(before*60000)){
-      // We're in the "before" window right now
-      sendNotif(`⏰ تنبيه: الشيفت قريباً`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${alarmTime}`);
-    }
-    alarmTimeout=setTimeout(()=>{
-      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
-      // Reschedule for next day
-      setTimeout(scheduleTimeouts, 5000);
-    },msToAlarm);
-  }
-
-  scheduleTimeouts();
-
-  // Fallback: check every minute in case page was in background and setTimeout drifted
-  alarmCheckInterval = setInterval(()=>{
-    const now=new Date();
-    const [h,m]=(localStorage.getItem('tk_alarm_time')||'').split(':').map(Number);
-    if(isNaN(h)) return;
-    const b=parseInt(localStorage.getItem('tk_alarm_before'))||15;
-    const nowMin=now.getHours()*60+now.getMinutes();
-    const alarmMin=h*60+m;
-    const beforeMin=alarmMin-b;
-    const lastFired=parseInt(localStorage.getItem('tk_alarm_last_fired')||'0');
-    const todayKey=now.toLocaleDateString('en-CA');
-    const lastFiredKey=localStorage.getItem('tk_alarm_last_fired_day')||'';
-    if(nowMin===alarmMin && lastFiredKey!==todayKey){
-      localStorage.setItem('tk_alarm_last_fired_day',todayKey);
-      sendNotif('🛵 حان وقت الشيفت!','وقت العمل وصل يا كابتن — بالتوفيق والرزق الوفير!');
-    }
-    if(nowMin===beforeMin && localStorage.getItem('tk_alarm_before_fired_day')!==todayKey){
-      localStorage.setItem('tk_alarm_before_fired_day',todayKey);
-      sendNotif(`⏰ تنبيه: الشيفت بعد ${b} دقيقة`,`استعد يا كابتن! شيفتك بيبدأ الساعة ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`);
-    }
-  }, 30000);
+    peakTimeouts.push(setTimeout(()=>{ sendNotif('⚡ وقت الذروة!',p.msg,'⚡'); schedulePeakNotifs(); }, d-now));
+  });
 }
 
-// Motor km check (alert at 800+ from last maintenance)
-function checkMotorKm() {
-  const cur=num('s-motor-km'), last=num('s-last-maint');
-  const diff=cur-last;
-  if(diff>=800&&diff<1000){
-    sendNotif('⚠️ تنبيه صيانة',`اقتربت من موعد تغيير الزيت — لقد قطعت ${fmt(diff,0)} كم منذ آخر صيانة. موعد التغيير عند 1000 كم.`);
+// Motor km — auto calculation from log
+function updateMotorStatus(){
+  const total = num('s-motor-km');
+  const last  = parseFloat(localStorage.getItem('tk_last_maint')||'0');
+  const since = Math.max(0, total - last);
+  const pct   = Math.min(since/1000,1);
+  const remaining = Math.max(0, 1000-since);
+
+  const fill=$('motorBarFill');
+  const badge=$('motorBadge');
+  const sinceEl=$('motorSince');
+  const totalEl=$('motorTotal');
+  const remEl=$('motorRemaining');
+
+  if(fill){ fill.style.width=(pct*100)+'%'; fill.className='motor-bar-fill'+(pct>=1?' bad':pct>=.75?' warn':''); }
+  if(sinceEl) sinceEl.textContent=fmt(since,0)+' كم';
+  if(totalEl) totalEl.textContent=fmt(total,0)+' كم';
+  if(remEl)   remEl.textContent=fmt(remaining,0)+' كم';
+  if(badge){
+    if(pct>=1){ badge.textContent='تغيير الزيت الآن!'; badge.className='motor-status-badge bad'; }
+    else if(pct>=.75){ badge.textContent='اقتراب الصيانة ⚠️'; badge.className='motor-status-badge warn'; }
+    else { badge.textContent='جيد ✓'; badge.className='motor-status-badge'; }
   }
-  if(diff>=1000){
-    sendNotif('🔧 تغيير الزيت الآن!',`لقد تجاوزت ${fmt(diff,0)} كم منذ آخر صيانة. يرجى تغيير الزيت وصيانة الموتور فوراً.`);
+
+  // Smart maintenance notifications (at 75%, 90%, 100%)
+  if(notifPrefs.maint){
+    const prevSince=parseFloat(localStorage.getItem('tk_motor_prev')||'0');
+    if(prevSince<750&&since>=750) sendNotif('⚠️ اقتراب الصيانة',`قطعت ${fmt(since,0)} كم من آخر صيانة — تبقى ${fmt(remaining,0)} كم على تغيير الزيت`,'⚙️');
+    if(prevSince<900&&since>=900) sendNotif('🔧 الصيانة قريبة جداً!',`${fmt(since,0)} كم منذ آخر صيانة — يُنصح بتغيير الزيت قريباً`,'🔧');
+    if(prevSince<1000&&since>=1000) sendNotif('🚨 تغيير الزيت الآن!',`تجاوزت 1000 كم منذ آخر صيانة. غيّر الزيت فوراً للحفاظ على المحرك`,'🚨');
+    try{localStorage.setItem('tk_motor_prev',since);}catch(e){}
   }
 }
+function resetMotorMaint(){
+  const cur=num('s-motor-km');
+  localStorage.setItem('tk_last_maint', cur);
+  localStorage.setItem('tk_motor_prev','0');
+  sendNotif('✅ تم تسجيل تغيير الزيت',`آخر صيانة عند ${fmt(cur,0)} كم — موعد الصيانة القادمة بعد 1000 كم`,'✅');
+  updateMotorStatus();
+}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// SHARE APP (6)
+// ═══════════════════════════════════════
+function shareApp(){
+  const txt='🛵 تطبيق حاسبة الشيفت — تتبع مشاويرك وأرباحك بسهولة!\n\nتطوير: طارق عبد الجليل\nhttps://www.facebook.com/share/1CfEWkNmwH/';
+  if(navigator.share){ navigator.share({title:'حاسبة الشيفت',text:txt}).catch(()=>{}); }
+  else { navigator.clipboard?.writeText(txt).then(()=>alert('✅ تم نسخ رابط التطبيق!')).catch(()=>alert(txt)); }
+}
+
+// ═══════════════════════════════════════
 // PROFILE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 let currentPhoto=null;
 function openModal(){$('nameInput').value=$('displayName').textContent;$('profileOverlay').classList.add('open');}
 function closeModal(){$('profileOverlay').classList.remove('open');}
@@ -1192,41 +2058,9 @@ function saveProfile(){
   try{localStorage.setItem('tk_name',name);if(currentPhoto)localStorage.setItem('tk_photo',currentPhoto);}catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
-// DATA VERSION & MIGRATION — يحمي البيانات عند التحديث
-// ═══════════════════════════════════════════════════════════
-const APP_VERSION = '2.1';
-
-function migrateData() {
-  try {
-    const storedVersion = localStorage.getItem('tk_version');
-    if (storedVersion === APP_VERSION) return; // لا يحتاج ترحيل
-
-    // ── v1.x → v2.x ──
-    // الإصدارات القديمة لم يكن عندها tk_version، نتحقق من وجود البيانات فقط
-    // وننقلها بأمان دون حذف شيء
-
-    // تحقق من بيانات السجل القديمة
-    const oldLog = localStorage.getItem('tk_log');
-    if (oldLog && !localStorage.getItem('tk_log_migrated')) {
-      // السجل موجود ومحفوظ — لا نتغير عليه
-      localStorage.setItem('tk_log_migrated', '1');
-    }
-
-    // تحقق من الإعدادات القديمة — إذا كانت موجودة نحتفظ بها
-    const oldSettings = localStorage.getItem('tk_settings');
-    // لا نحذف شيء، فقط نحدث الإصدار
-
-    localStorage.setItem('tk_version', APP_VERSION);
-    console.log(`✅ البيانات محمية — تم التحديث إلى v${APP_VERSION}`);
-  } catch(e) {}
-}
-
-migrateData();
-
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // SETTINGS PERSISTENCE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 const SKEYS=['goalInput','s-pkm','s-pp','s-kpl','s-oil','s-mnt','s-iph','s-com','s-pers','s-spd','s-alarm','s-alarm-before','s-motor-km','s-last-maint'];
 
 function saveSettings(){
@@ -1243,30 +2077,16 @@ function loadSettings(){
   }catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // EXPORT / IMPORT
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 function exportData(){
-  const data={
-    version: APP_VERSION,
-    exportDate: new Date().toISOString(),
-    name: $('displayName').textContent,
-    photo: localStorage.getItem('tk_photo') || null,
-    settings:{},
-    log: logEntries,
-    trips: trips,
-    shiftState: {
-      active: shiftActive,
-      paused: shiftPaused,
-      startTS: shiftStartTS,
-      elapsedMs: shiftElapsedMs
-    }
-  };
+  const data={name:$('displayName').textContent,settings:{},log:logEntries,exportDate:new Date().toISOString()};
   SKEYS.forEach(k=>{if($(k))data.settings[k]=$(k).value;});
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`tarek_shift_backup_${new Date().toLocaleDateString('en-CA')}.json`;
+  a.download=`tarek_shift_${new Date().toLocaleDateString('en-CA')}.json`;
   a.click();
 }
 function importData(e){
@@ -1276,12 +2096,9 @@ function importData(e){
     try{
       const data=JSON.parse(ev.target.result);
       if(data.name){$('displayName').textContent=data.name;$('nameInput').value=data.name;localStorage.setItem('tk_name',data.name);}
-      if(data.photo){currentPhoto=data.photo;showPhoto(data.photo);localStorage.setItem('tk_photo',data.photo);}
       if(data.settings)Object.entries(data.settings).forEach(([k,v])=>{if($(k))$(k).value=v;});
       if(data.log){logEntries=data.log;saveLog();renderLog();}
-      if(data.trips&&Array.isArray(data.trips)){trips=data.trips;renderTrips();updateTripTracker();updateRemBar();localStorage.setItem('tk_trips',JSON.stringify(trips));}
-      recalc();
-      alert(`✅ تم استيراد البيانات بنجاح!\n📅 النسخة: ${data.version||'قديمة'}\n📆 تاريخ النسخة: ${data.exportDate?new Date(data.exportDate).toLocaleDateString('ar-EG'):'غير معروف'}`);
+      recalc();alert('✅ تم استيراد البيانات بنجاح!');
     }catch(err){alert('❌ ملف غير صالح');}
   };
   reader.readAsText(file);e.target.value='';
@@ -1290,16 +2107,17 @@ function clearAllData(){
   if(confirm('هتمسح كل البيانات والإعدادات؟')){try{localStorage.clear();}catch(e){}location.reload();}
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 loadSettings();
 loadLog();
+loadNotifPrefs();
 recalc();
 updateNotifBtn();
 scheduleAlarm();
-
-// restore active page
+schedulePeakNotifs();
+updateMotorStatus();
 showTab(currentTab, 'bnav-'+currentTab);
 
 // restore trips
@@ -1311,28 +2129,14 @@ try{
 // restore shift timer
 try{
   const savedStart=localStorage.getItem('tk_shiftStart');
-  const savedElapsed=parseInt(localStorage.getItem('tk_shiftElapsed')||'0');
-  const savedPaused=localStorage.getItem('tk_shiftPaused')==='1';
   if(savedStart){
-    shiftActive=true;
-    shiftElapsedMs=savedElapsed||0;
+    shiftActive=true; shiftStartTS=parseInt(savedStart); onBreak=false; totalBreakMs=0;
+    $('btnStart').classList.add('active-shift');
+    $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='جارٍ...';
+    $('btnBreak').classList.add('enabled');
     $('btnEnd').classList.add('enabled');
     $('shiftTimer').style.display='block';
-    if(savedPaused){
-      shiftPaused=true;
-      $('btnStart').className='btn-start paused-shift';
-      $('shiftBtnIcon').textContent='▶'; $('shiftBtnTxt').textContent='متابعة';
-      $('pauseBadge').style.display='flex';
-      // show paused time
-      const el=shiftElapsedMs;
-      const h=Math.floor(el/3600000),m=Math.floor((el%3600000)/60000),s=Math.floor((el%60000)/1000);
-      $('timerDisplay').textContent=`${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    } else {
-      shiftStartTS=parseInt(savedStart);
-      $('btnStart').className='btn-start active-shift';
-      $('shiftBtnIcon').textContent='⏸'; $('shiftBtnTxt').textContent='إيقاف مؤقت';
-      startTimerTick();
-    }
+    shiftTimerInt=setInterval(tickTimer,1000);
   }
 }catch(e){}
 </script>
