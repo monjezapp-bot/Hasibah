@@ -967,7 +967,7 @@ html.dark .wallet-card {
   <!-- Net Bar -->
   <div class="net-bar">
     <div>
-      <div class="net-lbl">✅ صافي الربح للبيت</div>
+      <div class="net-lbl">✅ صافي الربح </div>
       <div class="net-sub">بعد خصم كل التكاليف والعمولة</div>
     </div>
     <div style="text-align:left">
@@ -1023,9 +1023,9 @@ html.dark .wallet-card {
   <div style="height:4px"></div>
 
   <div class="setting-card">
-    <div class="setting-hdr">💵 الكسب والإيرادات</div>
+    <div class="setting-hdr">💵 المكسب والإيرادات</div>
     <div class="setting-row">
-      <div><div class="sr-label">مكسب الكيلو</div><div class="sr-desc">صافي ربحك لكل كيلومتر</div></div>
+      <div><div class="sr-label">تسعيرة الكيلو</div><div class="sr-desc">صافي ربحك لكل كيلومتر</div></div>
       <div class="sr-right"><input class="setting-input" id="s-pkm" type="number" value="4" step="0.5" min="0.1" oninput="recalc()"><span class="sr-unit">جنيه/كم</span></div>
     </div>
     <div class="setting-row">
@@ -1073,7 +1073,7 @@ html.dark .wallet-card {
   <!-- Motor KM - auto tracker -->
   <div class="motor-status-card">
     <div class="motor-status-top">
-      <div class="motor-status-title">🛵 عداد المحرك — تلقائي</div>
+      <div class="motor-status-title">🛵 عداد المحرك </div>
       <div class="motor-status-badge" id="motorBadge">جيد ✓</div>
     </div>
     <div class="motor-bar"><div class="motor-bar-fill" id="motorBarFill" style="width:0%"></div></div>
@@ -1223,7 +1223,7 @@ html.dark .wallet-card {
     <div class="wallet-stats">
       <div class="wallet-stat">
         <div class="wallet-stat-val" id="w-net">—</div>
-        <div class="wallet-stat-lbl">صافي للبيت</div>
+        <div class="wallet-stat-lbl">صافي </div>
       </div>
       <div class="wallet-stat">
         <div class="wallet-stat-val" id="w-shifts">0</div>
@@ -1277,21 +1277,21 @@ html.dark .wallet-card {
     <div class="bnav-dot"></div>
     <span class="bl">الرئيسية</span>
   </button>
-  <button class="bnav-btn" id="bnav-notifs" onclick="showTab('notifs','bnav-notifs')">
-    <span class="bi">🔔</span>
+   <button class="bnav-btn" id="bnav-settings" onclick="showTab('settings','bnav-settings')">
+    <span class="bi">⚙️</span>
     <div class="bnav-dot"></div>
-    <span class="bl">الإشعارات</span>
-  </button>
+    <span class="bl">الإعدادات</span>
+   </button>
   <button class="bnav-btn" id="bnav-log" onclick="showTab('log','bnav-log')">
     <span class="bi">👛</span>
     <div class="bnav-dot"></div>
     <span class="bl">المحفظة</span>
   </button>
-  <button class="bnav-btn" id="bnav-settings" onclick="showTab('settings','bnav-settings')">
-    <span class="bi">⚙️</span>
+   <button class="bnav-btn" id="bnav-notifs" onclick="showTab('notifs','bnav-notifs')">
+    <span class="bi">🔔</span>
     <div class="bnav-dot"></div>
-    <span class="bl">الإعدادات</span>
-  </button>
+    <span class="bl">الإشعارات</span>
+   </button>
 </div>
 
 <!-- KPI BOTTOM SHEET -->
@@ -1575,8 +1575,8 @@ function showKpiSheet(type) {
     const rem = Math.max(0, R.revenue - collected);
     rows=[
       ['الإيراد الكلي المطلوب',   fmt(R.revenue,0)+' جنيه'],
-      ['منه تكاليف',              fmt(R.allCosts,0)+' جنيه'],
-      ['منه صافي للبيت',          fmt(R.goal,0)+' جنيه'],
+      [' التكاليف',              fmt(R.allCosts,0)+' جنيه'],
+      ['  الربح الصافي ',          fmt(R.goal,0)+' جنيه'],
       ['المحصّل حتى الآن',         fmt(collected,0)+' جنيه'],
     ];
     highlight=`<div style="display:flex;justify-content:space-between">
